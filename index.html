@@ -47,6 +47,8 @@
         .input-group {
             margin-bottom: 10px;
             width: 100%;
+            display: flex;
+            flex-direction: column;
         }
         label {
             font-size: 13px;
@@ -54,13 +56,16 @@
             font-weight: bold;
             display: block;
             margin-bottom: 4px;
+            line-height: 1.2; /* iOS'ta yazının yukarı fırlamasını önlemek için sabitlendi */
         }
         input[type="text"], select {
             width: 100%;
-            padding: 11px;
+            height: 44px; /* Yüksekliği sabitleyerek iOS kaymalarını engelledik */
+            padding: 0 11px;
             border: 2px solid #bdc3c7;
             border-radius: 6px;
             font-size: 15px;
+            line-height: 40px; /* İçerideki metnin dikey hizasını sabitledik */
             box-sizing: border-box;
             transition: border-color 0.3s;
             text-align: center;
