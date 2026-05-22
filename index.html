@@ -76,6 +76,10 @@ input[type="text"]:focus{
     background:#f7eb75 !important;
 }
 
+.pink-bg{
+    background:#ffd6e8 !important;
+}
+
 .clear-btn{
     width:40px;
     height:46px;
@@ -171,11 +175,9 @@ button:hover{
 }
 
 @media(max-width:480px){
-
     .row{
         flex-direction:row;
     }
-
 }
 
 </style>
@@ -212,7 +214,7 @@ button:hover{
 <label>2. Ürün Miktarı (Adet / Adet Sayısı)</label>
 
 <div class="field-container">
-<input type="text" id="miktar2" class="yellow-bg">
+<input type="text" id="miktar2">
 <div class="clear-btn" onclick="temizleKutu('miktar2')">×</div>
 </div>
 
@@ -302,6 +304,32 @@ button:hover{
 
 </div>
 
+<div class="row">
+
+<div class="input-group">
+
+<label>Satış Kutu Miktarı</label>
+
+<div class="field-container">
+<input type="text" id="kutuMiktar" class="pink-bg">
+<div class="clear-btn" onclick="temizleKutu('kutuMiktar')">×</div>
+</div>
+
+</div>
+
+<div class="input-group">
+
+<label>Satış Kutu İskontosu (%)</label>
+
+<div class="field-container">
+<input type="text" id="kutuIskonto" class="pink-bg">
+<div class="clear-btn" onclick="temizleKutu('kutuIskonto')">×</div>
+</div>
+
+</div>
+
+</div>
+
 <button onclick="hesaplaSatis()">
 Satış Fiyatını Hesapla
 </button>
@@ -344,6 +372,11 @@ KDV Tutarı
 <span class="highlight" id="resAdetSatis">0,00 TL</span>
 </p>
 
+<p style="font-size:16px;font-weight:bold;color:#2980b9;">
+5. Kutu Satış Fiyatı
+<span class="highlight" id="resKutuSatis">0,00 TL</span>
+</p>
+
 </div>
 
 </div>
@@ -353,118 +386,61 @@ KDV Tutarı
 <script>
 
 function temizleKutu(id){
-
     document.getElementById(id).value = "";
-
 }
 
-function guvenliSayiyaCevir(id,tip){
-
-    let value = document.getElementById(id).value.trim();
-
-    if(value === ""){
-        return 0;
-    }
-
-    if(tip === "tutar"){
-        value = value.replace(/\./g,"").replace(",",".");
-    }else{
-        value = value.replace(",",".");
-    }
-
-    let sayi = parseFloat(value);
-
-    return isNaN(sayi) ? 0 : sayi;
+function guvenliSayiyaCevir(id){
+    let v = document.getElementById(id).value.trim();
+    if(!v) return 0;
+    v = v.replace(/\./g,"").replace(",",".");
+    return parseFloat(v) || 0;
 }
 
 function hesaplaSatis(){
 
-    let brut = guvenliSayiyaCevir("brut","tutar");
+    let brut = guvenliSayiyaCevir("brut");
 
-    let miktar1 = guvenliSayiyaCevir("miktar","sayi");
-    let miktar2 = guvenliSayiyaCevir("miktar2","sayi");
+    let m1 = guvenliSayiyaCevir("miktar");
+    let m2 = guvenliSayiyaCevir("miktar2");
 
-    let isk1 = guvenliSayiyaCevir("isk1","oran");
-    let isk2 = guvenliSayiyaCevir("isk2","oran");
-    let isk3 = guvenliSayiyaCevir("isk3","oran");
-    let isk4 = guvenliSayiyaCevir("isk4","oran");
+    let isk1 = guvenliSayiyaCevir("isk1");
+    let isk2 = guvenliSayiyaCevir("isk2");
+    let isk3 = guvenliSayiyaCevir("isk3");
+    let isk4 = guvenliSayiyaCevir("isk4");
 
-    let karOran = parseFloat(document.getElementById("kar").value) || 0;
-    let kdvOran = parseFloat(document.getElementById("kdv").value) || 0;
+    let kar = parseFloat(document.getElementById("kar").value);
+    let kdv = parseFloat(document.getElementById("kdv").value);
 
-    if(brut <= 0){
+    let km = guvenliSayiyaCevir("kutuMiktar");
+    let ki = guvenliSayiyaCevir("kutuIskonto");
 
-        alert("Lütfen geçerli bir tutar giriniz.");
-        return;
+    if(m1<=0) m1=1;
+    if(m2<=0) m2=1;
+    if(km<=0) km=1;
 
-    }
+    let ham = (brut/m1)/m2;
 
-    if(miktar1 <= 0){
-        miktar1 = 1;
-    }
+    let net = ham;
+    net *= (1-isk1/100);
+    net *= (1-isk2/100);
+    net *= (1-isk3/100);
+    net *= (1-isk4/100);
 
-    if(miktar2 <= 0){
-        miktar2 = 1;
-    }
+    let karli = net*(1+kar/100);
+    let satis = karli*(1+kdv/100);
 
-    let hamAdetMaliyeti = (brut / miktar1) / miktar2;
+    let kutu = satis*km*(1-ki/100);
 
-    let netAdetMaliyeti = hamAdetMaliyeti;
+    document.getElementById("resHamMaliyet").innerText = ham.toFixed(2);
+    document.getElementById("resNetMaliyet").innerText = net.toFixed(2);
+    document.getElementById("resKarTutar").innerText = (karli-net).toFixed(2);
+    document.getElementById("resKarliFiyat").innerText = karli.toFixed(2);
+    document.getElementById("resKdvTutar").innerText = (satis-karli).toFixed(2);
+    document.getElementById("resAdetSatis").innerText = satis.toFixed(2);
+    document.getElementById("resKutuSatis").innerText = kutu.toFixed(2);
 
-    netAdetMaliyeti *= (1 - isk1 / 100);
-    netAdetMaliyeti *= (1 - isk2 / 100);
-    netAdetMaliyeti *= (1 - isk3 / 100);
-    netAdetMaliyeti *= (1 - isk4 / 100);
-
-    let karTutar = netAdetMaliyeti * (karOran / 100);
-
-    let karliFiyat = netAdetMaliyeti + karTutar;
-
-    let kdvTutar = karliFiyat * (kdvOran / 100);
-
-    let satisFiyati = karliFiyat + kdvTutar;
-
-    let fmt = {
-        minimumFractionDigits:2,
-        maximumFractionDigits:2
-    };
-
-    document.getElementById("resHamMaliyet").innerText =
-        hamAdetMaliyeti.toLocaleString("tr-TR",fmt) + " TL";
-
-    document.getElementById("resNetMaliyet").innerText =
-        netAdetMaliyeti.toLocaleString("tr-TR",fmt) + " TL";
-
-    document.getElementById("resKarTutar").innerText =
-        karTutar.toLocaleString("tr-TR",fmt) + " TL";
-
-    document.getElementById("resKarliFiyat").innerText =
-        karliFiyat.toLocaleString("tr-TR",fmt) + " TL";
-
-    document.getElementById("resKdvTutar").innerText =
-        kdvTutar.toLocaleString("tr-TR",fmt) + " TL";
-
-    document.getElementById("resAdetSatis").innerText =
-        satisFiyati.toLocaleString("tr-TR",fmt) + " TL";
-
-    document.getElementById("sonucAlani").style.display = "block";
-
+    document.getElementById("sonucAlani").style.display="block";
 }
-
-document.querySelectorAll("input").forEach(function(input){
-
-    input.addEventListener("keydown",function(e){
-
-        if(e.key === "Enter"){
-
-            e.preventDefault();
-            hesaplaSatis();
-
-        }
-
-    });
-
-});
 
 </script>
 
