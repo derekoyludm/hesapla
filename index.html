@@ -7,10 +7,7 @@
 <title>Sıralı Satış Fiyatı Hesaplama</title>
 
 <style>
-
-*{
-    box-sizing:border-box;
-}
+*{box-sizing:border-box;}
 
 body{
     margin:0;
@@ -30,10 +27,7 @@ body{
     box-shadow:0 6px 18px rgba(0,0,0,0.08);
 }
 
-.input-group{
-    margin-bottom:18px;
-    width:100%;
-}
+.input-group{margin-bottom:18px;width:100%;}
 
 label{
     display:block;
@@ -64,7 +58,6 @@ input[type="text"]{
     padding:0 14px;
     font-size:16px;
     text-align:center;
-    transition:0.2s;
 }
 
 input[type="text"]:focus{
@@ -72,13 +65,8 @@ input[type="text"]:focus{
     border-color:#57c785;
 }
 
-.yellow-bg{
-    background:#f7eb75 !important;
-}
-
-.pink-bg{
-    background:#ffd6e8 !important;
-}
+.yellow-bg{background:#f7eb75 !important;}
+.pink-bg{background:#ffd6e8 !important;}
 
 .clear-btn{
     width:40px;
@@ -93,32 +81,6 @@ input[type="text"]:focus{
     font-weight:bold;
     cursor:pointer;
     user-select:none;
-    flex-shrink:0;
-}
-
-.clear-btn:hover{
-    background:#2587ca;
-}
-
-.row{
-    display:flex;
-    gap:10px;
-    width:100%;
-}
-
-.row .input-group{
-    flex:1;
-    min-width:0;
-}
-
-select{
-    width:100%;
-    height:46px;
-    border:2px solid #bfc6cd;
-    border-radius:8px;
-    font-size:16px;
-    text-align:center;
-    background:white;
 }
 
 button{
@@ -132,53 +94,9 @@ button{
     font-weight:700;
     cursor:pointer;
     margin-top:10px;
-    transition:0.2s;
 }
 
-button:hover{
-    background:#28b765;
-}
-
-.result{
-    display:none;
-    margin-top:20px;
-    background:#ecfdf5;
-    border-radius:10px;
-    padding:15px;
-}
-
-.result p{
-    margin:10px 0;
-    color:#2c3e50;
-    font-size:14px;
-}
-
-.highlight{
-    float:right;
-    font-weight:bold;
-}
-
-.total-box{
-    background:#ebf5fb;
-    padding:10px;
-    border-radius:8px;
-    margin-top:12px;
-    border-left:5px solid #3498db;
-}
-
-.final-box{
-    background:#d4efdf;
-    padding:10px;
-    border-radius:8px;
-    margin-top:12px;
-    border-left:5px solid #2ecc71;
-}
-
-@media(max-width:480px){
-    .row{
-        flex-direction:row;
-    }
-}
+.result{display:none;margin-top:20px;}
 
 </style>
 </head>
@@ -188,203 +106,82 @@ button:hover{
 <div class="container">
 
 <div class="input-group">
-
-<label>Toplam Brüt Giriş Tutarı (KDV Hariç)</label>
-
+<label>Toplam Brüt Giriş Tutarı</label>
 <div class="field-container">
-<input type="text" id="brut">
+<input type="text" id="brut" inputmode="decimal" pattern="[0-9.,]*">
 <div class="clear-btn" onclick="temizleKutu('brut')">×</div>
 </div>
-
 </div>
 
 <div class="input-group">
-
-<label>Ürün Miktarı (Adet / Adet Sayısı)</label>
-
+<label>Ürün Miktarı</label>
 <div class="field-container">
-<input type="text" id="miktar">
+<input type="text" id="miktar" inputmode="decimal" pattern="[0-9.,]*">
 <div class="clear-btn" onclick="temizleKutu('miktar')">×</div>
 </div>
-
 </div>
 
 <div class="input-group">
-
-<label>2. Ürün Miktarı (Adet / Adet Sayısı)</label>
-
+<label>2. Ürün Miktarı</label>
 <div class="field-container">
-<input type="text" id="miktar2" class="yellow-bg">
+<input type="text" id="miktar2" class="yellow-bg" inputmode="decimal" pattern="[0-9.,]*">
 <div class="clear-btn" onclick="temizleKutu('miktar2')">×</div>
 </div>
-
 </div>
 
-<div class="row">
-
 <div class="input-group">
-
 <label>İskonto 1 (%)</label>
-
 <div class="field-container">
-<input type="text" id="isk1">
+<input type="text" id="isk1" inputmode="decimal" pattern="[0-9.,]*">
 <div class="clear-btn" onclick="temizleKutu('isk1')">×</div>
 </div>
-
 </div>
 
 <div class="input-group">
-
 <label>İskonto 2 (%)</label>
-
 <div class="field-container">
-<input type="text" id="isk2">
+<input type="text" id="isk2" inputmode="decimal" pattern="[0-9.,]*">
 <div class="clear-btn" onclick="temizleKutu('isk2')">×</div>
 </div>
-
 </div>
-
-</div>
-
-<div class="row">
 
 <div class="input-group">
-
 <label>İskonto 3 (%)</label>
-
 <div class="field-container">
-<input type="text" id="isk3">
+<input type="text" id="isk3" inputmode="decimal" pattern="[0-9.,]*">
 <div class="clear-btn" onclick="temizleKutu('isk3')">×</div>
 </div>
-
 </div>
 
 <div class="input-group">
-
 <label>İskonto 4 (%)</label>
-
 <div class="field-container">
-<input type="text" id="isk4">
+<input type="text" id="isk4" inputmode="decimal" pattern="[0-9.,]*">
 <div class="clear-btn" onclick="temizleKutu('isk4')">×</div>
 </div>
-
-</div>
-
-</div>
-
-<div class="row">
-
-<div class="input-group">
-
-<label>Kâr Marjı Oranı (%)</label>
-
-<select id="kar">
-<option value="10">10</option>
-<option value="15">15</option>
-<option value="20">20</option>
-<option value="25" selected>25</option>
-<option value="30">30</option>
-<option value="35">35</option>
-<option value="50">50</option>
-</select>
-
 </div>
 
 <div class="input-group">
-
-<label>KDV Oranı (%)</label>
-
-<select id="kdv">
-<option value="1">%1</option>
-<option value="10">%10</option>
-<option value="20" selected>%20</option>
-</select>
-
-</div>
-
-</div>
-
-<div class="row">
-
-<div class="input-group">
-
 <label>Satış Kutu Miktarı</label>
-
 <div class="field-container">
-<input type="text" id="kutuMiktar" class="pink-bg">
+<input type="text" id="kutuMiktar" class="pink-bg" inputmode="decimal" pattern="[0-9.,]*">
 <div class="clear-btn" onclick="temizleKutu('kutuMiktar')">×</div>
 </div>
-
 </div>
 
 <div class="input-group">
-
 <label>Satış Kutu İsk. (%)</label>
-
 <div class="field-container">
-<input type="text" id="kutuIskonto" class="pink-bg">
+<input type="text" id="kutuIskonto" class="pink-bg" inputmode="decimal" pattern="[0-9.,]*">
 <div class="clear-btn" onclick="temizleKutu('kutuIskonto')">×</div>
 </div>
-
 </div>
 
-</div>
-
-<button onclick="hesaplaSatis()">
-Satış Fiyatını Hesapla
-</button>
-
-<div class="result" id="sonucAlani">
-
-<p>
-1. Ham Adet Maliyeti
-<span class="highlight" id="resHamMaliyet">0,00 TL</span>
-</p>
-
-<p>
-2. İskontolu Net Adet Maliyeti
-<span class="highlight" id="resNetMaliyet">0,00 TL</span>
-</p>
-
-<div class="total-box">
-
-<p>
-Eklenen Kâr Tutarı
-<span class="highlight" id="resKarTutar">0,00 TL</span>
-</p>
-
-<p style="font-weight:bold;">
-3. Kârlı Adet Fiyatı (KDV Hariç)
-<span class="highlight" id="resKarliFiyat">0,00 TL</span>
-</p>
-
-</div>
-
-<div class="final-box">
-
-<p>
-KDV Tutarı
-<span class="highlight" id="resKdvTutar">0,00 TL</span>
-</p>
-
-<p style="font-size:16px;font-weight:bold;color:#27ae60;">
-4. Ürün Adet Satış Fiyatı (KDV Dahil)
-<span class="highlight" id="resAdetSatis">0,00 TL</span>
-</p>
-
-<p style="font-size:16px;font-weight:bold;color:#2980b9;">
-5. Kutu Satış Fiyatı
-<span class="highlight" id="resKutuSatis">0,00 TL</span>
-</p>
-
-</div>
-
-</div>
+<button onclick="hesaplaSatis()">Hesapla</button>
 
 </div>
 
 <script>
-
 function temizleKutu(id){
     document.getElementById(id).value = "";
 }
@@ -397,9 +194,7 @@ function guvenliSayiyaCevir(id){
 }
 
 function hesaplaSatis(){
-
     let brut = guvenliSayiyaCevir("brut");
-
     let m1 = guvenliSayiyaCevir("miktar");
     let m2 = guvenliSayiyaCevir("miktar2");
 
@@ -408,40 +203,12 @@ function hesaplaSatis(){
     let isk3 = guvenliSayiyaCevir("isk3");
     let isk4 = guvenliSayiyaCevir("isk4");
 
-    let kar = parseFloat(document.getElementById("kar").value);
-    let kdv = parseFloat(document.getElementById("kdv").value);
-
-    let km = guvenliSayiyaCevir("kutuMiktar");
-    let ki = guvenliSayiyaCevir("kutuIskonto");
-
-    if(m1<=0) m1=1;
-    if(m2<=0) m2=1;
-    if(km<=0) km=1;
-
     let ham = (brut/m1)/m2;
 
-    let net = ham;
-    net *= (1-isk1/100);
-    net *= (1-isk2/100);
-    net *= (1-isk3/100);
-    net *= (1-isk4/100);
+    let net = ham*(1-isk1/100)*(1-isk2/100)*(1-isk3/100)*(1-isk4/100);
 
-    let karli = net*(1+kar/100);
-    let satis = karli*(1+kdv/100);
-
-    let kutu = satis*km*(1-ki/100);
-
-    document.getElementById("resHamMaliyet").innerText = ham.toFixed(2);
-    document.getElementById("resNetMaliyet").innerText = net.toFixed(2);
-    document.getElementById("resKarTutar").innerText = (karli-net).toFixed(2);
-    document.getElementById("resKarliFiyat").innerText = karli.toFixed(2);
-    document.getElementById("resKdvTutar").innerText = (satis-karli).toFixed(2);
-    document.getElementById("resAdetSatis").innerText = satis.toFixed(2);
-    document.getElementById("resKutuSatis").innerText = kutu.toFixed(2);
-
-    document.getElementById("sonucAlani").style.display="block";
+    alert("Net: " + net.toFixed(2));
 }
-
 </script>
 
 </body>
