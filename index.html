@@ -1,315 +1,381 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Hesaplayıcı">
-    
-    <title>Sıralı Satış Fiyatı Hesaplayıcı</title>
-    <style>
-        body {
-            font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f6f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-        .container {
-            background-color: white;
-            padding: 20px 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 420px;
-            box-sizing: border-box;
-        }
-        h2 {
-            color: #2c3e50;
-            margin-top: 0;
-            margin-bottom: 20px;
-            font-size: 19px;
-            text-align: center;
-            border-bottom: 2px solid #34495e;
-            padding-bottom: 10px;
-        }
-        .row-half {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .input-group {
-            margin-bottom: 10px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-        label {
-            font-size: 13px;
-            color: #34495e;
-            font-weight: bold;
-            display: block;
-            margin-bottom: 4px;
-            line-height: 1.2; /* iOS'ta yazının yukarı fırlamasını önlemek için sabitlendi */
-        }
-        input[type="text"], select {
-            width: 100%;
-            height: 44px; /* Yüksekliği sabitleyerek iOS kaymalarını engelledik */
-            padding: 0 11px;
-            border: 2px solid #bdc3c7;
-            border-radius: 6px;
-            font-size: 15px;
-            line-height: 40px; /* İçerideki metnin dikey hizasını sabitledik */
-            box-sizing: border-box;
-            transition: border-color 0.3s;
-            text-align: center;
-            -webkit-appearance: none;
-            background-color: white;
-        }
-        select {
-            text-align-last: center;
-            cursor: pointer;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='24' viewBox='0 0 10 24'><path fill='%2334495e' d='M0 9l5 5 5-5H0z'/></svg>");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            padding-right: 25px;
-        }
-        input[type="text"]:focus, select:focus {
-            border-color: #2ecc71;
-            outline: none;
-        }
-        button {
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            padding: 14px 20px;
-            font-size: 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            width: 100%;
-            font-weight: bold;
-            transition: background-color 0.3s;
-            margin-top: 15px;
-            -webkit-appearance: none;
-            touch-action: manipulation;
-        }
-        button:hover, button:active {
-            background-color: #27ae60;
-        }
-        .result {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e8f8f5;
-            border-radius: 6px;
-            display: none;
-        }
-        .result p {
-            margin: 8px 0;
-            font-size: 14px;
-            color: #2c3e50;
-        }
-        .highlight {
-            font-weight: bold;
-            float: right;
-        }
-        .total-box {
-            background-color: #ebf5fb;
-            padding: 10px;
-            border-radius: 4px;
-            margin-top: 8px;
-            border-left: 5px solid #3498db;
-        }
-        .final-box {
-            background-color: #d4efdf;
-            padding: 12px;
-            border-radius: 4px;
-            margin-top: 10px;
-            border-left: 5px solid #2ecc71;
-        }
-        /* 2. Ürün Miktarı için sarı arka plan stili */
-        .yellow-bg {
-            background-color: #fff176 !important;
-            color: black !important;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sıralı Satış Fiyatı Hesaplayıcı</title>
+
+<style>
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f4f6f9;
+    margin:0;
+    padding:20px;
+    display:flex;
+    justify-content:center;
+}
+
+.container{
+    background:#fff;
+    width:100%;
+    max-width:500px;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+h2{
+    text-align:center;
+    margin-top:0;
+    color:#2c3e50;
+}
+
+.input-group{
+    margin-bottom:12px;
+}
+
+label{
+    display:block;
+    margin-bottom:5px;
+    font-weight:bold;
+    font-size:14px;
+}
+
+.field-container{
+    display:flex;
+    gap:6px;
+}
+
+input[type="text"],
+select{
+    flex:1;
+    height:42px;
+    border:2px solid #ccc;
+    border-radius:6px;
+    padding:0 10px;
+    font-size:15px;
+    box-sizing:border-box;
+    text-align:center;
+}
+
+input:focus,
+select:focus{
+    border-color:#2ecc71;
+    outline:none;
+}
+
+.clear-btn{
+    width:40px;
+    height:42px;
+    background:#3498db;
+    color:white;
+    border-radius:6px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+    font-size:20px;
+    user-select:none;
+}
+
+.clear-btn:hover{
+    background:#2980b9;
+}
+
+.row-half{
+    display:flex;
+    gap:10px;
+}
+
+button{
+    width:100%;
+    border:none;
+    background:#2ecc71;
+    color:white;
+    padding:14px;
+    font-size:16px;
+    font-weight:bold;
+    border-radius:6px;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+button:hover{
+    background:#27ae60;
+}
+
+.result{
+    display:none;
+    margin-top:20px;
+    background:#ecfdf5;
+    padding:15px;
+    border-radius:8px;
+}
+
+.result p{
+    margin:8px 0;
+}
+
+.highlight{
+    float:right;
+    font-weight:bold;
+}
+
+.yellow-bg{
+    background:#fff176;
+}
+</style>
 </head>
+
 <body>
 
 <div class="container">
-    <h2>Sıralı Satış Fiyatı Hesaplama</h2>
-    
-    <div class="input-group">
-        <label>Toplam Brüt Giriş Tutarı (KDV Hariç)</label>
-        <input type="text" id="brut" placeholder="" inputmode="decimal" autocapitalize="off" autocomplete="off" autocorrect="off">
-    </div>
 
-    <div class="input-group">
-        <label>Ürün Miktarı (Adet / Adet Sayısı)</label>
-        <input type="text" id="miktar" placeholder="" inputmode="decimal" autocapitalize="off" autocomplete="off" autocorrect="off">
-    </div>
+<h2>Sıralı Satış Fiyatı Hesaplama</h2>
 
-    <div class="input-group">
-        <label>2. Ürün Miktarı (Adet / Adet Sayısı)</label>
-        <input type="text" id="miktar2" class="yellow-bg" placeholder="" inputmode="decimal" autocapitalize="off" autocomplete="off" autocorrect="off">
-    </div>
-    
-    <div class="row-half">
-        <div class="input-group">
-            <label>İskonto 1 (%)</label>
-            <input type="text" id="isk1" placeholder="" inputmode="decimal" autocapitalize="off" autocomplete="off" autocorrect="off">
-        </div>
-        <div class="input-group">
-            <label>İskonto 2 (%)</label>
-            <input type="text" id="isk2" placeholder="" inputmode="decimal" autocapitalize="off" autocomplete="off" autocorrect="off">
-        </div>
-    </div>
+<div class="input-group">
+<label>Toplam Brüt Giriş Tutarı (KDV Hariç)</label>
+<div class="field-container">
+<input type="text" id="brut">
+<div class="clear-btn" onclick="temizleKutu('brut')">×</div>
+</div>
+</div>
 
-    <div class="row-half">
-        <div class="input-group">
-            <label>İskonto 3 (%)</label>
-            <input type="text" id="isk3" placeholder="" inputmode="decimal" autocapitalize="off" autocomplete="off" autocorrect="off">
-        </div>
-        <div class="input-group">
-            <label>İskonto 4 (%)</label>
-            <input type="text" id="isk4" placeholder="" inputmode="decimal" autocapitalize="off" autocomplete="off" autocorrect="off">
-        </div>
-    </div>
+<div class="input-group">
+<label>Ürün Miktarı</label>
+<div class="field-container">
+<input type="text" id="miktar">
+<div class="clear-btn" onclick="temizleKutu('miktar')">×</div>
+</div>
+</div>
 
-    <div class="row-half">
-        <div class="input-group">
-            <label>Kâr Marjı Oranı (%)</label>
-            <select id="kar">
-                <option value="10">10</option>
-                <option value="15">15</option>
-                <option value="20">20</option>
-                <option value="25" selected>25</option>
-                <option value="30">30</option>
-                <option value="35">35</option>
-                <option value="50">50</option>
-            </select>
-        </div>
-        <div class="input-group">
-            <label>KDV Oranı (%)</label>
-            <select id="kdv">
-                <option value="1">%1</option>
-                <option value="10">%10</option>
-                <option value="20" selected>%20</option>
-            </select>
-        </div>
-    </div>
-    
-    <button type="button" id="calcBtn" onclick="hesaplaSatis()" ontouchstart="hesaplaSatis()">Satış Fiyatını Hesapla</button>
+<div class="input-group">
+<label>2. Ürün Miktarı</label>
+<div class="field-container">
+<input type="text" id="miktar2" class="yellow-bg">
+<div class="clear-btn" onclick="temizleKutu('miktar2')">×</div>
+</div>
+</div>
 
-    <div class="result" id="sonucAlani">
-        <p>1. Ham Adet Maliyeti: <span class="highlight" id="resHamMaliyet">0,00 TL</span></p>
-        <p>2. İskontolu Net Adet Maliyeti: <span class="highlight" id="resNetMaliyet">0,00 TL</span></p>
-        
-        <div class="total-box">
-            <p>Eklenen Kâr Tutarı: <span class="highlight" id="resKarTutar">0,00 TL</span></p>
-            <p style="font-weight: bold; margin-bottom: 0;">3. Kârlı Adet Fiyatı (KDV Hariç): <span class="highlight" id="resKarliFiyat" style="color: #2980b9;">0,00 TL</span></p>
-        </div>
+<div class="row-half">
 
-        <div class="final-box">
-            <p style="margin-top: 0;">Hesaplanan KDV Tutarı: <span class="highlight" id="resKdvTutar">0,00 TL</span></p>
-            <p style="font-weight: bold; font-size: 15px; margin: 0; color: #27ae60;">4. Ürün Adet Satış Fiyatı (KDV Dahil): <span class="highlight" id="resAdetSatis">0,00 TL</span></p>
-        </div>
-    </div>
+<div class="input-group">
+<label>İskonto 1 (%)</label>
+<div class="field-container">
+<input type="text" id="isk1">
+<div class="clear-btn" onclick="temizleKutu('isk1')">×</div>
+</div>
+</div>
+
+<div class="input-group">
+<label>İskonto 2 (%)</label>
+<div class="field-container">
+<input type="text" id="isk2">
+<div class="clear-btn" onclick="temizleKutu('isk2')">×</div>
+</div>
+</div>
+
+</div>
+
+<div class="row-half">
+
+<div class="input-group">
+<label>İskonto 3 (%)</label>
+<div class="field-container">
+<input type="text" id="isk3">
+<div class="clear-btn" onclick="temizleKutu('isk3')">×</div>
+</div>
+</div>
+
+<div class="input-group">
+<label>İskonto 4 (%)</label>
+<div class="field-container">
+<input type="text" id="isk4">
+<div class="clear-btn" onclick="temizleKutu('isk4')">×</div>
+</div>
+</div>
+
+</div>
+
+<div class="row-half">
+
+<div class="input-group">
+<label>Kâr Marjı (%)</label>
+<select id="kar">
+<option value="10">10</option>
+<option value="15">15</option>
+<option value="20">20</option>
+<option value="25" selected>25</option>
+<option value="30">30</option>
+<option value="35">35</option>
+<option value="50">50</option>
+</select>
+</div>
+
+<div class="input-group">
+<label>KDV (%)</label>
+<select id="kdv">
+<option value="1">%1</option>
+<option value="10">%10</option>
+<option value="20" selected>%20</option>
+</select>
+</div>
+
+</div>
+
+<button onclick="hesaplaSatis()">Satış Fiyatını Hesapla</button>
+
+<div class="result" id="sonucAlani">
+
+<p>
+1. Ham Adet Maliyeti:
+<span class="highlight" id="resHamMaliyet">0,00 TL</span>
+</p>
+
+<p>
+2. İskontolu Net Adet Maliyeti:
+<span class="highlight" id="resNetMaliyet">0,00 TL</span>
+</p>
+
+<p>
+Eklenen Kâr Tutarı:
+<span class="highlight" id="resKarTutar">0,00 TL</span>
+</p>
+
+<p>
+3. Kârlı Adet Fiyatı (KDV Hariç):
+<span class="highlight" id="resKarliFiyat">0,00 TL</span>
+</p>
+
+<p>
+KDV Tutarı:
+<span class="highlight" id="resKdvTutar">0,00 TL</span>
+</p>
+
+<p style="font-size:18px;color:#27ae60;font-weight:bold;">
+4. Satış Fiyatı (KDV Dahil):
+<span class="highlight" id="resAdetSatis">0,00 TL</span>
+</p>
+
+</div>
+
 </div>
 
 <script>
-function temizleVeCevirTutar(id) {
-    var element = document.getElementById(id);
-    if (!element) return 0;
-    var val = element.value.trim();
-    if (val === "") return 0;
-    var temiz = val.replace(/\./g, '').replace(',', '.');
-    var sayi = parseFloat(temiz);
+
+function temizleKutu(id){
+    document.getElementById(id).value = "";
+}
+
+function guvenliSayiyaCevir(id, tip){
+
+    let value = document.getElementById(id).value.trim();
+
+    if(value === ""){
+        return 0;
+    }
+
+    if(tip === "tutar"){
+        value = value.replace(/\./g, "").replace(",", ".");
+    }else{
+        value = value.replace(",", ".");
+    }
+
+    let sayi = parseFloat(value);
+
     return isNaN(sayi) ? 0 : sayi;
 }
 
-function temizleVeCevirIskonto(id) {
-    var element = document.getElementById(id);
-    if (!element) return 0;
-    var val = element.value.trim();
-    if (val === "") return 0;
-    var temiz = val.replace(',', '.');
-    var sayi = parseFloat(temiz);
-    return isNaN(sayi) ? 0 : sayi;
-}
+function hesaplaSatis(){
 
-function temizleVeCevirMiktar(id) {
-    var element = document.getElementById(id);
-    if (!element) return 0;
-    var val = element.value.trim();
-    if (val === "") return 0;
-    var temiz = val.replace(/,/g, '');
-    var sayi = parseFloat(temiz);
-    return isNaN(sayi) ? 0 : sayi;
-}
+    let brut = guvenliSayiyaCevir("brut","tutar");
 
-function hesaplaSatis() {
-    var brut = temizleVeCevirTutar('brut');
-    var miktar1 = temizleVeCevirMiktar('miktar');
-    var miktar2 = temizleVeCevirMiktar('miktar2');
-    var isk1 = temizleVeCevirIskonto('isk1');
-    var isk2 = temizleVeCevirIskonto('isk2');
-    var isk3 = temizleVeCevirIskonto('isk3');
-    var isk4 = temizleVeCevirIskonto('isk4');
-    
-    var karOran = parseFloat(document.getElementById('kar').value) || 0;
-    var kdvOran = parseFloat(document.getElementById('kdv').value) || 0;
+    let miktar1 = guvenliSayiyaCevir("miktar","sayi");
+    let miktar2 = guvenliSayiyaCevir("miktar2","sayi");
 
-    if (brut <= 0) {
-        alert("Lütfen geçerli bir toplam brüt tutar giriniz.");
+    let isk1 = guvenliSayiyaCevir("isk1","oran");
+    let isk2 = guvenliSayiyaCevir("isk2","oran");
+    let isk3 = guvenliSayiyaCevir("isk3","oran");
+    let isk4 = guvenliSayiyaCevir("isk4","oran");
+
+    let karOran = parseFloat(document.getElementById("kar").value);
+    let kdvOran = parseFloat(document.getElementById("kdv").value);
+
+    if(brut <= 0){
+        alert("Lütfen geçerli bir tutar giriniz.");
         return;
     }
-    
-    if (miktar1 <= 0) miktar1 = 1;
-    if (miktar2 <= 0) miktar2 = 1;
 
-    var hamAdetMaliyeti = (brut / miktar1) / miktar2;
+    if(miktar1 <= 0){
+        miktar1 = 1;
+    }
 
-    var geciciMaliyet = hamAdetMaliyeti;
-    geciciMaliyet = geciciMaliyet * (1 - (isk1 / 100));
-    geciciMaliyet = geciciMaliyet * (1 - (isk2 / 100));
-    geciciMaliyet = geciciMaliyet * (1 - (isk3 / 100));
-    geciciMaliyet = geciciMaliyet * (1 - (isk4 / 100));
-    var netAdetMaliyeti = geciciMaliyet;
+    if(miktar2 <= 0){
+        miktar2 = 1;
+    }
 
-    var karTutar = netAdetMaliyeti * (karOran / 100);
-    var karliAdetFiyatiKdvHaric = netAdetMaliyeti + karTutar;
+    // Ham maliyet
+    let hamAdetMaliyeti = (brut / miktar1) / miktar2;
 
-    var kdvTutar = karliAdetFiyatiKdvHaric * (kdvOran / 100);
-    var adetSatisFiyatiKdvDahil = karliAdetFiyatiKdvHaric + kdvTutar;
+    // İskontolar
+    let netAdetMaliyeti = hamAdetMaliyeti;
 
-    var fmt = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
+    netAdetMaliyeti *= (1 - isk1 / 100);
+    netAdetMaliyeti *= (1 - isk2 / 100);
+    netAdetMaliyeti *= (1 - isk3 / 100);
+    netAdetMaliyeti *= (1 - isk4 / 100);
 
-    document.getElementById('resHamMaliyet').innerText = hamAdetMaliyeti.toLocaleString('tr-TR', fmt) + " TL";
-    document.getElementById('resNetMaliyet').innerText = netAdetMaliyeti.toLocaleString('tr-TR', fmt) + " TL";
-    document.getElementById('resKarTutar').innerText = karTutar.toLocaleString('tr-TR', fmt) + " TL";
-    document.getElementById('resKarliFiyat').innerText = karliAdetFiyatiKdvHaric.toLocaleString('tr-TR', fmt) + " TL";
-    document.getElementById('resKdvTutar').innerText = kdvTutar.toLocaleString('tr-TR', fmt) + " TL";
-    document.getElementById('resAdetSatis').innerText = adetSatisFiyatiKdvDahil.toLocaleString('tr-TR', fmt) + " TL";
+    // Kar
+    let karTutar = netAdetMaliyeti * (karOran / 100);
 
-    document.getElementById('sonucAlani').style.display = 'block';
+    let karliAdetFiyati = netAdetMaliyeti + karTutar;
+
+    // KDV
+    let kdvTutar = karliAdetFiyati * (kdvOran / 100);
+
+    let satisFiyati = karliAdetFiyati + kdvTutar;
+
+    let fmt = {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+    };
+
+    document.getElementById("resHamMaliyet").innerText =
+        hamAdetMaliyeti.toLocaleString("tr-TR",fmt) + " TL";
+
+    document.getElementById("resNetMaliyet").innerText =
+        netAdetMaliyeti.toLocaleString("tr-TR",fmt) + " TL";
+
+    document.getElementById("resKarTutar").innerText =
+        karTutar.toLocaleString("tr-TR",fmt) + " TL";
+
+    document.getElementById("resKarliFiyat").innerText =
+        karliAdetFiyati.toLocaleString("tr-TR",fmt) + " TL";
+
+    document.getElementById("resKdvTutar").innerText =
+        kdvTutar.toLocaleString("tr-TR",fmt) + " TL";
+
+    document.getElementById("resAdetSatis").innerText =
+        satisFiyati.toLocaleString("tr-TR",fmt) + " TL";
+
+    document.getElementById("sonucAlani").style.display = "block";
 }
 
-var inputs = document.querySelectorAll('input[type="text"]');
-inputs.forEach(function(input) {
-    input.addEventListener('keydown', function(event) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            input.blur(); 
+// ENTER ile hesaplama
+document.querySelectorAll("input").forEach(function(input){
+
+    input.addEventListener("keydown",function(e){
+
+        if(e.key === "Enter"){
+            e.preventDefault();
             hesaplaSatis();
         }
+
     });
+
 });
+
 </script>
 
 </body>
