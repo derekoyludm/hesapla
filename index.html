@@ -161,9 +161,7 @@ button:hover{
 <!-- Birim Fiyat -->
 <div class="input-group">
 <label>Birim Fiyat</label>
-
 <div class="field-container">
-
 <input type="tel" inputmode="decimal" id="brut">
 
 <div class="clear-btn"
@@ -175,12 +173,10 @@ onmousedown="temizle('brut'); event.preventDefault();">
 </div>
 </div>
 
-<!-- MİKTAR -->
+<!-- Miktar -->
 <div class="input-group">
 <label>Miktar</label>
-
 <div class="field-container">
-
 <input type="tel" inputmode="decimal" id="miktar">
 
 <div class="clear-btn"
@@ -188,16 +184,13 @@ ontouchstart="temizle('miktar'); event.preventDefault();"
 onmousedown="temizle('miktar'); event.preventDefault();">
 ×
 </div>
-
 </div>
 </div>
 
-<!-- 2. MİKTAR -->
+<!-- 2. Miktar -->
 <div class="input-group">
 <label>2. Miktar</label>
-
 <div class="field-container">
-
 <input type="tel" inputmode="decimal" class="yellow-bg" id="miktar2">
 
 <div class="clear-btn"
@@ -214,33 +207,21 @@ onmousedown="temizle('miktar2'); event.preventDefault();">
 
 <div class="input-group">
 <label>İsk 1</label>
-
 <div class="field-container">
-
 <input type="tel" inputmode="decimal" id="isk1">
-
 <div class="clear-btn"
 ontouchstart="temizle('isk1'); event.preventDefault();"
-onmousedown="temizle('isk1'); event.preventDefault();">
-×
-</div>
-
+onmousedown="temizle('isk1'); event.preventDefault();">×</div>
 </div>
 </div>
 
 <div class="input-group">
 <label>İsk 2</label>
-
 <div class="field-container">
-
 <input type="tel" inputmode="decimal" id="isk2">
-
 <div class="clear-btn"
 ontouchstart="temizle('isk2'); event.preventDefault();"
-onmousedown="temizle('isk2'); event.preventDefault();">
-×
-</div>
-
+onmousedown="temizle('isk2'); event.preventDefault();">×</div>
 </div>
 </div>
 
@@ -250,33 +231,21 @@ onmousedown="temizle('isk2'); event.preventDefault();">
 
 <div class="input-group">
 <label>İsk 3</label>
-
 <div class="field-container">
-
 <input type="tel" inputmode="decimal" id="isk3">
-
 <div class="clear-btn"
 ontouchstart="temizle('isk3'); event.preventDefault();"
-onmousedown="temizle('isk3'); event.preventDefault();">
-×
-</div>
-
+onmousedown="temizle('isk3'); event.preventDefault();">×</div>
 </div>
 </div>
 
 <div class="input-group">
 <label>İsk 4</label>
-
 <div class="field-container">
-
 <input type="tel" inputmode="decimal" id="isk4">
-
 <div class="clear-btn"
 ontouchstart="temizle('isk4'); event.preventDefault();"
-onmousedown="temizle('isk4'); event.preventDefault();">
-×
-</div>
-
+onmousedown="temizle('isk4'); event.preventDefault();">×</div>
 </div>
 </div>
 
@@ -287,25 +256,21 @@ onmousedown="temizle('isk4'); event.preventDefault();">
 
 <div class="input-group">
 <label>Kâr %</label>
-
 <select id="kar">
 <option value="25" selected>25</option>
 <option value="30">30</option>
 <option value="40">40</option>
 <option value="50">50</option>
 </select>
-
 </div>
 
 <div class="input-group">
 <label>KDV %</label>
-
 <select id="kdv">
 <option value="20" selected>20</option>
 <option value="10">10</option>
 <option value="1">1</option>
 </select>
-
 </div>
 
 </div>
@@ -315,85 +280,47 @@ onmousedown="temizle('isk4'); event.preventDefault();">
 
 <div class="input-group">
 <label>Kutu Miktar</label>
-
 <div class="field-container">
-
 <input type="tel" inputmode="decimal" class="pink-bg" id="kutuMiktar">
-
 <div class="clear-btn"
 ontouchstart="temizle('kutuMiktar'); event.preventDefault();"
-onmousedown="temizle('kutuMiktar'); event.preventDefault();">
-×
-</div>
-
+onmousedown="temizle('kutuMiktar'); event.preventDefault();">×</div>
 </div>
 </div>
 
 <div class="input-group">
 <label>Kutu İskonto %</label>
-
 <div class="field-container">
 
-<input type="tel" inputmode="decimal" class="pink-bg" id="kutuIskonto">
-
-<div class="clear-btn"
-ontouchstart="temizle('kutuIskonto'); event.preventDefault();"
-onmousedown="temizle('kutuIskonto'); event.preventDefault();">
-×
-</div>
+<select id="kutuIskonto" class="pink-bg">
+<option value="5">%5</option>
+<option value="10">%10</option>
+<option value="15">%15</option>
+</select>
 
 </div>
 </div>
 
 </div>
 
-<button onclick="hesapla()">
-Hesapla
-</button>
+<button onclick="hesapla()">Hesapla</button>
 
 <div class="result" id="sonuc">
 
-<p>
-Birim Fiyat
-<span class="highlight" id="ham"></span>
-</p>
+<p>Birim Fiyat <span class="highlight" id="ham"></span></p>
 
-<p>
-<b>Birim Fiyat İskontolu</b>
-<span class="highlight" id="net"></span>
-</p>
+<p><b>Birim Fiyat İskontolu</b> <span class="highlight" id="net"></span></p>
 
-<p>
-<b>Satış Fiyatı Kârlı</b>
-<span class="highlight" id="karli"></span>
-</p>
+<p><b>Satış Fiyatı Kârlı</b> <span class="highlight" id="karli"></span></p>
 
-<p>
-<b>Satış Fiyatı KDV DAHİL</b>
-<span class="highlight" id="satis"></span>
-</p>
+<p><b>Satış Fiyatı KDV DAHİL</b> <span class="highlight" id="satis"></span></p>
 
 <div class="box">
 
-<p>
-Kutu Miktar
-<span class="highlight" id="km"></span>
-</p>
-
-<p>
-Kutu İskonto %
-<span class="highlight" id="ki"></span>
-</p>
-
-<p>
-Kutu İskonto Tutarı
-<span class="highlight" id="kit"></span>
-</p>
-
-<p>
-<b>Kutu Satış Fiyatı</b>
-<span class="highlight" id="ksf"></span>
-</p>
+<p>Kutu Miktar <span class="highlight" id="km"></span></p>
+<p>Kutu İskonto % <span class="highlight" id="ki"></span></p>
+<p>Kutu İskonto Tutarı <span class="highlight" id="kit"></span></p>
+<p><b>Kutu Satış Fiyatı</b> <span class="highlight" id="ksf"></span></p>
 
 </div>
 
@@ -404,29 +331,20 @@ Kutu İskonto Tutarı
 <script>
 
 function temizle(id){
-
 document.getElementById(id).value="";
-
 }
 
 function g(id){
-
 let v=document.getElementById(id).value.trim();
-
 if(!v) return 0;
-
 v=v.replace(/\./g,"").replace(",", ".");
-
 return parseFloat(v)||0;
-
 }
 
 function hesapla(){
 
 let brut=g("brut");
-
 let m1=g("miktar");
-
 let m2=g("miktar2");
 
 let isk1=g("isk1");
@@ -435,12 +353,10 @@ let isk3=g("isk3");
 let isk4=g("isk4");
 
 let kar=parseFloat(document.getElementById("kar").value);
-
 let kdv=parseFloat(document.getElementById("kdv").value);
 
 let km=g("kutuMiktar");
-
-let ki=g("kutuIskonto");
+let ki=parseFloat(document.getElementById("kutuIskonto").value);
 
 if(m1<=0)m1=1;
 if(m2<=0)m2=1;
@@ -456,27 +372,19 @@ net*=1-isk3/100;
 net*=1-isk4/100;
 
 let karli=net*(1+kar/100);
-
 let satis=karli*(1+kdv/100);
 
 let kutu=satis*km*(1-ki/100);
-
 let kutuIsk=satis*km*(ki/100);
 
 document.getElementById("ham").innerText=ham.toFixed(2);
-
 document.getElementById("net").innerText=net.toFixed(2);
-
 document.getElementById("karli").innerText=karli.toFixed(2);
-
 document.getElementById("satis").innerText=satis.toFixed(2);
 
 document.getElementById("km").innerText=km;
-
 document.getElementById("ki").innerText=ki+"%";
-
 document.getElementById("kit").innerText=kutuIsk.toFixed(2);
-
 document.getElementById("ksf").innerText=kutu.toFixed(2);
 
 document.getElementById("sonuc").style.display="block";
