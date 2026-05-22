@@ -41,6 +41,7 @@ label{
     color:#3d4f66;
 }
 
+/* 🔥 INPUT + BUTON YAN YANA */
 .field-container{
     display:flex;
     align-items:center;
@@ -48,25 +49,16 @@ label{
     width:100%;
 }
 
-input[type="text"]{
-    flex:1;
+input,select{
+    width:100%;
     height:46px;
     border:2px solid #bfc6cd;
     border-radius:8px;
-    background:#fff;
-    padding:0 14px;
     font-size:16px;
     text-align:center;
 }
 
-input[type="text"]:focus{
-    outline:none;
-    border-color:#57c785;
-}
-
-.yellow-bg{background:#f7eb75 !important;}
-.pink-bg{background:#ffd6e8 !important;}
-
+/* TEMİZLE BUTONU */
 .clear-btn{
     width:40px;
     height:46px;
@@ -79,17 +71,23 @@ input[type="text"]:focus{
     font-size:22px;
     font-weight:bold;
     cursor:pointer;
-    user-select:none;
+    flex-shrink:0;
 }
+
+/* RENKLER */
+.yellow-bg{background:#fff7a6 !important;}
+.pink-bg{background:#ffd6e8 !important;}
 
 .row{
     display:flex;
     gap:10px;
     width:100%;
+    flex-wrap:nowrap;
 }
 
 .row .input-group{
     flex:1;
+    min-width:0;
 }
 
 button{
@@ -101,8 +99,28 @@ button{
     color:white;
     font-size:17px;
     font-weight:700;
-    cursor:pointer;
     margin-top:10px;
+}
+
+.result{
+    display:none;
+    margin-top:20px;
+    background:#ecfdf5;
+    border-radius:10px;
+    padding:15px;
+}
+
+.highlight{
+    float:right;
+    font-weight:bold;
+}
+
+.box{
+    background:#d4efdf;
+    padding:10px;
+    border-radius:8px;
+    margin-top:12px;
+    border-left:5px solid #2ecc71;
 }
 
 </style>
@@ -113,64 +131,44 @@ button{
 <div class="container">
 
 <div class="input-group">
-<label>Toplam Brüt Giriş Tutarı</label>
+<label>Brüt Tutar</label>
 <div class="field-container">
-<input type="text" id="brut" inputmode="decimal" pattern="[0-9.,]*">
-<div class="clear-btn" onclick="temizleKutu('brut')">×</div>
+<input type="text" id="brut">
+<div class="clear-btn" onclick="temizle('brut')">×</div>
 </div>
 </div>
 
 <div class="input-group">
-<label>Ürün Miktarı</label>
+<label>Miktar</label>
 <div class="field-container">
-<input type="text" id="miktar" inputmode="decimal" pattern="[0-9.,]*">
-<div class="clear-btn" onclick="temizleKutu('miktar')">×</div>
+<input type="text" id="miktar">
+<div class="clear-btn" onclick="temizle('miktar')">×</div>
 </div>
 </div>
 
 <div class="input-group">
-<label>2. Ürün Miktarı</label>
+<label>2. Miktar</label>
 <div class="field-container">
-<input type="text" id="miktar2" class="yellow-bg" inputmode="decimal" pattern="[0-9.,]*">
-<div class="clear-btn" onclick="temizleKutu('miktar2')">×</div>
+<input type="text" id="miktar2" class="yellow-bg">
+<div class="clear-btn" onclick="temizle('miktar2')">×</div>
 </div>
 </div>
 
 <div class="row">
 
 <div class="input-group">
-<label>İskonto 1 (%)</label>
+<label>İsk 1</label>
 <div class="field-container">
-<input type="text" id="isk1" inputmode="decimal" pattern="[0-9.,]*">
-<div class="clear-btn" onclick="temizleKutu('isk1')">×</div>
+<input type="text" id="isk1">
+<div class="clear-btn" onclick="temizle('isk1')">×</div>
 </div>
 </div>
 
 <div class="input-group">
-<label>İskonto 2 (%)</label>
+<label>İsk 2</label>
 <div class="field-container">
-<input type="text" id="isk2" inputmode="decimal" pattern="[0-9.,]*">
-<div class="clear-btn" onclick="temizleKutu('isk2')">×</div>
-</div>
-</div>
-
-</div>
-
-<div class="row">
-
-<div class="input-group">
-<label>İskonto 3 (%)</label>
-<div class="field-container">
-<input type="text" id="isk3" inputmode="decimal" pattern="[0-9.,]*">
-<div class="clear-btn" onclick="temizleKutu('isk3')">×</div>
-</div>
-</div>
-
-<div class="input-group">
-<label>İskonto 4 (%)</label>
-<div class="field-container">
-<input type="text" id="isk4" inputmode="decimal" pattern="[0-9.,]*">
-<div class="clear-btn" onclick="temizleKutu('isk4')">×</div>
+<input type="text" id="isk2">
+<div class="clear-btn" onclick="temizle('isk2')">×</div>
 </div>
 </div>
 
@@ -179,24 +177,39 @@ button{
 <div class="row">
 
 <div class="input-group">
-<label>Kâr Marjı (%)</label>
+<label>İsk 3</label>
+<div class="field-container">
+<input type="text" id="isk3">
+<div class="clear-btn" onclick="temizle('isk3')">×</div>
+</div>
+</div>
+
+<div class="input-group">
+<label>İsk 4</label>
+<div class="field-container">
+<input type="text" id="isk4">
+<div class="clear-btn" onclick="temizle('isk4')">×</div>
+</div>
+</div>
+
+</div>
+
+<div class="row">
+
+<div class="input-group">
+<label>Kâr %</label>
 <select id="kar">
-<option value="10">10</option>
-<option value="15">15</option>
-<option value="20">20</option>
 <option value="25" selected>25</option>
 <option value="30">30</option>
-<option value="35">35</option>
-<option value="50">50</option>
+<option value="40">40</option>
 </select>
 </div>
 
 <div class="input-group">
-<label>KDV (%)</label>
+<label>KDV %</label>
 <select id="kdv">
-<option value="1">%1</option>
-<option value="10">%10</option>
-<option value="20" selected>%20</option>
+<option value="20" selected>20</option>
+<option value="10">10</option>
 </select>
 </div>
 
@@ -205,70 +218,103 @@ button{
 <div class="row">
 
 <div class="input-group">
-<label>Kutu Miktarı</label>
+<label>Kutu Miktar</label>
 <div class="field-container">
-<input type="text" id="kutuMiktar" class="pink-bg" inputmode="decimal" pattern="[0-9.,]*">
-<div class="clear-btn" onclick="temizleKutu('kutuMiktar')">×</div>
+<input type="text" id="kutuMiktar" class="pink-bg">
+<div class="clear-btn" onclick="temizle('kutuMiktar')">×</div>
 </div>
 </div>
 
 <div class="input-group">
-<label>Kutu İskonto (%)</label>
+<label>Kutu İskonto %</label>
 <div class="field-container">
-<input type="text" id="kutuIskonto" class="pink-bg" inputmode="decimal" pattern="[0-9.,]*">
-<div class="clear-btn" onclick="temizleKutu('kutuIskonto')">×</div>
+<input type="text" id="kutuIskonto" class="pink-bg">
+<div class="clear-btn" onclick="temizle('kutuIskonto')">×</div>
 </div>
 </div>
 
 </div>
 
-<button onclick="hesaplaSatis()">Hesapla</button>
+<button onclick="hesapla()">Hesapla</button>
+
+<div class="result" id="sonuc">
+
+<p>Birim Fiyat <span class="highlight" id="ham"></span></p>
+
+<p><b>Birim Fiyat İskontolu</b> <span class="highlight" id="net"></span></p>
+
+<p><b>Satış Fiyatı</b> <span class="highlight" id="karli"></span></p>
+
+<p><b>Satış Fiyatı KDV DAHİL</b> <span class="highlight" id="satis"></span></p>
+
+<div class="box">
+
+<p>Kutu Miktar <span class="highlight" id="km"></span></p>
+<p>Kutu İskonto % <span class="highlight" id="ki"></span></p>
+<p>Kutu İskonto Tutar <span class="highlight" id="kit"></span></p>
+
+<p><b>Kutu Satış Fiyatı</b> <span class="highlight" id="ksf"></span></p>
+
+</div>
+
+</div>
 
 </div>
 
 <script>
 
-function temizleKutu(id){
-    document.getElementById(id).value = "";
+function temizle(id){
+document.getElementById(id).value="";
 }
 
-function guvenliSayiyaCevir(id){
-    let v = document.getElementById(id).value.trim();
-    if(!v) return 0;
-    v = v.replace(/\./g,"").replace(",",".");
-    return parseFloat(v) || 0;
+function g(id){
+let v=document.getElementById(id).value.trim();
+if(!v) return 0;
+return parseFloat(v.replace(/\./g,"").replace(",","."))||0;
 }
 
-function hesaplaSatis(){
-    let brut = guvenliSayiyaCevir("brut");
-    let m1 = guvenliSayiyaCevir("miktar");
-    let m2 = guvenliSayiyaCevir("miktar2");
+function hesapla(){
 
-    let isk1 = guvenliSayiyaCevir("isk1");
-    let isk2 = guvenliSayiyaCevir("isk2");
-    let isk3 = guvenliSayiyaCevir("isk3");
-    let isk4 = guvenliSayiyaCevir("isk4");
+let brut=g("brut");
+let m1=g("miktar");
+let m2=g("miktar2");
 
-    let kar = parseFloat(document.getElementById("kar").value);
-    let kdv = parseFloat(document.getElementById("kdv").value);
+let isk1=g("isk1");
+let isk2=g("isk2");
+let isk3=g("isk3");
+let isk4=g("isk4");
 
-    let km = guvenliSayiyaCevir("kutuMiktar");
-    let ki = guvenliSayiyaCevir("kutuIskonto");
+let kar=parseFloat(document.getElementById("kar").value);
+let kdv=parseFloat(document.getElementById("kdv").value);
 
-    if(m1<=0) m1=1;
-    if(m2<=0) m2=1;
-    if(km<=0) km=1;
+let km=g("kutuMiktar");
+let ki=g("kutuIskonto");
 
-    let ham = (brut/m1)/m2;
+if(m1<=0)m1=1;
+if(m2<=0)m2=1;
 
-    let net = ham*(1-isk1/100)*(1-isk2/100)*(1-isk3/100)*(1-isk4/100);
+let ham=(brut/m1)/m2;
 
-    let karli = net*(1+kar/100);
-    let satis = karli*(1+kdv/100);
+let net=ham*(1-isk1/100)*(1-isk2/100)*(1-isk3/100)*(1-isk4/100);
 
-    let kutu = satis*km*(1-ki/100);
+let karli=net*(1+kar/100);
+let satis=karli*(1+kdv/100);
 
-    alert("Adet satış: " + satis.toFixed(2));
+let kutu=satis*km*(1-ki/100);
+let kutuIsk=satis*km*(ki/100);
+
+document.getElementById("ham").innerText=ham.toFixed(2);
+document.getElementById("net").innerText=net.toFixed(2);
+document.getElementById("karli").innerText=karli.toFixed(2);
+document.getElementById("satis").innerText=satis.toFixed(2);
+
+document.getElementById("km").innerText=km;
+document.getElementById("ki").innerText=ki+"%";
+document.getElementById("kit").innerText=kutuIsk.toFixed(2);
+document.getElementById("ksf").innerText=kutu.toFixed(2);
+
+document.getElementById("sonuc").style.display="block";
+
 }
 
 </script>
