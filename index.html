@@ -60,6 +60,7 @@ input:focus,select:focus{
     border-color:#57c785;
 }
 
+/* BUTON DÜZELTME */
 button{
     background:#2ecc71;
     color:#fff;
@@ -70,11 +71,15 @@ button{
     margin-top:10px;
 }
 
+/* mouse + tab focus */
 button:hover,
+button:focus,
 button:focus-visible{
-    box-shadow:0 0 0 3px rgba(231,76,60,0.75);
+    outline:none;               /* siyah çerçeveyi kaldır */
+    box-shadow:0 0 0 3px rgba(231,76,60,0.75); /* kırmızı sabit */
 }
 
+/* tıklama efekti */
 button.clicked{
     box-shadow:0 0 0 3px #3498db !important;
 }
@@ -169,7 +174,6 @@ button.clicked{
 </div>
 </div>
 
-<!-- İSKONTO ALANLARI (GÜNCELLENDİ) -->
 <div class="row">
 <div class="input-group">
 <label>İsk 1</label>
@@ -252,7 +256,6 @@ Hesapla
 </button>
 
 <div class="result" id="sonuc">
-
 <p>Birim Fiyat <span id="ham" class="highlight"></span></p>
 <p><b>Birim Fiyat İskontolu</b> <span id="net" class="highlight"></span></p>
 <p><b>Satış Fiyatı Kârlı</b> <span id="karli" class="highlight"></span></p>
@@ -265,13 +268,11 @@ Hesapla
 <p>Kutu İskonto Tutarı <span id="kit" class="highlight"></span></p>
 <p><b>Kutu Satış Fiyatı</b> <span id="ksf" class="highlight"></span></p>
 </div>
-
 </div>
 
 </div>
 
 <script>
-
 function temizle(e,id){
     e.preventDefault();
     document.getElementById(id).value="";
@@ -285,7 +286,6 @@ function g(id){
 }
 
 function hesapla(){
-
     const btn=document.getElementById("hesaplaBtn");
     btn.classList.add("clicked");
 
@@ -309,7 +309,7 @@ function hesapla(){
     let karli=net*(1+kar/100);
     let satis=karli*(1+kdv/100);
 
-    let iskontosuzKutu = satis * km;
+    let iskontosuzKutu=satis*km;
 
     document.getElementById("ham").innerText=ham.toFixed(2);
     document.getElementById("net").innerText=net.toFixed(2);
@@ -350,7 +350,6 @@ alanlar.forEach((a,i)=>{
         }
     });
 });
-
 </script>
 
 </body>
