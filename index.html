@@ -2,7 +2,6 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<!-- 🟢 Mobil tarayıcıların otomatik yakınlaştırma yapmasını engelleyen kesin viewport ayarı -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, user-scalable=no">
 <title>Satış Fiyatı Hesaplama</title>
 
@@ -62,14 +61,13 @@ button{
     height:46px;
     border:1.5px solid #c9d2dc;
     border-radius:8px;
-    font-size:16px; /* 🟢 Yakınlaşmayı önleyen kritik sınır (Minimum 16px) */
+    font-size:16px; 
     text-align:center;
     background:#fff;
     font-weight:400;
     transition:.15s;
 }
 
-/* 🟢 İmleç gelip odaklanıldığında (focus) tarayıcının yazı boyutunu küçültüp yakınlaşma yapmasını engelleme */
 input:focus, 
 select:focus {
     font-size: 16px !important;
@@ -88,7 +86,6 @@ select {
     background-size: 8px;
 }
 
-/* TELEFONDA ETRAFININ AÇIK YEŞİL OLMASINI SAĞLAYAN GÜNCELLEME */
 input:focus,
 select:focus {
     outline: none !important;
@@ -170,7 +167,6 @@ button.clicked-blue{
 .pink-bg{background:#ffd6e8 !important;}
 .gray-bg{background:#f2f4f7 !important;}
 
-/* Odaklanıldığında arka plan renk tonlarını koruma */
 select.gray-bg:focus { background-color: #f2f4f7 !important; }
 select.pink-bg:focus { background-color: #ffd6e8 !important; }
 
@@ -240,7 +236,8 @@ select.pink-bg:focus { background-color: #ffd6e8 !important; }
 <div class="input-group">
 <label>Birim Fiyat</label>
 <div class="field-container">
-<input id="brut" type="tel">
+<!-- 🟢 iPhone'da hem virgül hem Enter getiren inputmode yapısı eklendi -->
+<input id="brut" type="text" inputmode="decimal">
 <div class="clear-btn" ontouchstart="temizle(event,'brut')" onclick="temizle(event,'brut')">×</div>
 </div>
 </div>
@@ -248,7 +245,7 @@ select.pink-bg:focus { background-color: #ffd6e8 !important; }
 <div class="input-group">
 <label>Miktar</label>
 <div class="field-container">
-<input id="miktar" type="tel">
+<input id="miktar" type="text" inputmode="decimal">
 <div class="clear-btn" ontouchstart="temizle(event,'miktar')" onclick="temizle(event,'miktar')">×</div>
 </div>
 </div>
@@ -256,7 +253,7 @@ select.pink-bg:focus { background-color: #ffd6e8 !important; }
 <div class="input-group">
 <label>2. Miktar</label>
 <div class="field-container">
-<input id="miktar2" type="tel" class="yellow-bg">
+<input id="miktar2" type="text" inputmode="decimal" class="yellow-bg">
 <div class="clear-btn" ontouchstart="temizle(event,'miktar2')" onclick="temizle(event,'miktar2')">×</div>
 </div>
 </div>
@@ -266,7 +263,7 @@ select.pink-bg:focus { background-color: #ffd6e8 !important; }
 <div class="input-group">
 <label>İsk 1</label>
 <div class="field-container">
-<input id="isk1" type="tel">
+<input id="isk1" type="text" inputmode="decimal">
 <div class="clear-btn" ontouchstart="temizle(event,'isk1')" onclick="temizle(event,'isk1')">×</div>
 </div>
 </div>
@@ -274,7 +271,7 @@ select.pink-bg:focus { background-color: #ffd6e8 !important; }
 <div class="input-group">
 <label>İsk 2</label>
 <div class="field-container">
-<input id="isk2" type="tel">
+<input id="isk2" type="text" inputmode="decimal">
 <div class="clear-btn" ontouchstart="temizle(event,'isk2')" onclick="temizle(event,'isk2')">×</div>
 </div>
 </div>
@@ -286,7 +283,7 @@ select.pink-bg:focus { background-color: #ffd6e8 !important; }
 <div class="input-group">
 <label>İsk 3</label>
 <div class="field-container">
-<input id="isk3" type="tel">
+<input id="isk3" type="text" inputmode="decimal">
 <div class="clear-btn" ontouchstart="temizle(event,'isk3')" onclick="temizle(event,'isk3')">×</div>
 </div>
 </div>
@@ -294,7 +291,7 @@ select.pink-bg:focus { background-color: #ffd6e8 !important; }
 <div class="input-group">
 <label>İsk 4</label>
 <div class="field-container">
-<input id="isk4" type="tel">
+<input id="isk4" type="text" inputmode="decimal">
 <div class="clear-btn" ontouchstart="temizle(event,'isk4')" onclick="temizle(event,'isk4')">×</div>
 </div>
 </div>
@@ -329,7 +326,7 @@ select.pink-bg:focus { background-color: #ffd6e8 !important; }
 <div class="input-group">
 <label>Kutu Miktar</label>
 <div class="field-container">
-<input id="kutuMiktar" type="tel" class="pink-bg">
+<input id="kutuMiktar" type="text" inputmode="decimal" class="pink-bg">
 <div class="clear-btn" ontouchstart="temizle(event,'kutuMiktar')" onclick="temizle(event,'kutuMiktar')">×</div>
 </div>
 </div>
