@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Satış Fiyatı Hesaplama</title>
 
-<!-- FAVICON (EKLENDİ) -->
+<!-- FAVICON -->
 <link rel="icon" type="image/png" sizes="512x512" href="tag-512.png">
 <link rel="apple-touch-icon" href="tag-512.png">
 
@@ -66,11 +66,25 @@ button{
     transition:.15s;
 }
 
+/* 📱 MOBİLDE SELECT KUTULARININ YEŞİL ÇERÇEVESİNİ AKTİF ETMEK İÇİN GÜNCELLENDİ */
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    text-align-last: center; /* Yazıyı ortala */
+    padding-right: 24px; /* Ok işareti için pay */
+    /* Sağ tarafa modern bir aşağı ok simgesi yerleştirme */
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 4 5'><path fill='%236b7a90' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 8px;
+}
+
 input:focus,
-select:focus{
+select:focus {
     outline:none;
-    border-color:#8fd4ae;
-    box-shadow:0 0 0 4px rgba(143,212,174,0.35);
+    border-color:#8fd4ae !important;
+    box-shadow:0 0 0 4px rgba(143,212,174,0.35) !important;
 }
 
 .main-btn{
@@ -145,6 +159,10 @@ button.clicked-blue{
 .yellow-bg{background:#fff7a6 !important;}
 .pink-bg{background:#ffd6e8 !important;}
 .gray-bg{background:#f2f4f7 !important;}
+
+/* Odaklanıldığında arka plan rengini koruması için ek kontrol */
+select.gray-bg:focus { background-color: #f2f4f7 !important; }
+select.pink-bg:focus { background-color: #ffd6e8 !important; }
 
 .row{
     display:flex;
@@ -353,7 +371,6 @@ Hesapla
 
 <script>
 
-/* JS aynı bırakıldı */
 function temizle(e,id){
     e.preventDefault();
     document.getElementById(id).value="";
