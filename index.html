@@ -152,6 +152,7 @@ button.clicked-blue{
     color:#fff;
     font-weight:600;
     cursor:pointer;
+    user-select: none;
 }
 
 .clear-btn:hover{
@@ -374,19 +375,24 @@ Hesapla
 <script>
 
 function temizle(e,id){
+    // Hem dokunma hem tıklama tetiklendiğinde çift çalışmayı engeller
     e.preventDefault();
     e.stopPropagation();
     
     let el = document.getElementById(id);
-    el.value = "";
-    hesapGecersizYap();
+    el.value = ""; // Kutuyu temizle
+    hesapGecersizYap(); // Sonuç panelini gizle
     
+    // Mobil klavyenin açılması ve imlecin (focus) anında gelmesi için en kesin yöntem
+    el.focus();
+    
+    // Bazı tarayıcılarda focus'un kaybolmaması için zamanlayıcı desteği
     setTimeout(() => {
         el.focus();
         if(typeof el.setSelectionRange === "function") {
             el.setSelectionRange(0, 0); 
         }
-    }, 40);
+    }, 10);
 }
 
 function g(id){
