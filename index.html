@@ -62,7 +62,6 @@ button{
     transition:.15s;
 }
 
-/* INPUT FOCUS */
 input:focus,
 select:focus{
     outline:none;
@@ -70,7 +69,6 @@ select:focus{
     box-shadow:0 0 0 4px rgba(143,212,174,0.35);
 }
 
-/* HESAPLA BUTONU */
 .main-btn{
     flex:1;
     background:#fff;
@@ -92,13 +90,11 @@ select:focus{
     box-shadow:0 0 0 4px rgba(143,212,174,0.35);
 }
 
-/* CLICK EFFECT */
 button.clicked-blue{
     border-color:#8fd4ae !important;
     box-shadow:0 0 0 4px rgba(143,212,174,0.45) !important;
 }
 
-/* RESET (YENİ UYUMLU TASARIM) */
 .reset-btn{
     width:46px;
     min-width:46px;
@@ -115,16 +111,15 @@ button.clicked-blue{
     background:#f6f8fa;
 }
 
-/* RESET FOCUS / ACTIVE (HESAPLA İLE AYNI TON) */
+/* 🔴 RESET AKTİF RENK */
 .reset-btn:focus,
 .reset-btn:active,
 .reset-btn.active-reset{
     outline:none;
-    border-color:#8fd4ae;
-    box-shadow:0 0 0 4px rgba(143,212,174,0.35);
+    border-color:#e74c3c;
+    box-shadow:0 0 0 4px rgba(231,76,60,0.35);
 }
 
-/* CLEAR BUTTON */
 .clear-btn{
     width:40px;
     height:46px;
@@ -162,7 +157,6 @@ button.clicked-blue{
     margin-top:10px;
 }
 
-/* RESULT */
 .result{
     display:none;
     margin-top:20px;
@@ -196,7 +190,6 @@ button.clicked-blue{
     font-size:13px;
 }
 
-/* CREATED BY */
 .creator{
     margin-top:22px;
     text-align:center;
@@ -357,26 +350,16 @@ Hesapla
 <script>
 
 function temizle(e,id){
-
     e.preventDefault();
-
     document.getElementById(id).value="";
-
     hesapGecersizYap();
-
-    setTimeout(()=>{
-        document.getElementById(id).focus();
-    },10);
+    setTimeout(()=>{document.getElementById(id).focus();},10);
 }
 
 function g(id){
-
     let v=document.getElementById(id).value.trim();
     if(!v) return 0;
-
-    return parseFloat(
-        v.replace(/\./g,"").replace(/,/g,".")
-    ) || 0;
+    return parseFloat(v.replace(/\./g,"").replace(/,/g,".")) || 0;
 }
 
 function hesapla(){
@@ -428,9 +411,7 @@ function hesapla(){
 }
 
 function hesapGecersizYap(){
-
     document.getElementById("sonuc").style.display="none";
-
     document.getElementById("hesaplaBtn").classList.remove("clicked-blue");
 }
 
@@ -458,29 +439,18 @@ document.querySelectorAll("input, select")
 const alanlar = Array.from(document.querySelectorAll("input,select"));
 
 alanlar.forEach((el,i)=>{
-
     el.addEventListener("keydown",(e)=>{
-
         if(e.key==="Enter"){
-
             e.preventDefault();
-
             document.activeElement.blur();
 
             let next=alanlar[i+1];
-
             if(next){
-
                 setTimeout(()=>{
-
                     next.focus();
-
                     if(next.tagName==="INPUT") next.select();
-
                 },0);
-
             }else{
-
                 hesapla();
             }
         }
@@ -488,7 +458,6 @@ alanlar.forEach((el,i)=>{
 });
 
 function sifirla(e){
-
     e.preventDefault();
 
     document.querySelectorAll("input").forEach(i=>i.value="");
@@ -498,7 +467,6 @@ function sifirla(e){
     document.getElementById("hesaplaBtn").classList.remove("clicked-blue");
 
     let resetBtn = e.currentTarget;
-
     resetBtn.classList.add("active-reset");
 }
 
