@@ -326,15 +326,22 @@ Hesapla
 <script>
 
 function temizle(e,id){
+
     e.preventDefault();
+
     document.getElementById(id).value="";
 
     hesapGecersizYap();
 
-    setTimeout(()=>document.getElementById(id).focus(),10);
+    setTimeout(()=>{
+
+        document.getElementById(id).focus();
+
+    },10);
 }
 
 function g(id){
+
     let v=document.getElementById(id).value.trim();
 
     if(!v) return 0;
@@ -347,6 +354,7 @@ function g(id){
 function hesapla(){
 
     let btn=document.getElementById("hesaplaBtn");
+
     btn.classList.add("clicked-blue");
 
     let brut=g("brut");
@@ -358,11 +366,19 @@ function hesapla(){
     let isk3=g("isk3");
     let isk4=g("isk4");
 
-    let kar=parseFloat(document.getElementById("kar").value);
-    let kdv=parseFloat(document.getElementById("kdv").value);
+    let kar=parseFloat(
+        document.getElementById("kar").value
+    );
+
+    let kdv=parseFloat(
+        document.getElementById("kdv").value
+    );
 
     let km=g("kutuMiktar") || 1;
-    let ki=parseFloat(document.getElementById("kutuIskonto").value);
+
+    let ki=parseFloat(
+        document.getElementById("kutuIskonto").value
+    );
 
     let ham=(brut/m1)/m2;
 
@@ -374,17 +390,27 @@ function hesapla(){
         (1-isk4/100);
 
     let karli=net*(1+kar/100);
+
     let satis=karli*(1+kdv/100);
 
     let iskontosuzKutu=satis*km;
 
-    document.getElementById("ham").innerText=ham.toFixed(2);
-    document.getElementById("net").innerText=net.toFixed(2);
-    document.getElementById("karli").innerText=karli.toFixed(2);
-    document.getElementById("satis").innerText=satis.toFixed(2);
+    document.getElementById("ham").innerText=
+        ham.toFixed(2);
+
+    document.getElementById("net").innerText=
+        net.toFixed(2);
+
+    document.getElementById("karli").innerText=
+        karli.toFixed(2);
+
+    document.getElementById("satis").innerText=
+        satis.toFixed(2);
 
     document.getElementById("km").innerText=km;
-    document.getElementById("ki").innerText=ki+"%";
+
+    document.getElementById("ki").innerText=
+        ki+"%";
 
     document.getElementById("kit").innerText=
         (iskontosuzKutu*(ki/100)).toFixed(2);
@@ -398,7 +424,7 @@ function hesapla(){
     document.getElementById("sonuc").style.display="block";
 }
 
-/* HERHANGİ BİR DEĞİŞİKLİKTE SONUCU GİZLE */
+/* DEĞİŞİKLİK OLUNCA SONUÇ GİZLE */
 function hesapGecersizYap(){
 
     document.getElementById("sonuc").style.display="none";
@@ -408,47 +434,53 @@ function hesapGecersizYap(){
         .classList.remove("clicked-blue");
 }
 
-/* INPUT VE SELECTLERİ DİNLE */
+/* TÜM INPUT VE SELECTLERİ DİNLE */
 document
     .querySelectorAll("input, select")
     .forEach(el=>{
 
-        el.addEventListener("input", hesapGecersizYap);
+        el.addEventListener(
+            "input",
+            hesapGecersizYap
+        );
 
-        el.addEventListener("change", hesapGecersizYap);
+        el.addEventListener(
+            "change",
+            hesapGecersizYap
+        );
 
     });
 
-/* ENTER FIX */
+/* ENTER GEÇİŞ */
 const alanlar = Array.from(
     document.querySelectorAll("input,select")
 );
 
-alanlar.forEach((el, i) => {
+alanlar.forEach((el, i)=>{
 
-    el.addEventListener("keydown", (e) => {
+    el.addEventListener("keydown",(e)=>{
 
-        if (e.key === "Enter") {
+        if(e.key==="Enter"){
 
             e.preventDefault();
 
             document.activeElement.blur();
 
-            let next = alanlar[i + 1];
+            let next=alanlar[i+1];
 
-            if (next) {
+            if(next){
 
-                setTimeout(() => {
+                setTimeout(()=>{
 
                     next.focus();
 
-                    if (next.tagName === "INPUT") {
+                    if(next.tagName==="INPUT"){
                         next.select();
                     }
 
-                }, 0);
+                },0);
 
-            } else {
+            }else{
 
                 hesapla();
 
@@ -457,13 +489,23 @@ alanlar.forEach((el, i) => {
     });
 });
 
+/* RESET */
 function sifirla(e){
 
     e.preventDefault();
 
+    let bosMu=true;
+
     document
         .querySelectorAll("input")
-        .forEach(i=>i.value="");
+        .forEach(i=>{
+
+            if(i.value.trim()!==""){
+                bosMu=false;
+            }
+
+            i.value="";
+        });
 
     document
         .querySelectorAll("select")
@@ -475,7 +517,18 @@ function sifirla(e){
 
     btn.classList.remove("clicked-blue");
 
-    btn.blur();
+    let resetBtn=e.currentTarget;
+
+    /* zaten boşsa yeşil focus kalsın */
+    if(bosMu){
+
+        resetBtn.focus();
+
+    }else{
+
+        resetBtn.blur();
+
+    }
 }
 
 </script>
