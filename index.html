@@ -92,7 +92,7 @@ select:focus{
     box-shadow:0 0 0 4px rgba(143,212,174,0.35);
 }
 
-/* CLICK EFFECT (YEŞİL) */
+/* CLICK EFFECT */
 button.clicked-blue{
     border-color:#8fd4ae !important;
     box-shadow:0 0 0 4px rgba(143,212,174,0.45) !important;
@@ -328,13 +328,20 @@ Hesapla
 function temizle(e,id){
     e.preventDefault();
     document.getElementById(id).value="";
+
+    hesapGecersizYap();
+
     setTimeout(()=>document.getElementById(id).focus(),10);
 }
 
 function g(id){
     let v=document.getElementById(id).value.trim();
+
     if(!v) return 0;
-    return parseFloat(v.replace(/\./g,"").replace(/,/g,".")) || 0;
+
+    return parseFloat(
+        v.replace(/\./g,"").replace(/,/g,".")
+    ) || 0;
 }
 
 function hesapla(){
@@ -378,48 +385,96 @@ function hesapla(){
 
     document.getElementById("km").innerText=km;
     document.getElementById("ki").innerText=ki+"%";
-    document.getElementById("kit").innerText=(iskontosuzKutu*(ki/100)).toFixed(2);
-    document.getElementById("ksk").innerText=iskontosuzKutu.toFixed(2);
-    document.getElementById("ksf").innerText=(iskontosuzKutu*(1-ki/100)).toFixed(2);
+
+    document.getElementById("kit").innerText=
+        (iskontosuzKutu*(ki/100)).toFixed(2);
+
+    document.getElementById("ksk").innerText=
+        iskontosuzKutu.toFixed(2);
+
+    document.getElementById("ksf").innerText=
+        (iskontosuzKutu*(1-ki/100)).toFixed(2);
 
     document.getElementById("sonuc").style.display="block";
 }
 
-/* ENTER FIX (tek aktif focus sistemi) */
-const alanlar = Array.from(document.querySelectorAll("input,select"));
+/* HERHANGİ BİR DEĞİŞİKLİKTE SONUCU GİZLE */
+function hesapGecersizYap(){
+
+    document.getElementById("sonuc").style.display="none";
+
+    document
+        .getElementById("hesaplaBtn")
+        .classList.remove("clicked-blue");
+}
+
+/* INPUT VE SELECTLERİ DİNLE */
+document
+    .querySelectorAll("input, select")
+    .forEach(el=>{
+
+        el.addEventListener("input", hesapGecersizYap);
+
+        el.addEventListener("change", hesapGecersizYap);
+
+    });
+
+/* ENTER FIX */
+const alanlar = Array.from(
+    document.querySelectorAll("input,select")
+);
 
 alanlar.forEach((el, i) => {
+
     el.addEventListener("keydown", (e) => {
+
         if (e.key === "Enter") {
+
             e.preventDefault();
 
-            // 🔥 TEK FOCUS GARANTİ
             document.activeElement.blur();
 
             let next = alanlar[i + 1];
 
             if (next) {
+
                 setTimeout(() => {
+
                     next.focus();
-                    if (next.tagName === "INPUT") next.select();
+
+                    if (next.tagName === "INPUT") {
+                        next.select();
+                    }
+
                 }, 0);
+
             } else {
+
                 hesapla();
+
             }
         }
     });
 });
 
 function sifirla(e){
+
     e.preventDefault();
 
-    document.querySelectorAll("input").forEach(i=>i.value="");
-    document.querySelectorAll("select").forEach(s=>s.selectedIndex=0);
+    document
+        .querySelectorAll("input")
+        .forEach(i=>i.value="");
+
+    document
+        .querySelectorAll("select")
+        .forEach(s=>s.selectedIndex=0);
 
     document.getElementById("sonuc").style.display="none";
 
     let btn=document.getElementById("hesaplaBtn");
+
     btn.classList.remove("clicked-blue");
+
     btn.blur();
 }
 
