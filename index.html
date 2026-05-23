@@ -6,6 +6,7 @@
 <title>Sıralı Satış Fiyatı Hesaplama</title>
 
 <style>
+
 *{
     box-sizing:border-box;
     -webkit-tap-highlight-color:transparent;
@@ -29,14 +30,16 @@ body{
     box-shadow:0 6px 18px rgba(0,0,0,0.08);
 }
 
-.input-group{margin-bottom:18px;}
+.input-group{
+    margin-bottom:18px;
+}
 
 label{
     display:block;
-    margin-bottom:8px;
-    font-weight:700;
-    font-size:14px;
-    color:#3d4f66;
+    margin-bottom:6px;
+    font-weight:500;
+    font-size:13px;
+    color:#6b7a90;
 }
 
 .field-container{
@@ -45,104 +48,147 @@ label{
     align-items:center;
 }
 
-input,select,button{
+input,
+select,
+button{
     width:100%;
     height:46px;
-    border:2px solid #bfc6cd;
+    border:1.5px solid #c9d2dc;
     border-radius:8px;
-    font-size:16px;
+    font-size:15px;
     text-align:center;
     background:#fff;
+    font-weight:400;
+    transition:.15s;
 }
 
-input:focus,select:focus{
+/* INPUT FOCUS */
+input:focus,
+select:focus{
     outline:none;
-    border-color:#57c785;
+    border-color:#8fd4ae;
+    box-shadow:0 0 0 4px rgba(143,212,174,0.35);
 }
 
-/* BUTON DÜZELTME */
-button{
-    background:#2ecc71;
-    color:#fff;
-    font-weight:700;
+/* HESAPLA BUTONU */
+.main-btn{
+    flex:1;
+    background:#fff;
+    color:#2c3e50;
+    font-weight:600;
     cursor:pointer;
+    border:1.5px solid #c9d2dc;
+    transition:.15s;
+}
+
+.main-btn:hover{
+    background:#f6f8fa;
+}
+
+.main-btn:focus,
+.main-btn:active{
+    outline:none;
+    border-color:#8fd4ae;
+    box-shadow:0 0 0 4px rgba(143,212,174,0.35);
+}
+
+/* CLICK EFFECT (YEŞİL) */
+button.clicked-blue{
+    border-color:#8fd4ae !important;
+    box-shadow:0 0 0 4px rgba(143,212,174,0.45) !important;
+}
+
+/* RESET */
+.reset-btn{
+    width:46px;
+    min-width:46px;
+    background:#e74c3c;
+    color:#fff;
     border:none;
-    position:relative;
-    margin-top:10px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+    transition:.15s;
 }
 
-/* mouse + tab focus */
-button:hover,
-button:focus,
-button:focus-visible{
-    outline:none;               /* siyah çerçeveyi kaldır */
-    box-shadow:0 0 0 3px rgba(231,76,60,0.75); /* kırmızı sabit */
+.reset-btn:focus,
+.reset-btn:active{
+    outline:none;
+    box-shadow:0 0 0 4px rgba(143,212,174,0.35);
 }
 
-/* tıklama efekti */
-button.clicked{
-    box-shadow:0 0 0 3px #3498db !important;
-}
-
+/* CLEAR BUTTON */
 .clear-btn{
     width:40px;
     height:46px;
+    min-width:40px;
     background:#3498db;
     border-radius:8px;
     display:flex;
     align-items:center;
     justify-content:center;
     color:#fff;
-    font-weight:bold;
+    font-weight:600;
     cursor:pointer;
 }
 
-.clear-btn:hover{background:#2587ca;}
+.clear-btn:hover{
+    background:#2587ca;
+}
 
 .yellow-bg{background:#fff7a6 !important;}
 .pink-bg{background:#ffd6e8 !important;}
 .gray-bg{background:#f2f4f7 !important;}
 
-.row{display:flex;gap:10px;}
-.row .input-group{flex:1;}
+.row{
+    display:flex;
+    gap:10px;
+}
 
+.row .input-group{
+    flex:1;
+}
+
+.button-row{
+    display:flex;
+    gap:10px;
+    margin-top:10px;
+}
+
+/* RESULT */
 .result{
     display:none;
     margin-top:20px;
-    background:#ecfdf5;
+    background:#f7fbf9;
     padding:15px;
     border-radius:10px;
 }
 
+.result p{
+    margin:8px 0;
+    font-size:14px;
+    color:#3d4f66;
+}
+
 .highlight{
     float:right;
-    font-weight:bold;
+    font-weight:600;
+    color:#2c3e50;
 }
 
 .box{
     margin-top:12px;
     padding:10px;
-    background:#d4efdf;
-    border-left:5px solid #2ecc71;
+    background:#eaf7ef;
+    border-left:4px solid #2ecc71;
     border-radius:8px;
 }
 
-.reset-btn{
-    position:absolute;
-    right:8px;
-    top:50%;
-    transform:translateY(-50%);
-    width:26px;
-    height:26px;
-    border-radius:6px;
-    background:#e74c3c;
-    color:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:14px;
-    cursor:pointer;
+.box p{
+    margin:6px 0;
+    font-size:13px;
 }
+
 </style>
 </head>
 
@@ -250,10 +296,15 @@ button.clicked{
 </div>
 </div>
 
-<button id="hesaplaBtn" onclick="hesapla()">
+<div class="button-row">
+<button id="hesaplaBtn" class="main-btn" onclick="hesapla()">
 Hesapla
-<div class="reset-btn" onclick="sifirla(event)">↺</div>
 </button>
+
+<button class="reset-btn" onclick="sifirla(event)">
+↺
+</button>
+</div>
 
 <div class="result" id="sonuc">
 <p>Birim Fiyat <span id="ham" class="highlight"></span></p>
@@ -273,6 +324,7 @@ Hesapla
 </div>
 
 <script>
+
 function temizle(e,id){
     e.preventDefault();
     document.getElementById(id).value="";
@@ -286,8 +338,9 @@ function g(id){
 }
 
 function hesapla(){
-    const btn=document.getElementById("hesaplaBtn");
-    btn.classList.add("clicked");
+
+    let btn=document.getElementById("hesaplaBtn");
+    btn.classList.add("clicked-blue");
 
     let brut=g("brut");
     let m1=g("miktar") || 1;
@@ -305,7 +358,14 @@ function hesapla(){
     let ki=parseFloat(document.getElementById("kutuIskonto").value);
 
     let ham=(brut/m1)/m2;
-    let net=ham*(1-isk1/100)*(1-isk2/100)*(1-isk3/100)*(1-isk4/100);
+
+    let net=
+        ham*
+        (1-isk1/100)*
+        (1-isk2/100)*
+        (1-isk3/100)*
+        (1-isk4/100);
+
     let karli=net*(1+kar/100);
     let satis=karli*(1+kdv/100);
 
@@ -325,31 +385,44 @@ function hesapla(){
     document.getElementById("sonuc").style.display="block";
 }
 
-function sifirla(e){
-    e.preventDefault();
-    e.stopPropagation();
+/* ENTER FIX (tek aktif focus sistemi) */
+const alanlar = Array.from(document.querySelectorAll("input,select"));
 
-    document.querySelectorAll("input").forEach(i=>i.value="");
-    document.getElementById("sonuc").style.display="none";
-    document.getElementById("hesaplaBtn").classList.remove("clicked");
-}
-
-const alanlar=document.querySelectorAll("input,select");
-
-alanlar.forEach((a,i)=>{
-    a.addEventListener("keydown",e=>{
-        if(e.key==="Enter"){
+alanlar.forEach((el, i) => {
+    el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
             e.preventDefault();
-            let next=alanlar[i+1];
-            if(next){
-                next.focus();
-                if(next.select) next.select();
-            }else{
+
+            // 🔥 TEK FOCUS GARANTİ
+            document.activeElement.blur();
+
+            let next = alanlar[i + 1];
+
+            if (next) {
+                setTimeout(() => {
+                    next.focus();
+                    if (next.tagName === "INPUT") next.select();
+                }, 0);
+            } else {
                 hesapla();
             }
         }
     });
 });
+
+function sifirla(e){
+    e.preventDefault();
+
+    document.querySelectorAll("input").forEach(i=>i.value="");
+    document.querySelectorAll("select").forEach(s=>s.selectedIndex=0);
+
+    document.getElementById("sonuc").style.display="none";
+
+    let btn=document.getElementById("hesaplaBtn");
+    btn.classList.remove("clicked-blue");
+    btn.blur();
+}
+
 </script>
 
 </body>
