@@ -98,24 +98,29 @@ button.clicked-blue{
     box-shadow:0 0 0 4px rgba(143,212,174,0.45) !important;
 }
 
-/* RESET */
+/* RESET (YENİ UYUMLU TASARIM) */
 .reset-btn{
     width:46px;
     min-width:46px;
-    background:#e74c3c;
-    color:#fff;
-    border:none;
+    background:#fff;
+    color:#2c3e50;
+    border:1.5px solid #c9d2dc;
     border-radius:8px;
     cursor:pointer;
     font-size:16px;
     transition:.15s;
 }
 
-/* RESET YEŞİL HALKA */
+.reset-btn:hover{
+    background:#f6f8fa;
+}
+
+/* RESET FOCUS / ACTIVE (HESAPLA İLE AYNI TON) */
 .reset-btn:focus,
 .reset-btn:active,
 .reset-btn.active-reset{
     outline:none;
+    border-color:#8fd4ae;
     box-shadow:0 0 0 4px rgba(143,212,174,0.35);
 }
 
@@ -422,7 +427,6 @@ function hesapla(){
     document.getElementById("sonuc").style.display="block";
 }
 
-/* DEĞİŞİKLİKTE SIFIRLA + BUTON DURUMU */
 function hesapGecersizYap(){
 
     document.getElementById("sonuc").style.display="none";
@@ -430,7 +434,6 @@ function hesapGecersizYap(){
     document.getElementById("hesaplaBtn").classList.remove("clicked-blue");
 }
 
-/* INPUT DEĞİŞİNCE BUTON DURUMU */
 document.querySelectorAll("input, select")
 .forEach(el=>{
 
@@ -452,7 +455,6 @@ document.querySelectorAll("input, select")
 
 });
 
-/* ENTER NAV */
 const alanlar = Array.from(document.querySelectorAll("input,select"));
 
 alanlar.forEach((el,i)=>{
@@ -485,7 +487,6 @@ alanlar.forEach((el,i)=>{
     });
 });
 
-/* RESET (İLK BASIŞTA DA YEŞİL VERİR) */
 function sifirla(e){
 
     e.preventDefault();
