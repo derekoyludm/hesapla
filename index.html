@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Satış Fiyatı Hesaplama</title>
 
-<!-- FAVICON (EKLENDİ) -->
 <link rel="icon" type="image/png" sizes="512x512" href="tag-512.png">
 <link rel="apple-touch-icon" href="tag-512.png">
 
@@ -115,7 +114,6 @@ button.clicked-blue{
     background:#f6f8fa;
 }
 
-/* 🔴 RESET AKTİF RENK */
 .reset-btn:focus,
 .reset-btn:active,
 .reset-btn.active-reset{
@@ -142,9 +140,17 @@ button.clicked-blue{
     background:#2587ca;
 }
 
-.yellow-bg{background:#fff7a6 !important;}
-.pink-bg{background:#ffd6e8 !important;}
-.gray-bg{background:#f2f4f7 !important;}
+.yellow-bg{
+    background:#fff7a6 !important;
+}
+
+.pink-bg{
+    background:#ffd6e8 !important;
+}
+
+.gray-bg{
+    background:#f2f4f7 !important;
+}
 
 .row{
     display:flex;
@@ -181,12 +187,15 @@ button.clicked-blue{
     color:#2c3e50;
 }
 
+/* TELEFONDA DA GÖRÜNEN YEŞİL KUTU */
 .box{
     margin-top:12px;
     padding:10px;
     background:#eaf7ef;
-    border-left:4px solid #2ecc71;
+    border:2px solid #b7eac8;
+    border-left:5px solid #2ecc71;
     border-radius:8px;
+    box-shadow:0 0 0 3px rgba(46,204,113,0.15);
 }
 
 .box p{
@@ -343,31 +352,39 @@ Hesapla
 <p>Kutu İskonto Tutarı <span id="kit" class="highlight"></span></p>
 <p><b>Kutu Satış Fiyatı</b> <span id="ksf" class="highlight"></span></p>
 </div>
+
 </div>
 
 <div class="creator">
-    Created by Fatih Mersin
+Created by Fatih Mersin
 </div>
 
 </div>
 
 <script>
 
-/* JS aynı bırakıldı */
 function temizle(e,id){
     e.preventDefault();
     document.getElementById(id).value="";
     hesapGecersizYap();
-    setTimeout(()=>{document.getElementById(id).focus();},10);
+
+    setTimeout(()=>{
+        document.getElementById(id).focus();
+    },10);
 }
 
 function g(id){
     let v=document.getElementById(id).value.trim();
+
     if(!v) return 0;
-    return parseFloat(v.replace(/\./g,"").replace(/,/g,".")) || 0;
+
+    return parseFloat(
+        v.replace(/\./g,"").replace(/,/g,".")
+    ) || 0;
 }
 
 function hesapla(){
+
     let btn=document.getElementById("hesaplaBtn");
     btn.classList.add("clicked-blue");
 
@@ -396,6 +413,7 @@ function hesapla(){
         (1-isk4/100);
 
     let karli=net*(1+kar/100);
+
     let satis=karli*(1+kdv/100);
 
     let iskontosuzKutu=satis*km;
@@ -407,50 +425,78 @@ function hesapla(){
 
     document.getElementById("km").innerText=km;
     document.getElementById("ki").innerText=ki+"%";
-    document.getElementById("kit").innerText=(iskontosuzKutu*(ki/100)).toFixed(2);
-    document.getElementById("ksk").innerText=iskontosuzKutu.toFixed(2);
-    document.getElementById("ksf").innerText=(iskontosuzKutu*(1-ki/100)).toFixed(2);
+
+    document.getElementById("kit").innerText=
+        (iskontosuzKutu*(ki/100)).toFixed(2);
+
+    document.getElementById("ksk").innerText=
+        iskontosuzKutu.toFixed(2);
+
+    document.getElementById("ksf").innerText=
+        (iskontosuzKutu*(1-ki/100)).toFixed(2);
 
     document.getElementById("sonuc").style.display="block";
 }
 
 function hesapGecersizYap(){
+
     document.getElementById("sonuc").style.display="none";
-    document.getElementById("hesaplaBtn").classList.remove("clicked-blue");
+
+    document.getElementById("hesaplaBtn")
+        .classList.remove("clicked-blue");
 }
 
 document.querySelectorAll("input, select")
 .forEach(el=>{
 
-    el.addEventListener("input", ()=>{
+    el.addEventListener("input",()=>{
+
         hesapGecersizYap();
+
         document.querySelector(".reset-btn")
             .classList.remove("active-reset");
     });
 
-    el.addEventListener("change", ()=>{
+    el.addEventListener("change",()=>{
+
         hesapGecersizYap();
+
         document.querySelector(".reset-btn")
             .classList.remove("active-reset");
     });
 
 });
 
-const alanlar = Array.from(document.querySelectorAll("input,select"));
+const alanlar = Array.from(
+    document.querySelectorAll("input,select")
+);
 
 alanlar.forEach((el,i)=>{
+
     el.addEventListener("keydown",(e)=>{
+
         if(e.key==="Enter"){
+
             e.preventDefault();
+
             document.activeElement.blur();
 
             let next=alanlar[i+1];
+
             if(next){
+
                 setTimeout(()=>{
+
                     next.focus();
-                    if(next.tagName==="INPUT") next.select();
+
+                    if(next.tagName==="INPUT"){
+                        next.select();
+                    }
+
                 },0);
+
             }else{
+
                 hesapla();
             }
         }
@@ -458,15 +504,22 @@ alanlar.forEach((el,i)=>{
 });
 
 function sifirla(e){
+
     e.preventDefault();
 
-    document.querySelectorAll("input").forEach(i=>i.value="");
-    document.querySelectorAll("select").forEach(s=>s.selectedIndex=0);
+    document.querySelectorAll("input")
+        .forEach(i=>i.value="");
+
+    document.querySelectorAll("select")
+        .forEach(s=>s.selectedIndex=0);
 
     document.getElementById("sonuc").style.display="none";
-    document.getElementById("hesaplaBtn").classList.remove("clicked-blue");
+
+    document.getElementById("hesaplaBtn")
+        .classList.remove("clicked-blue");
 
     let resetBtn = e.currentTarget;
+
     resetBtn.classList.add("active-reset");
 }
 
