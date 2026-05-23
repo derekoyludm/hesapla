@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Satış Fiyatı Hesaplama</title>
 
-<!-- FAVICON (EKLENDİ) -->
+<!-- FAVICON -->
 <link rel="icon" type="image/png" sizes="512x512" href="tag-512.png">
 <link rel="apple-touch-icon" href="tag-512.png">
 
@@ -66,11 +66,24 @@ button{
     transition:.15s;
 }
 
+/* 📱 MOBİLDE SELECT KUTULARININ YEŞİL ÇERÇEVESİNİ AKTİF ETMEK İÇİN GÜNCELLENDİ */
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    text-align-last: center; 
+    padding-right: 24px; 
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 4 5'><path fill='%236b7a90' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 8px;
+}
+
 input:focus,
-select:focus{
+select:focus {
     outline:none;
-    border-color:#8fd4ae;
-    box-shadow:0 0 0 4px rgba(143,212,174,0.35);
+    border-color:#8fd4ae !important;
+    box-shadow:0 0 0 4px rgba(143,212,174,0.35) !important;
 }
 
 .main-btn{
@@ -115,7 +128,6 @@ button.clicked-blue{
     background:#f6f8fa;
 }
 
-/* 🔴 RESET AKTİF RENK */
 .reset-btn:focus,
 .reset-btn:active,
 .reset-btn.active-reset{
@@ -145,6 +157,10 @@ button.clicked-blue{
 .yellow-bg{background:#fff7a6 !important;}
 .pink-bg{background:#ffd6e8 !important;}
 .gray-bg{background:#f2f4f7 !important;}
+
+/* Odaklanıldığında arka plan renk tonlarını koruma */
+select.gray-bg:focus { background-color: #f2f4f7 !important; }
+select.pink-bg:focus { background-color: #ffd6e8 !important; }
 
 .row{
     display:flex;
@@ -213,7 +229,7 @@ button.clicked-blue{
 <label>Birim Fiyat</label>
 <div class="field-container">
 <input id="brut" type="tel">
-<div class="clear-btn" onclick="temizle(event,'brut')">×</div>
+<div class="clear-btn" ontouchstart="temizle(event,'brut')" onclick="temizle(event,'brut')">×</div>
 </div>
 </div>
 
@@ -221,7 +237,7 @@ button.clicked-blue{
 <label>Miktar</label>
 <div class="field-container">
 <input id="miktar" type="tel">
-<div class="clear-btn" onclick="temizle(event,'miktar')">×</div>
+<div class="clear-btn" ontouchstart="temizle(event,'miktar')" onclick="temizle(event,'miktar')">×</div>
 </div>
 </div>
 
@@ -229,7 +245,7 @@ button.clicked-blue{
 <label>2. Miktar</label>
 <div class="field-container">
 <input id="miktar2" type="tel" class="yellow-bg">
-<div class="clear-btn" onclick="temizle(event,'miktar2')">×</div>
+<div class="clear-btn" ontouchstart="temizle(event,'miktar2')" onclick="temizle(event,'miktar2')">×</div>
 </div>
 </div>
 
@@ -239,7 +255,7 @@ button.clicked-blue{
 <label>İsk 1</label>
 <div class="field-container">
 <input id="isk1" type="tel">
-<div class="clear-btn" onclick="temizle(event,'isk1')">×</div>
+<div class="clear-btn" ontouchstart="temizle(event,'isk1')" onclick="temizle(event,'isk1')">×</div>
 </div>
 </div>
 
@@ -247,7 +263,7 @@ button.clicked-blue{
 <label>İsk 2</label>
 <div class="field-container">
 <input id="isk2" type="tel">
-<div class="clear-btn" onclick="temizle(event,'isk2')">×</div>
+<div class="clear-btn" ontouchstart="temizle(event,'isk2')" onclick="temizle(event,'isk2')">×</div>
 </div>
 </div>
 
@@ -259,7 +275,7 @@ button.clicked-blue{
 <label>İsk 3</label>
 <div class="field-container">
 <input id="isk3" type="tel">
-<div class="clear-btn" onclick="temizle(event,'isk3')">×</div>
+<div class="clear-btn" ontouchstart="temizle(event,'isk3')" onclick="temizle(event,'isk3')">×</div>
 </div>
 </div>
 
@@ -267,7 +283,7 @@ button.clicked-blue{
 <label>İsk 4</label>
 <div class="field-container">
 <input id="isk4" type="tel">
-<div class="clear-btn" onclick="temizle(event,'isk4')">×</div>
+<div class="clear-btn" ontouchstart="temizle(event,'isk4')" onclick="temizle(event,'isk4')">×</div>
 </div>
 </div>
 
@@ -302,7 +318,7 @@ button.clicked-blue{
 <label>Kutu Miktar</label>
 <div class="field-container">
 <input id="kutuMiktar" type="tel" class="pink-bg">
-<div class="clear-btn" onclick="temizle(event,'kutuMiktar')">×</div>
+<div class="clear-btn" ontouchstart="temizle(event,'kutuMiktar')" onclick="temizle(event,'kutuMiktar')">×</div>
 </div>
 </div>
 
@@ -353,12 +369,22 @@ Hesapla
 
 <script>
 
-/* JS aynı bırakıldı */
+/* 📱 GÜNCELLENDİ: Mobilde klavyeyi ve imleci kaybettirmeden anında odağı korur */
 function temizle(e,id){
     e.preventDefault();
-    document.getElementById(id).value="";
+    e.stopPropagation();
+    
+    let el = document.getElementById(id);
+    el.value = "";
     hesapGecersizYap();
-    setTimeout(()=>{document.getElementById(id).focus();},10);
+    
+    // 40ms gecikme mobil işletim sisteminin klavye kapatma refleksini kırar
+    setTimeout(() => {
+        el.focus();
+        if(typeof el.setSelectionRange === "function") {
+            el.setSelectionRange(0, 0); // İmleci kutunun içine yerleştirir
+        }
+    }, 40);
 }
 
 function g(id){
@@ -433,6 +459,13 @@ document.querySelectorAll("input, select")
         document.querySelector(".reset-btn")
             .classList.remove("active-reset");
     });
+    
+    // Kutunun kendisine elle tıklandığında içindeki eski sayıyı otomatik seçer
+    if(el.tagName === "INPUT") {
+        el.addEventListener("focus", () => {
+            setTimeout(() => { el.select(); }, 50);
+        });
+    }
 
 });
 
