@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, user-scalable=no">
 <title>Satış Fiyatı Hesaplama</title>
 
-<link rel="icon" type="image/png" sizes="512x512" href="tag-512.png">
+<link class="icon" type="image/png" sizes="512x512" href="tag-512.png">
 <link rel="apple-touch-icon" href="tag-512.png">
 
 <style>
@@ -373,15 +373,14 @@ Hesapla
 <p>Birim Fiyat <span id="ham" class="highlight"></span></p>
 <p><b>Birim Fiyat İskontolu</b> <span id="txtIsk" class="label-text"></span> <span id="net" class="highlight"></span></p>
 <p><b>Satış Fiyatı Kârlı</b> <span id="txtKar" class="label-text"></span> <span id="karli" class="highlight"></span></p>
-<p><b>Satış Fiyatı KDV DAHİL</b> <span id="txtSatisKdv" class="label-text"></span> <span id="satis" class="highlight"></span></p>
-<p style="color:#c0392b;"><b>Alış Fiyatı KDV DAHİL</b> <span id="txtAlisKdv" class="label-text" style="color:#c0392b;"></span> <span id="alisKdvDahil" class="highlight" style="color:#c0392b;"></span></p>
+<p style="color:#c0392b;"><b>Satış Fiyatı KDV DAHİL</b> <span id="txtSatisKdv" class="label-text" style="color:#c0392b;"></span> <span id="satis" class="highlight" style="color:#c0392b;"></span></p>
+<p>Alış Fiyatı KDV DAHİL <span id="txtAlisKdv" class="label-text"></span> <span id="alisKdvDahil" class="highlight"></span></p>
 
 <div class="box">
 <p>Kutu Miktar <span id="km" class="highlight"></span></p>
 <p><b>Kutu Tutarı İskontosuz</b> <span id="ksk" class="highlight"></span></p>
-<p>Kutu İskonto % <span id="ki" class="highlight"></span></p>
-<p>Kutu İskonto Tutarı <span id="kit" class="highlight"></span></p>
-<p><b>Kutu Satış Fiyatı</b> <span id="ksf" class="highlight"></span></p>
+<p><b>Kutu İskonto Tutarı</b> <span id="txtKutuIsk" class="label-text"></span> <span id="kit" class="highlight"></span></p>
+<p style="color:#3498db;"><b>Kutu Satış Fiyatı</b> <span id="ksf" class="highlight" style="color:#3498db;"></span></p>
 </div>
 </div>
 
@@ -457,6 +456,7 @@ function hesapla(){
     document.getElementById("txtKar").innerText = "(%" + kar + ")";
     document.getElementById("txtSatisKdv").innerText = "(%" + kdv + ")";
     document.getElementById("txtAlisKdv").innerText = "(%" + kdv + ")";
+    document.getElementById("txtKutuIsk").innerText = "(%" + ki + ")";
 
     // 🟢 Sayıları Türkçe formatına (virgüllü ve binlik noktalı) çeviren fonksiyon
     function formatTR(deger) {
@@ -471,7 +471,6 @@ function hesapla(){
     document.getElementById("alisKdvDahil").innerText=formatTR(alisKdvDahil);
 
     document.getElementById("km").innerText=km;
-    document.getElementById("ki").innerText=ki+"%";
     document.getElementById("kit").innerText=formatTR(iskontosuzKutu*(ki/100));
     document.getElementById("ksk").innerText=formatTR(iskontosuzKutu);
     document.getElementById("ksf").innerText=formatTR(iskontosuzKutu*(1-ki/100));
