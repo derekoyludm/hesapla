@@ -146,10 +146,11 @@ button.clicked-blue{
     box-shadow:0 0 0 4px rgba(231,76,60,0.35);
 }
 
+/* 🟢 Mavi silme butonları orijinalden %35 daraltılarak genişliği 20px yapıldı */
 .clear-btn{
-    width:30px; 
+    width:20px; 
     height:46px;
-    min-width:30px;
+    min-width:20px;
     background:#3498db;
     border-radius:8px;
     display:flex;
@@ -159,6 +160,7 @@ button.clicked-blue{
     font-weight:600;
     cursor:pointer;
     user-select: none;
+    font-size: 14px; 
 }
 
 .clear-btn:hover{
@@ -177,7 +179,7 @@ select.pink-bg:focus { background-color: #ffd6e8 !important; }
     gap:10px;
 }
 
-/* 🟢 Üst sıra için özel flex yapısı */
+/* Üst sıra için özel flex yapısı */
 .row-top{
     display:flex;
     gap:10px;
@@ -549,7 +551,7 @@ document.querySelectorAll("input, select")
 
 });
 
-// 🟢 row-top yapısı eklendiği için tüm form elemanlarının Enter sırasını güncelledik
+// Form elemanlarının Enter sırası
 const alanlar = Array.from(document.querySelectorAll("input,select"));
 
 alanlar.forEach((el,i)=>{
