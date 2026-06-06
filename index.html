@@ -50,10 +50,19 @@ label{
     color:#6b7a90;
 }
 
+/* Kutu Miktar için butonu sağa alan yatay esnek yapı */
 .field-container{
     display:flex;
     gap:4px; 
     align-items:center;
+}
+
+/* Birim Fiyat, Miktarlar ve İskontolar için butonu alta alan dikey esnek yapı */
+.field-container-isk {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
 }
 
 input,
@@ -146,24 +155,41 @@ button.clicked-blue{
     box-shadow:0 0 0 4px rgba(231,76,60,0.35);
 }
 
-/* 🟢 Mavi silme butonları orijinalden %35 daraltılarak genişliği 20px yapıldı */
-.clear-btn{
-    width:20px; 
-    height:46px;
-    min-width:20px;
-    background:#3498db;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:#fff;
-    font-weight:600;
-    cursor:pointer;
+/* 🟢 Kutu Miktar'ın SAĞINDA yer alan butonun eni (genişliği) alt butonların yükseklik ölçüsü olan 26px değerine eşitlendi */
+.clear-btn-sag {
+    width: 26px; 
+    height: 46px;
+    min-width: 26px;
+    background: #3498db;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
     user-select: none;
     font-size: 14px; 
 }
 
-.clear-btn:hover{
+/* Kutuların altında duran ve yüksekliği 26px olan ortak silme butonları */
+.clear-btn-isk {
+    width: 100%;
+    height: 26px;
+    min-width: 100%;
+    background: #3498db;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    font-size: 14px;
+}
+
+.clear-btn-sag:hover, .clear-btn-isk:hover{
     background:#2587ca;
 }
 
@@ -198,7 +224,7 @@ select.pink-bg:focus { background-color: #ffd6e8 !important; }
 /* İskontoların yan yana rahat sığması için 4'lü satıra özel sınıf */
 .row-isk{
     display:flex;
-    gap:6px;
+    gap:8px;
 }
 
 .row .input-group, .row-isk .input-group{
@@ -270,25 +296,25 @@ select.pink-bg:focus { background-color: #ffd6e8 !important; }
 
 <div class="input-group w-50">
 <label>Birim Fiyat</label>
-<div class="field-container">
+<div class="field-container-isk">
 <input id="brut" type="text" inputmode="decimal">
-<div class="clear-btn" ontouchstart="temizle(event,'brut')" onclick="temizle(event,'brut')">×</div>
+<div class="clear-btn-isk" ontouchstart="temizle(event,'brut')" onclick="temizle(event,'brut')">×</div>
 </div>
 </div>
 
 <div class="input-group w-25">
 <label>Miktar</label>
-<div class="field-container">
+<div class="field-container-isk">
 <input id="miktar" type="text" inputmode="decimal">
-<div class="clear-btn" ontouchstart="temizle(event,'miktar')" onclick="temizle(event,'miktar')">×</div>
+<div class="clear-btn-isk" ontouchstart="temizle(event,'miktar')" onclick="temizle(event,'miktar')">×</div>
 </div>
 </div>
 
 <div class="input-group w-25">
 <label>2. Miktar</label>
-<div class="field-container">
+<div class="field-container-isk">
 <input id="miktar2" type="text" inputmode="decimal" class="yellow-bg">
-<div class="clear-btn" ontouchstart="temizle(event,'miktar2')" onclick="temizle(event,'miktar2')">×</div>
+<div class="clear-btn-isk" ontouchstart="temizle(event,'miktar2')" onclick="temizle(event,'miktar2')">×</div>
 </div>
 </div>
 
@@ -298,33 +324,33 @@ select.pink-bg:focus { background-color: #ffd6e8 !important; }
 
 <div class="input-group">
 <label>İsk 1</label>
-<div class="field-container">
+<div class="field-container-isk">
 <input id="isk1" type="text" inputmode="decimal">
-<div class="clear-btn" ontouchstart="temizle(event,'isk1')" onclick="temizle(event,'isk1')">×</div>
+<div class="clear-btn-isk" ontouchstart="temizle(event,'isk1')" onclick="temizle(event,'isk1')">×</div>
 </div>
 </div>
 
 <div class="input-group">
 <label>İsk 2</label>
-<div class="field-container">
+<div class="field-container-isk">
 <input id="isk2" type="text" inputmode="decimal">
-<div class="clear-btn" ontouchstart="temizle(event,'isk2')" onclick="temizle(event,'isk2')">×</div>
+<div class="clear-btn-isk" ontouchstart="temizle(event,'isk2')" onclick="temizle(event,'isk2')">×</div>
 </div>
 </div>
 
 <div class="input-group">
 <label>İsk 3</label>
-<div class="field-container">
+<div class="field-container-isk">
 <input id="isk3" type="text" inputmode="decimal">
-<div class="clear-btn" ontouchstart="temizle(event,'isk3')" onclick="temizle(event,'isk3')">×</div>
+<div class="clear-btn-isk" ontouchstart="temizle(event,'isk3')" onclick="temizle(event,'isk3')">×</div>
 </div>
 </div>
 
 <div class="input-group">
 <label>İsk 4</label>
-<div class="field-container">
+<div class="field-container-isk">
 <input id="isk4" type="text" inputmode="decimal">
-<div class="clear-btn" ontouchstart="temizle(event,'isk4')" onclick="temizle(event,'isk4')">×</div>
+<div class="clear-btn-isk" ontouchstart="temizle(event,'isk4')" onclick="temizle(event,'isk4')">×</div>
 </div>
 </div>
 
@@ -365,7 +391,7 @@ select.pink-bg:focus { background-color: #ffd6e8 !important; }
 <label>Kutu Miktar</label>
 <div class="field-container">
 <input id="kutuMiktar" type="text" inputmode="decimal" class="pink-bg">
-<div class="clear-btn" ontouchstart="temizle(event,'kutuMiktar')" onclick="temizle(event,'kutuMiktar')">×</div>
+<div class="clear-btn-sag" ontouchstart="temizle(event,'kutuMiktar')" onclick="temizle(event,'kutuMiktar')">×</div>
 </div>
 </div>
 
