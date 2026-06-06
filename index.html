@@ -52,7 +52,7 @@ label{
 
 .field-container{
     display:flex;
-    gap:8px;
+    gap:4px; /* Yan yana 4 kutu olacağı için gap miktarını 4px'e düşürdük */
     align-items:center;
 }
 
@@ -147,9 +147,9 @@ button.clicked-blue{
 }
 
 .clear-btn{
-    width:40px;
+    width:30px; /* Yan yana 4'lü yapıda sığması için x butonunu biraz daralttık */
     height:46px;
-    min-width:40px;
+    min-width:30px;
     background:#3498db;
     border-radius:8px;
     display:flex;
@@ -177,7 +177,13 @@ select.pink-bg:focus { background-color: #ffd6e8 !important; }
     gap:10px;
 }
 
-.row .input-group{
+/* 🟢 İskontoların yan yana daha rahat sığması için 4'lü satıra özel az boşluklu sınıf */
+.row-isk{
+    display:flex;
+    gap:6px;
+}
+
+.row .input-group, .row-isk .input-group{
     flex:1;
 }
 
@@ -270,7 +276,7 @@ select.pink-bg:focus { background-color: #ffd6e8 !important; }
 
 </div>
 
-<div class="row">
+<div class="row-isk">
 
 <div class="input-group">
 <label>İsk 1</label>
@@ -287,10 +293,6 @@ select.pink-bg:focus { background-color: #ffd6e8 !important; }
 <div class="clear-btn" ontouchstart="temizle(event,'isk2')" onclick="temizle(event,'isk2')">×</div>
 </div>
 </div>
-
-</div>
-
-<div class="row">
 
 <div class="input-group">
 <label>İsk 3</label>
@@ -430,7 +432,7 @@ function g(id){
     return parseFloat(v.replace(/\./g,"").replace(/,/g,".")) || 0;
 }
 
-// 🟢 Alanın boş olup olmadığını kontrol eden ek fonksiyon
+// Alanın boş olup olmadığını kontrol eden ek fonksiyon
 function alanBosMu(id){
     return document.getElementById(id).value.trim() === "";
 }
@@ -489,7 +491,7 @@ function hesapla(){
     document.getElementById("satis").innerText=formatTR(satis);
     document.getElementById("alisKdvDahil").innerText=formatTR(alisKdvDahil);
 
-    // 🟢 Eğer Miktar ve Kutu Miktar alanları boşsa sonuç panelinde 1 yazmasın, boş kalsın
+    // Eğer Miktar ve Kutu Miktar alanları boşsa sonuç panelinde 1 yazmasın, boş kalsın
     if(alanBosMu("miktar") && alanBosMu("kutuMiktar")) {
         document.getElementById("km").innerText="";
     } else {
