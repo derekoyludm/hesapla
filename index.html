@@ -75,10 +75,10 @@ label{
     height: 46px;
     overflow: hidden;
     transition: .15s;
-    outline: none !important; /* Chrome siyah çerçeve koruması */
+    outline: none !important;
 }
 
-/* 🟢 Seçim esnasında Chrome'un dış siyah border basmasını engelleme */
+/* Seçim esnasında Chrome'un dış siyah border basmasını engelleme */
 .stepper-container:focus-within {
     border-color: #8fd4ae !important;
     box-shadow: 0 0 0 4px rgba(143,212,174,0.45) !important;
@@ -97,7 +97,7 @@ button{
     background:#fff;
     font-weight:400;
     transition:.15s;
-    outline: none !important; /* Tüm tarayıcılar için varsayılan siyah halkayı siler */
+    outline: none !important;
 }
 
 /* Kutunun içindeki tarayıcıya ait orijinal tek aşağı oku tamamen gizleyen ayarlar */
@@ -117,7 +117,7 @@ button{
     outline: none !important;
 }
 
-/* 🟢 Chrome select focus siyah halka temizliği */
+/* Chrome select focus siyah halka temizliği */
 .stepper-container select:focus {
     outline: none !important;
     box-shadow: none !important;
@@ -658,8 +658,24 @@ document.querySelectorAll("input, select")
 
 const alanlar = Array.from(document.querySelectorAll("input,select"));
 
+// Tüm sayfa düzeyinde ESC tuşunu dinleyen global yakalayıcı
+window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+        // Eğer hiçbir input/select odaklı değilse (yani Hesapla paneli açıkken)
+        if (document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "SELECT") {
+            e.preventDefault();
+            let sonAlan = alanlar[alanlar.length - 1]; // Listenin son elemanı (Kutu İskonto %)
+            if (sonAlan) {
+                sonAlan.focus();
+                if (sonAlan.tagName === "INPUT") sonAlan.select();
+            }
+        }
+    }
+});
+
 alanlar.forEach((el,i)=>{
     el.addEventListener("keydown",(e)=>{
+        // ENTER ile İLERI gitme kuralı
         if(e.key==="Enter"){
             e.preventDefault();
             document.activeElement.blur();
@@ -672,6 +688,25 @@ alanlar.forEach((el,i)=>{
                 },0);
             }else{
                 hesapla();
+            }
+        }
+        
+        // ESC ile GERI gelme kuralı
+        if(e.key==="Escape"){
+            e.preventDefault();
+            
+            // 🟢 Eğer en baştaki elemandaysak (Birim Fiyat ise), dur ve hiçbir şey yapma!
+            if(i === 0) {
+                return; 
+            }
+
+            document.activeElement.blur();
+            let prev=alanlar[i-1];
+            if(prev){
+                setTimeout(()=>{
+                    prev.focus();
+                    if(prev.tagName==="INPUT") prev.select();
+                },0);
             }
         }
     });
