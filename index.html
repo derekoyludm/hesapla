@@ -512,6 +512,14 @@ Hesapla
 
 <script>
 
+// 🟢 Sayfa yüklenir yüklenmez ilk odağı Birim Fiyat alanına verir
+window.addEventListener("DOMContentLoaded", () => {
+    const ilkAlan = document.getElementById("brut");
+    if(ilkAlan) {
+        ilkAlan.focus();
+    }
+});
+
 // Seçim listelerini butonla değiştiren ve başa dönmeyi engelleyen fonksiyon
 function degistir(id, yon) {
     let s = document.getElementById(id);
@@ -674,7 +682,7 @@ window.addEventListener("keydown", (e) => {
 alanlar.forEach((el,i)=>{
     el.addEventListener("keydown",(e)=>{
         
-        // 🟢 Yeni: Klavyedeki + ve - tuşları ile SELECT elemanlarını değiştirme kuralı
+        // Klavyedeki + ve - tuşları ile SELECT elemanlarını değiştirme kuralı
         if(el.tagName === "SELECT") {
             if(e.key === "+" || e.key === "Add") {
                 e.preventDefault();
