@@ -487,7 +487,7 @@ Hesapla
 <p style="color:#c0392b;"><b>Satış Fiyatı KDV DAHİL</b> <span id="txtSatisKdv" class="label-text" style="color:#c0392b;"></span> <span id="satis" class="highlight" style="color:#c0392b;"></span></p>
 <p>Alış Fiyatı KDV DAHİL <span id="txtAlisKdv" class="label-text"></span> <span id="alisKdvDahil" class="highlight"></span></p>
 
-<div class="box">
+<div class="box" id="kutuSonucBox">
 <p>Kutu Miktar <span id="km" class="highlight"></span></p>
 <p><b>Kutu Tutarı İskontosuz</b> <span id="ksk" class="highlight"></span></p>
 <p><b>Kutu İskonto Tutarı</b> <span id="txtKutuIsk" class="label-text"></span> <span id="kit" class="highlight"></span></p>
@@ -524,9 +524,7 @@ function degistir(id, yon) {
     s.dispatchEvent(new Event('change'));
 }
 
-document.getElementById("miktar").addEventListener("input", function() {
-    document.getElementById("kutuMiktar").value = this.value;
-});
+// Miktar alanından Kutu Miktar alanına otomatik veri aktaran dinleyici kaldırıldı.
 
 function temizle(e,id){
     e.preventDefault();
@@ -535,10 +533,6 @@ function temizle(e,id){
     let el = document.getElementById(id);
     el.value = ""; 
     hesapGecersizYap(); 
-    
-    if (id === "miktar") {
-        document.getElementById("kutuMiktar").value = "";
-    }
     
     el.focus();
     
@@ -576,7 +570,7 @@ function hesapla(){
     let kar=parseFloat(document.getElementById("kar").value);
     let kdv=parseFloat(document.getElementById("kdv").value);
 
-    let km=g("kutuMiktar") || 1;
+    let km=g("kutuMiktar");
     let ki=parseFloat(document.getElementById("kutuIskonto").value);
 
     let ham=(brut/m1)/m2;
@@ -612,15 +606,15 @@ function hesapla(){
     document.getElementById("satis").innerText=formatTR(satis);
     document.getElementById("alisKdvDahil").innerText=formatTR(alisKdvDahil);
 
-    if(alanBosMu("miktar") && alanBosMu("kutuMiktar")) {
-        document.getElementById("km").innerText="";
+    if(alanBosMu("kutuMiktar")) {
+        document.getElementById("kutuSonucBox").style.display = "none";
     } else {
-        document.getElementById("km").innerText=g("kutuMiktar"); 
+        document.getElementById("kutuSonucBox").style.display = "block";
+        document.getElementById("km").innerText=formatTR(km).replace(",00",""); 
+        document.getElementById("kit").innerText=formatTR(iskontosuzKutu*(ki/100));
+        document.getElementById("ksk").innerText=formatTR(iskontosuzKutu);
+        document.getElementById("ksf").innerText=formatTR(iskontosuzKutu*(1-ki/100));
     }
-    
-    document.getElementById("kit").innerText=formatTR(iskontosuzKutu*(ki/100));
-    document.getElementById("ksk").innerText=formatTR(iskontosuzKutu);
-    document.getElementById("ksf").innerText=formatTR(iskontosuzKutu*(1-ki/100));
 
     document.getElementById("sonuc").style.display="block";
 }
@@ -651,10 +645,8 @@ document.querySelectorAll("input, select")
 
 });
 
-// 🟢 Navigasyon listesine butonlar da eklendi
 const alanlar = Array.from(document.querySelectorAll("input, select, button"));
 
-// 🟢 Akıllı Yön Tuşları Matrisi (Butonlar eklenerek güncellendi)
 const navMap = {
     "brut":        { left: null,         right: "miktar",      up: null,          down: "isk1" },
     "miktar":      { left: "brut",       right: "miktar2",     up: null,          down: "isk2" },
@@ -668,8 +660,8 @@ const navMap = {
     "kar":         { left: null,         right: "kdv",         up: "isk1",        down: "kutuMiktar" },
     "kdv":         { left: "kar",        right: null,          up: "isk4",        down: "kutuIskonto" },
     
-    "kutuMiktar":  { left: null,         right: "kutuIskonto", up: "kar",         down: "hesaplaBtn" },
-    "kutuIskonto": { left: "kutuMiktar", right: null,          up: "kdv",         down: "hesaplaBtn" },
+    "kutuMiktar":  { left: null,         right: "kutuIskonto", up: "kar",          down: "hesaplaBtn" },
+    "kutuIskonto": { left: "kutuMiktar", right: null,          up: "kdv",          down: "hesaplaBtn" },
 
     "hesaplaBtn":  { left: null,         right: "btnReset",    up: "kutuMiktar",  down: null },
     "btnReset":    { left: "hesaplaBtn", right: null,          up: "kutuIskonto", down: null }
@@ -695,7 +687,6 @@ window.addEventListener("keydown", (e) => {
 alanlar.forEach((el,i)=>{
     el.addEventListener("keydown",(e)=>{
         
-        // Yön Tuşları Navigasyonu Yönetimi (Butonlar arası ve geçişlerde koruma)
         if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
             e.preventDefault(); 
             
@@ -761,7 +752,6 @@ alanlar.forEach((el,i)=>{
         }
 
         if(e.key==="Enter"){
-            // Eğer odak butonlardaysa varsayılan click işlevini bozma
             if(el.tagName === "BUTTON") return;
 
             e.preventDefault();
