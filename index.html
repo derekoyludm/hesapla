@@ -15,7 +15,6 @@
     -webkit-tap-highlight-color:transparent;
 }
 
-/* Yatayda ortalı, dikeyde üst tarafa (flex-start) hizalı yapı */
 body{
     margin:0;
     padding: 30px 20px 20px 20px; 
@@ -27,7 +26,6 @@ body{
     min-height: 100vh;
 }
 
-/* Kutunun genişlik dengesini hem PC hem mobil için koruyan alan */
 .container{
     width:100%;
     max-width:440px; 
@@ -50,14 +48,12 @@ label{
     color:#6b7a90;
 }
 
-/* Kutu Miktar için butonu sağa alan yatay esnek yapı */
 .field-container{
     display:flex;
     gap:4px; 
     align-items:center;
 }
 
-/* Birim Fiyat, Miktarlar ve İskontolar için butonu alta alan dikey esnek yapı */
 .field-container-isk {
     display: flex;
     flex-direction: column;
@@ -65,7 +61,6 @@ label{
     align-items: center;
 }
 
-/* Kar, KDV ve Kutu İskonto için butonlu esnek satır yapısı */
 .stepper-container {
     display: flex;
     align-items: center;
@@ -78,7 +73,6 @@ label{
     outline: none !important;
 }
 
-/* Seçim esnasında Chrome'un dış siyah border basmasını engelleme */
 .stepper-container:focus-within {
     border-color: #8fd4ae !important;
     box-shadow: 0 0 0 4px rgba(143,212,174,0.45) !important;
@@ -100,7 +94,6 @@ button{
     outline: none !important;
 }
 
-/* Kutunun içindeki tarayıcıya ait orijinal tek aşağı oku tamamen gizleyen ayarlar */
 .stepper-container select {
     flex: 1;
     border: none !important;
@@ -117,13 +110,11 @@ button{
     outline: none !important;
 }
 
-/* Chrome select focus siyah halka temizliği */
 .stepper-container select:focus {
     outline: none !important;
     box-shadow: none !important;
 }
 
-/* IE ve Eski Edge için iç okları temizleme */
 .stepper-container select::-ms-expand {
     display: none;
 }
@@ -207,7 +198,16 @@ button.clicked-blue{
     background:#f6f8fa;
 }
 
-.reset-btn:focus,
+/* Aktif buton görünürlüğü için focus halkası */
+.main-btn:focus, .reset-btn:focus {
+    border-color: #8fd4ae !important;
+    box-shadow: 0 0 0 4px rgba(143,212,174,0.45) !important;
+}
+
+.reset-btn:hover{
+    background:#f6f8fa;
+}
+
 .reset-btn:active,
 .reset-btn.active-reset{
     outline:none;
@@ -215,7 +215,6 @@ button.clicked-blue{
     box-shadow:0 0 0 4px rgba(231,76,60,0.35);
 }
 
-/* Kutu Miktar'ın SAĞINDA yer alan buton %5 daraltılarak 24.7px değerine düşürüldü */
 .clear-btn-sag {
     width: 24.7px; 
     height: 46px;
@@ -232,7 +231,6 @@ button.clicked-blue{
     font-size: 14px; 
 }
 
-/* Kutuların altında duran ve yüksekliği 26px olan ortak silme butonları */
 .clear-btn-isk {
     width: 100%;
     height: 26px;
@@ -255,11 +253,8 @@ button.clicked-blue{
 
 .yellow-bg{background:#fff7a6 !important;}
 .pink-bg{background:#ffd6e8 !important;}
-
-/* Kâr ve KDV için belirginleştirilmiş orta-koyu yeşil arka plan rengi */
 .green-bg{background:#c8ebd6 !important;}
 
-/* Odaklanınca ve seçim esnasında arka plan renk korumaları */
 .stepper-container:has(select.green-bg) { background-color: #c8ebd6 !important; }
 .stepper-container:has(select.pink-bg) { background-color: #ffd6e8 !important; }
 
@@ -268,23 +263,19 @@ button.clicked-blue{
     gap:10px;
 }
 
-/* Üst sıra için özel flex yapısı */
 .row-top{
     display:flex;
     gap:10px;
 }
 
-/* Birim Fiyat satırın %50'sini kaplasın */
 .w-50 {
     flex: 2;
 }
 
-/* Miktar ve 2. Miktar kendi aralarında %25 + %25 kaplasın */
 .w-25 {
     flex: 1;
 }
 
-/* İskontoların yan yana rahat sığması için 4'lü satıra özel sınıf */
 .row-isk{
     display:flex;
     gap:8px;
@@ -512,7 +503,6 @@ Hesapla
 
 <script>
 
-// Sayfa yüklenir yüklenmez ilk odağı Birim Fiyat alanına verir
 window.addEventListener("DOMContentLoaded", () => {
     const ilkAlan = document.getElementById("brut");
     if(ilkAlan) {
@@ -520,7 +510,6 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// Seçim listelerini butonla değiştiren ve başa dönmeyi engelleyen fonksiyon
 function degistir(id, yon) {
     let s = document.getElementById(id);
     let yeniIndex = s.selectedIndex + yon;
@@ -535,7 +524,6 @@ function degistir(id, yon) {
     s.dispatchEvent(new Event('change'));
 }
 
-// Miktar kutusuna yazılanı anlık olarak Kutu Miktar kutusuna kopyalar
 document.getElementById("miktar").addEventListener("input", function() {
     document.getElementById("kutuMiktar").value = this.value;
 });
@@ -663,28 +651,43 @@ document.querySelectorAll("input, select")
 
 });
 
-const alanlar = Array.from(document.querySelectorAll("input,select"));
+// 🟢 Navigasyon listesine butonlar da eklendi
+const alanlar = Array.from(document.querySelectorAll("input, select, button"));
 
-// Global tuş dinleyici: SHIFT + ESCAPE basıldığında sıfırlama butonunu tetikler
+// 🟢 Akıllı Yön Tuşları Matrisi (Butonlar eklenerek güncellendi)
+const navMap = {
+    "brut":        { left: null,         right: "miktar",      up: null,          down: "isk1" },
+    "miktar":      { left: "brut",       right: "miktar2",     up: null,          down: "isk2" },
+    "miktar2":     { left: "miktar",     right: null,          up: null,          down: "isk3" },
+    
+    "isk1":        { left: null,         right: "isk2",        up: "brut",        down: "kar" },
+    "isk2":        { left: "isk1",       right: "isk3",        up: "miktar",      down: "kar" },
+    "isk3":        { left: "isk2",       right: "isk4",        up: "miktar2",     down: "kdv" },
+    "isk4":        { left: "isk3",       right: null,          up: "miktar2",     down: "kdv" },
+    
+    "kar":         { left: null,         right: "kdv",         up: "isk1",        down: "kutuMiktar" },
+    "kdv":         { left: "kar",        right: null,          up: "isk4",        down: "kutuIskonto" },
+    
+    "kutuMiktar":  { left: null,         right: "kutuIskonto", up: "kar",         down: "hesaplaBtn" },
+    "kutuIskonto": { left: "kutuMiktar", right: null,          up: "kdv",         down: "hesaplaBtn" },
+
+    "hesaplaBtn":  { left: null,         right: "btnReset",    up: "kutuMiktar",  down: null },
+    "btnReset":    { left: "hesaplaBtn", right: null,          up: "kutuIskonto", down: null }
+};
+
 window.addEventListener("keydown", (e) => {
-    // 🟢 Yeni: Herhangi bir yerdeyken Shift + Escape basılırsa sıfırlama tetiklensin
     if (e.shiftKey && e.key === "Escape") {
         e.preventDefault();
         const rBtn = document.getElementById("btnReset");
-        if(rBtn) {
-            rBtn.click();
-        }
+        if(rBtn) rBtn.click();
         return;
     }
 
     if (e.key === "Escape") {
-        if (document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "SELECT") {
+        if (document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "SELECT" && document.activeElement.tagName !== "BUTTON") {
             e.preventDefault();
-            let sonAlan = alanlar[alanlar.length - 1];
-            if (sonAlan) {
-                sonAlan.focus();
-                if (sonAlan.tagName === "INPUT") sonAlan.select();
-            }
+            let sonAlan = document.getElementById("btnReset");
+            if (sonAlan) sonAlan.focus();
         }
     }
 });
@@ -692,9 +695,29 @@ window.addEventListener("keydown", (e) => {
 alanlar.forEach((el,i)=>{
     el.addEventListener("keydown",(e)=>{
         
-        // Kar % ve Kutu İskonto % için özel sayısal tuş basım kuralları
+        // Yön Tuşları Navigasyonu Yönetimi (Butonlar arası ve geçişlerde koruma)
+        if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+            e.preventDefault(); 
+            
+            let currentId = el.id;
+            let targetId = null;
+
+            if (e.key === "ArrowLeft")  targetId = navMap[currentId]?.left;
+            if (e.key === "ArrowRight") targetId = navMap[currentId]?.right;
+            if (e.key === "ArrowUp")    targetId = navMap[currentId]?.up;
+            if (e.key === "ArrowDown")  targetId = navMap[currentId]?.down;
+
+            if (targetId) {
+                let targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.focus();
+                    if (targetEl.tagName === "INPUT") targetEl.select();
+                }
+            }
+            return;
+        }
+
         if(el.tagName === "SELECT") {
-            // Klavyedeki + ve - tuşları kuralı
             if(e.key === "+" || e.key === "Add") {
                 e.preventDefault();
                 degistir(el.id, 1);
@@ -706,7 +729,6 @@ alanlar.forEach((el,i)=>{
                 return;
             }
 
-            // Kar % Kutusunda '2' tuşuna basınca 20 ve 25 arası geçiş
             if(el.id === "kar" && (e.key === "2")) {
                 e.preventDefault();
                 if(el.value === "20") {
@@ -718,9 +740,8 @@ alanlar.forEach((el,i)=>{
                 return;
             }
 
-            // Kutu İskonto % Kutusunda tuş geçiş kuralları
             if(el.id === "kutuIskonto") {
-                if(e.key === "1") { // '1' tuşuna ardı ardına basınca %10 ve %15 arası geçiş
+                if(e.key === "1") { 
                     e.preventDefault();
                     if(el.value === "10") {
                         el.value = "15";
@@ -730,7 +751,7 @@ alanlar.forEach((el,i)=>{
                     el.dispatchEvent(new Event('change'));
                     return;
                 }
-                if(e.key === "5") { // '5' tuşuna basınca direkt %5 seçilmesi
+                if(e.key === "5") { 
                     e.preventDefault();
                     el.value = "5";
                     el.dispatchEvent(new Event('change'));
@@ -739,8 +760,10 @@ alanlar.forEach((el,i)=>{
             }
         }
 
-        // ENTER ile İLERI gitme kuralı
         if(e.key==="Enter"){
+            // Eğer odak butonlardaysa varsayılan click işlevini bozma
+            if(el.tagName === "BUTTON") return;
+
             e.preventDefault();
             document.activeElement.blur();
 
@@ -755,13 +778,9 @@ alanlar.forEach((el,i)=>{
             }
         }
         
-        // ESC ile GERI gelme kuralı
         if(e.key==="Escape" && !e.shiftKey){
             e.preventDefault();
-            
-            if(i === 0) {
-                return; 
-            }
+            if(i === 0) return; 
 
             document.activeElement.blur();
             let prev=alanlar[i-1];
@@ -776,7 +795,7 @@ alanlar.forEach((el,i)=>{
 });
 
 function sifirla(e){
-    e.preventDefault();
+    if(e) e.preventDefault();
 
     document.querySelectorAll("input").forEach(i=>i.value="");
     
@@ -790,7 +809,6 @@ function sifirla(e){
     let resetBtn = document.getElementById("btnReset");
     resetBtn.classList.add("active-reset");
 
-    // Reset işleminden sonra odağı otomatik olarak Birim Fiyat (brut) kutusuna verir
     setTimeout(() => {
         const ilkAlan = document.getElementById("brut");
         if(ilkAlan) {
