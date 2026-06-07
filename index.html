@@ -75,11 +75,14 @@ label{
     height: 46px;
     overflow: hidden;
     transition: .15s;
+    outline: none !important; /* Chrome siyah çerçeve koruması */
 }
 
+/* 🟢 Seçim esnasında Chrome'un dış siyah border basmasını engelleme */
 .stepper-container:focus-within {
     border-color: #8fd4ae !important;
     box-shadow: 0 0 0 4px rgba(143,212,174,0.45) !important;
+    outline: none !important;
 }
 
 input,
@@ -94,6 +97,7 @@ button{
     background:#fff;
     font-weight:400;
     transition:.15s;
+    outline: none !important; /* Tüm tarayıcılar için varsayılan siyah halkayı siler */
 }
 
 /* Kutunun içindeki tarayıcıya ait orijinal tek aşağı oku tamamen gizleyen ayarlar */
@@ -110,6 +114,13 @@ button{
     cursor: pointer;
     box-shadow: none !important;
     background: transparent !important;
+    outline: none !important;
+}
+
+/* 🟢 Chrome select focus siyah halka temizliği */
+.stepper-container select:focus {
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 /* IE ve Eski Edge için iç okları temizleme */
@@ -131,6 +142,7 @@ button{
     align-items: center;
     justify-content: center;
     user-select: none;
+    outline: none !important;
 }
 
 .step-btn:hover {
@@ -144,6 +156,7 @@ button{
 input:focus, 
 select:focus {
     font-size: 16px !important;
+    outline: none !important;
 }
 
 input:focus {
@@ -203,7 +216,7 @@ button.clicked-blue{
     box-shadow:0 0 0 4px rgba(231,76,60,0.35);
 }
 
-/* 🟢 Kutu Miktar'ın SAĞINDA yer alan buton %5 daraltılarak 24.7px değerine düşürüldü */
+/* Kutu Miktar'ın SAĞINDA yer alan buton %5 daraltılarak 24.7px değerine düşürüldü */
 .clear-btn-sag {
     width: 24.7px; 
     height: 46px;
