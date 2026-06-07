@@ -482,7 +482,7 @@ button.clicked-blue{
 Hesapla
 </button>
 
-<button class="reset-btn" onclick="sifirla(event)">
+<button id="btnReset" class="reset-btn" onclick="sifirla(event)">
 ↺
 </button>
 
@@ -665,8 +665,18 @@ document.querySelectorAll("input, select")
 
 const alanlar = Array.from(document.querySelectorAll("input,select"));
 
-// Tüm sayfa düzeyinde ESC tuşunu dinleyen global yakalayıcı
+// Global tuş dinleyici: SHIFT + ESCAPE basıldığında sıfırlama butonunu tetikler
 window.addEventListener("keydown", (e) => {
+    // 🟢 Yeni: Herhangi bir yerdeyken Shift + Escape basılırsa sıfırlama tetiklensin
+    if (e.shiftKey && e.key === "Escape") {
+        e.preventDefault();
+        const rBtn = document.getElementById("btnReset");
+        if(rBtn) {
+            rBtn.click();
+        }
+        return;
+    }
+
     if (e.key === "Escape") {
         if (document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "SELECT") {
             e.preventDefault();
@@ -682,7 +692,7 @@ window.addEventListener("keydown", (e) => {
 alanlar.forEach((el,i)=>{
     el.addEventListener("keydown",(e)=>{
         
-        // 🟢 Yeni: Kar % ve Kutu İskonto % için özel sayısal tuş basım kuralları
+        // Kar % ve Kutu İskonto % için özel sayısal tuş basım kuralları
         if(el.tagName === "SELECT") {
             // Klavyedeki + ve - tuşları kuralı
             if(e.key === "+" || e.key === "Add") {
@@ -746,7 +756,7 @@ alanlar.forEach((el,i)=>{
         }
         
         // ESC ile GERI gelme kuralı
-        if(e.key==="Escape"){
+        if(e.key==="Escape" && !e.shiftKey){
             e.preventDefault();
             
             if(i === 0) {
@@ -777,8 +787,16 @@ function sifirla(e){
     document.getElementById("sonuc").style.display="none";
     document.getElementById("hesaplaBtn").classList.remove("clicked-blue");
 
-    let resetBtn = e.currentTarget;
+    let resetBtn = document.getElementById("btnReset");
     resetBtn.classList.add("active-reset");
+
+    // Reset işleminden sonra odağı otomatik olarak Birim Fiyat (brut) kutusuna verir
+    setTimeout(() => {
+        const ilkAlan = document.getElementById("brut");
+        if(ilkAlan) {
+            ilkAlan.focus();
+        }
+    }, 50);
 }
 
 </script>
