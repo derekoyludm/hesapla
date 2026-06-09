@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, user-scalable=no">
 <title>Hesaplama Araçları (Super App)</title>
 
-<link class="icon" type="image/png" sizes="512x512" href="tag-512.png">
-<link class="apple-touch-icon" href="tag-512.png">
+<link rel="icon" type="image/png" sizes="512x512" href="tag-512.png">
+<link rel="apple-touch-icon" sizes="512x512" href="tag-512.png">
 
 <style>
 *{
@@ -1168,6 +1168,7 @@ function satirSilFatura(id) {
     hesaplaFatura(); 
 }
 
+// Ardışık (zincirleme) iskonto hesaplama mantığı korunmuştur.
 function hesaplaFatura() {
     let rows = document.querySelectorAll("#faturaSatirlarKonteyner .fatura-row");
     let genelToplam = 0;
@@ -1199,7 +1200,7 @@ function sifirlaFatura(e) {
 
 /* ==========================================================================
    MODÜL: SATIŞ FİYATI HESAPLA
-   ========================================================================== */
+   ========================================================================= */
 function degistirSatis(id, yon) {
     document.getElementById("sonucSatis").style.display = "none";
     let selectEl = document.getElementById(id);
@@ -1322,7 +1323,7 @@ function hesaplaKarGeri() {
     let dusulenKar = fiyatVal * (oranVal / 100);
     let anaFiyat = fiyatVal - dusulenKar;
     
-    document.getElementById("girilenFiyatKarGeri").innerText = formatParaGenel(fiyatVal) + " ₺";
+    document.getElementById("gridenFiyatKarGeri").innerText = formatParaGenel(fiyatVal) + " ₺";
     document.getElementById("secilenOranKarGeri").innerText = "%" + formatParaGenel(oranVal);
     document.getElementById("dusulenKarTutari").innerText = formatParaGenel(dusulenKar) + " ₺";
     document.getElementById("anaFiyatKarGeri").innerText = formatParaGenel(anaFiyat) + " ₺";
