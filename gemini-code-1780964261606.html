@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, user-scalable=no">
+<title>Hesaplama Araçları (Super App)</title>
+
+<link class="icon" type="image/png" sizes="512x512" href="tag-512.png">
+<link class="apple-touch-icon" href="tag-512.png">
+
+<style>
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+body{
+    margin:0;
+    padding: 20px; 
+    background:#eef2f5;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
+    display:flex;
+    flex-direction: column;
+    justify-content:flex-start;
+    align-items: center; 
+    min-height: 100vh;
+}
+
+/* 🟢 Süper App Ana Konteyner */
+.app-container {
+    width:100%;
+    max-width:440px; 
+    margin: 0 auto;
+}
+
+/* 🟢 Üst Sekme (Tab) Tasarımı (Mouse & Dokunmatik Uyumlu Yatay Kaydırılabilir Yapı) */
+.tab-header {
+    display: flex;
+    background: #fff;
+    border-radius: 12px;
+    padding: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    margin-bottom: 10px;
+    gap: 4px;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Alt Sekme Barı için Ekstra Stil */
+.sub-tab-header {
+    margin-bottom: 15px;
+}
+
+/* Modern İnce Scrollbar */
+.tab-header::-webkit-scrollbar {
+    height: 4px;
+}
+.tab-header::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+.tab-header::-webkit-scrollbar-thumb {
+    background: #c9d2dc;
+    border-radius: 10px;
+}
+.tab-header::-webkit-scrollbar-thumb:hover {
+    background: #3498db;
+}
+
+.tab-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    height: 40px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b7a90;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all .2s;
+    padding: 0 14px;
+    display: inline-block;
+}
+
+/* 🟢 Ana Üst Sekmeler Seçildiğinde Siyah Olması İçin Değiştirildi */
+#mainTabHeader .tab-btn.active {
+    background: #2c3e50; /* Siyah / Koyu Füme Renk */
+    color: #fff;
+}
+
+/* 🔵 Alt Sekmeler Seçildiğinde Mavi Kalmaya Devam Eder */
+#subTabHeader .tab-btn.active {
+    background: #3498db;
+    color: #fff;
+}
+
+.sub-tab-btn {
+    display: none; /* JavaScript ile dinamik gösterilecek */
+}
+
+.sub-tab-btn.visible {
+    display: inline-block;
+}
+
+/* 🟢 İçerik Alanları Kontrolü */
+.tab-content {
+    display: none;
+    background:#fff;
+    border-radius:18px;
+    padding:26px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.08);
+    width: 100%;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* GENEL STİLLER */
+.input-group{
+    margin-bottom:18px;
+}
+
+.input-group-dinamik {
+    margin-bottom:14px;
+}
+
+label{
+    display:block;
+    margin-bottom:6px;
+    font-weight:500;
+    font-size:13px;
+    color:#6b7a90;
+}
+
+.field-container{
+    display:flex;
+    gap:4px; 
+    align-items:center;
+}
+
+.field-container-isk {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+}
+
+.stepper-container {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1.5px solid #c9d2dc;
+    border-radius: 8px;
+    height: 46px;
+    overflow: hidden;
+    transition: .15s;
+    outline: none !important;
+}
+
+.stepper-container:focus-within {
+    border-color: #8fd4ae !important;
+    box-shadow: 0 0 0 4px rgba(143,212,174,0.45) !important;
+    outline: none !important;
+}
+
+input,
+select,
+button{
+    width:100%;
+    height:46px;
+    border:1.5px solid #c9d2dc;
+    border-radius:8px;
+    font-size:16px; 
+    text-align:center;
+    background:#fff;
+    font-weight:400;
+    transition:.15s;
+    outline: none !important;
+}
+
+input:focus, 
+select:focus {
+    font-size: 16px !important;
+    outline: none !important;
+}
+
+input:focus {
+    outline: none !important;
+    -webkit-fullscreen-control-style: none;
+    border-color: #8fd4ae !important;
+    box-shadow: 0 0 0 4px rgba(143,212,174,0.45) !important;
+}
+
+select.custom-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    text-align-last: center; 
+    padding-right: 24px; 
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 4 5'><path fill='%236b7a90' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 8px;
+}
+
+.stepper-container select {
+    flex: 1;
+    border: none !important;
+    height: 100%;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding: 0;
+    text-align-last: center;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: none !important;
+    background: transparent !important;
+    outline: none !important;
+}
+
+.step-btn {
+    width: 36px;
+    height: 100%;
+    border: none;
+    background: #f1f4f7;
+    color: #2c3e50;
+    font-size: 18px; 
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    outline: none !important;
+}
+
+.step-btn:hover { background: #e2e8f0; }
+.step-btn:active { background: #cbd5e1; }
+
+.main-btn{
+    flex:1;
+    background:#fff;
+    color:#2c3e50;
+    font-weight:600;
+    cursor:pointer;
+    border:1.5px solid #c9d2dc;
+    transition:.15s;
+}
+
+.main-btn:hover{ background:#f6f8fa; }
+.main-btn:focus, .main-btn:active{
+    outline:none;
+    border-color:#8fd4ae;
+    box-shadow:0 0 0 4px rgba(143,212,174,0.35);
+}
+
+/* Kutu Ekle Butonu Stili */
+.add-box-btn {
+    background: #27ae60;
+    color: #fff;
+    border: none;
+    margin-bottom: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.add-box-btn:hover { background: #219653; }
+.add-box-btn:active { background: #1e8449; }
+
+button.clicked-blue{
+    border-color:#8fd4ae !important;
+    box-shadow:0 0 0 4px rgba(143,212,174,0.45) !important;
+}
+
+.reset-btn{
+    width:46px;
+    min-width:46px;
+    background:#fff;
+    color:#2c3e50;
+    border:1.5px solid #c9d2dc;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+    transition:.15s;
+}
+
+.reset-btn:hover{ background:#f6f8fa; }
+
+/* 🔴 Reset butonuna basıldığında (active-reset) tetiklenen stil */
+.reset-btn:active, .reset-btn.active-reset{
+    outline:none !important;
+    border-color:#e74c3c !important;
+    box-shadow:0 0 0 4px rgba(231,76,60,0.35) !important;
+    background: #fdf2f2 !important; /* Hafif kırmızımsı arka plan */
+}
+
+/* Temizleme ve Silme Butonları */
+.clear-btn-sag {
+    width: 24.7px; 
+    height: 46px;
+    min-width: 24.7px;
+    background: #3498db;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    font-size: 14px; 
+}
+
+.clear-btn-isk {
+    width: 100%;
+    height: 26px;
+    min-width: 100%;
+    background: #3498db;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    font-size: 14px;
+}
+
+.clear-btn-ort {
+    width:40px;
+    height:46px;
+    min-width:40px;
+    background:#3498db;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-weight:600;
+    cursor:pointer;
+    user-select: none;
+}
+
+/* Satır içi Özel Kutu Silme Butonu (Dinamik Yapı İçin) */
+.delete-btn-ort {
+    width:40px;
+    height:46px;
+    min-width:40px;
+    background:#e74c3c;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-weight:600;
+    cursor:pointer;
+    user-select: none;
+}
+.delete-btn-ort:hover { background: #c0392b; }
+
+.clear-btn-sag:hover, .clear-btn-isk:hover, .clear-btn-ort:hover{ background:#2587ca; }
+
+.yellow-bg{background:#fff7a6 !important;}
+.pink-bg{background:#ffd6e8 !important;}
+.green-bg{background:#c8ebd6 !important;}
+.gray-bg{background:#f2f4f7 !important;}
+
+.stepper-container:has(select.green-bg) { background-color: #c8ebd6 !important; }
+.stepper-container:has(select.pink-bg) { background-color: #ffd6e8 !important; }
+.stepper-container:has(select.yellow-bg) { background-color: #fff7a6 !important; }
+
+.row{ display:flex; gap:10px; }
+.row-top{ display:flex; gap:10px; }
+.w-50 { flex: 2; }
+.w-25 { flex: 1; }
+.row-isk{ display:flex; gap:8px; }
+.row .input-group, .row-isk .input-group{ flex:1; }
+.button-row{ display:flex; gap:10px; margin-top:10px; }
+
+/* Sonuç Kutuları */
+.result{
+    display:none;
+    margin-top:20px;
+    background:#f7fbf9;
+    padding:15px;
+    border-radius:10px;
+}
+
+.result.border-style {
+    border-left:4px solid #2ecc71;
+}
+
+.result p{
+    margin:8px 0;
+    font-size:14px;
+    color:#3d4f66;
+}
+
+.result-dinamik p{
+    margin:0;
+    font-size:15px;
+    font-weight:600;
+    color:#2c3e50;
+    line-height:26px;
+}
+
+.highlight{
+    float:right;
+    font-weight:600;
+    color:#2c3e50;
+}
+
+.highlight-bold {
+    float:right;
+    font-weight:700;
+    color:#2c3e50;
+}
+
+.total{
+    color:#2ecc71;
+    font-size:22px;
+    font-weight:700;
+}
+
+.total-cikar {
+    color:#c0392b;
+    font-size:22px;
+    font-weight:700;
+}
+
+.label-text {
+    font-weight: normal;
+    color: #7f8c8d;
+    font-size: 12px;
+    margin-left: 4px;
+}
+
+.box{
+    margin-top:12px;
+    padding:10px;
+    background:#eaf7ef;
+    border-left:4px solid #2ecc71;
+    border-radius:8px;
+}
+
+.box p{ margin:6px 0; font-size:13px; }
+
+.creator{
+    margin-top:22px;
+    text-align:center;
+    font-size:12px;
+    color:#9aa6b2;
+    letter-spacing:.4px;
+}
+
+/* 🟢 Hızlı Fatura / Üçlü Dinamik Düzen Stilleri */
+.fatura-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.fatura-header-labels {
+    display: flex;
+    gap: 6px;
+    padding-right: 46px; /* Silme butonu boşluğu kadar kaydırma */
+    margin-bottom: 2px;
+}
+.fatura-header-labels span {
+    flex: 1;
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b7a90;
+    text-align: center;
+}
+.fatura-input-box {
+    flex: 1;
+    min-width: 0; /* Flexbox taşmasını önler */
+}
+.fatura-tutar-disabled {
+    background: #f8f9fa !important;
+    color: #2c3e50;
+    font-weight: 600;
+    border-color: #dcdfe3 !important;
+}
+.fatura-del-btn {
+    width: 40px;
+    height: 46px;
+    min-width: 40px;
+    background: #e74c3c;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.fatura-del-btn:hover { background: #c0392b; }
+</style>
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <div class="tab-header" id="mainTabHeader">
+        <button class="tab-btn active" onclick="switchMainTab('hesaplaGroup')">Hesapla</button>
+        <button class="tab-btn" onclick="switchMainTab('nedirGroup')">Nedir?</button>
+        <button class="tab-btn" onclick="switchMainTab('toplaCikarGroup')">Topla - Çıkar</button>
+    </div>
+
+    <div class="tab-header sub-tab-header" id="subTabHeader">
+        <button class="tab-btn sub-tab-btn hesaplaGroup visible active" onclick="switchTab('satisTab', 'brut')">Satış Fiyatı Hesapla</button>
+        <button class="tab-btn sub-tab-btn hesaplaGroup visible" onclick="switchTab('indirimTab', 'fiyat')">Kutu İskontosu Uygula</button>
+        <button class="tab-btn sub-tab-btn hesaplaGroup visible" onclick="switchTab('karGeriTab', 'karGeriFiyat')">% Geri Gelme</button>
+        <button class="tab-btn sub-tab-btn hesaplaGroup visible" onclick="switchTab('ilaveTab', 'ilaveTutar')">% Ekle</button>
+        <button class="tab-btn sub-tab-btn hesaplaGroup visible" onclick="switchTab('kdvTab', 'kdvDahil')">KDV Hariç Hesapla</button>
+
+        <button class="tab-btn sub-tab-btn nedirGroup" onclick="switchTab('karsilastirmaTab', 'kutuFiyat')">Kutu Avantajı Nedir</button>
+        <button class="tab-btn sub-tab-btn nedirGroup" onclick="switchTab('kgLtTab', 'fiyatKg')">Kg Fiyatı Nedir</button>
+        <button class="tab-btn sub-tab-btn nedirGroup" onclick="switchTab('indirimOranTab', 'eskiFiyat')">İndirim Oranı Nedir</button>
+
+        <button class="tab-btn sub-tab-btn toplaCikarGroup" onclick="switchTab('sayiToplaTab', 'toplaSayi1')">Dinamik Toplama</button>
+        <button class="tab-btn sub-tab-btn toplaCikarGroup" onclick="switchTab('sayiCikarTab', 'cikarSayi1')">Dinamik Çıkarma</button>
+        <button class="tab-btn sub-tab-btn toplaCikarGroup" onclick="switchTab('hizliFaturaTab', '')">Hızlı Fatura Hesabı</button>
+    </div>
+
+    <div id="satisTab" class="tab-content active">
+        <div class="row-top">
+            <div class="input-group w-50">
+                <label>Birim Fiyat</label>
+                <div class="field-container-isk">
+                    <input id="brut" type="text" inputmode="decimal">
+                    <div class="clear-btn-isk" ontouchstart="temizleSatis(event,'brut')" onclick="temizleSatis(event,'brut')">×</div>
+                </div>
+            </div>
+            <div class="input-group w-25">
+                <label>Miktar</label>
+                <div class="field-container-isk">
+                    <input id="miktar" type="text" inputmode="decimal">
+                    <div class="clear-btn-isk" ontouchstart="temizleSatis(event,'miktar')" onclick="temizleSatis(event,'miktar')">×</div>
+                </div>
+            </div>
+            <div class="input-group w-25">
+                <label>2. Miktar</label>
+                <div class="field-container-isk">
+                    <input id="miktar2" type="text" inputmode="decimal" class="yellow-bg">
+                    <div class="clear-btn-isk" ontouchstart="temizleSatis(event,'miktar2')" onclick="temizleSatis(event,'miktar2')">×</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-isk">
+            <div class="input-group">
+                <label>İsk 1</label>
+                <div class="field-container-isk">
+                    <input id="isk1" type="text" inputmode="decimal">
+                    <div class="clear-btn-isk" ontouchstart="temizleSatis(event,'isk1')" onclick="temizleSatis(event,'isk1')">×</div>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>İsk 2</label>
+                <div class="field-container-isk">
+                    <input id="isk2" type="text" inputmode="decimal">
+                    <div class="clear-btn-isk" ontouchstart="temizleSatis(event,'isk2')" onclick="temizleSatis(event,'isk2')">×</div>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>İsk 3</label>
+                <div class="field-container-isk">
+                    <input id="isk3" type="text" inputmode="decimal">
+                    <div class="clear-btn-isk" ontouchstart="temizleSatis(event,'isk3')" onclick="temizleSatis(event,'isk3')">×</div>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>İsk 4</label>
+                <div class="field-container-isk">
+                    <input id="isk4" type="text" inputmode="decimal">
+                    <div class="clear-btn-isk" ontouchstart="temizleSatis(event,'isk4')" onclick="temizleSatis(event,'isk4')">×</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="input-group">
+                <label>Kâr %</label>
+                <div class="stepper-container">
+                    <div class="step-btn" onclick="degistirSatis('kar', -1)">-</div>
+                    <select id="kar" class="green-bg">
+                        <option value="5">5</option> <option value="10">10</option> <option value="15">15</option> <option value="20">20</option>
+                        <option value="25" selected>25</option> <option value="30">30</option> <option value="35">35</option> <option value="40">40</option>
+                        <option value="45">45</option> <option value="50">50</option> <option value="55">55</option> <option value="60">60</option>
+                        <option value="65">65</option> <option value="70">70</option> <option value="75">75</option> <option value="80">80</option>
+                        <option value="85">85</option> <option value="90">90</option> <option value="95">95</option> <option value="100">100</option>
+                    </select>
+                    <div class="step-btn" onclick="degistirSatis('kar', 1)">+</div>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>KDV %</label>
+                <div class="stepper-container">
+                    <div class="step-btn" onclick="degistirSatis('kdv', -1)">-</div>
+                    <select id="kdv" class="green-bg">
+                        <option value="1" selected>1</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                    </select>
+                    <div class="step-btn" onclick="degistirSatis('kdv', 1)">+</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="input-group">
+                <label>Kutu Miktar</label>
+                <div class="field-container">
+                    <input id="kutuMiktar" type="text" inputmode="decimal" class="pink-bg">
+                    <div class="clear-btn-sag" ontouchstart="temizleSatis(event,'kutuMiktar')" onclick="temizleSatis(event,'kutuMiktar')">×</div>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Kutu İskonto %</label>
+                <div class="stepper-container">
+                    <div class="step-btn" onclick="degistirSatis('kutuIskonto', -1)">-</div>
+                    <select id="kutuIskonto" class="pink-bg">
+                        <option value="5">%5</option>
+                        <option value="10">%10</option>
+                        <option value="15">%15</option>
+                    </select>
+                    <div class="step-btn" onclick="degistirSatis('kutuIskonto', 1)">+</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-row">
+            <button id="hesaplaBtnSatis" class="main-btn" onclick="hesaplaSatis()">Hesapla</button>
+            <button id="btnResetSatis" class="reset-btn" onclick="sifirlaSatis(event)">↺</button>
+        </div>
+
+        <div class="result" id="sonucSatis">
+            <p>Birim Fiyat <span id="ham" class="highlight"></span></p>
+            <p><b>Birim Fiyat İskontolu</b> <span id="txtIsk" class="label-text"></span> <span id="net" class="highlight"></span></p>
+            <p><b>Satış Fiyatı Kârlı</b> <span id="txtKar" class="label-text"></span> <span id="karli" class="highlight"></span></p>
+            <p style="color:#c0392b;"><b>Satış Fiyatı KDV DAHİL</b> <span id="txtSatisKdv" class="label-text" style="color:#c0392b;"></span> <span id="satis" class="highlight" style="color:#c0392b;"></span></p>
+            <p>Alış Fiyatı KDV DAHİL <span id="txtAlisKdv" class="label-text"></span> <span id="alisKdvDahil" class="highlight"></span></p>
+
+            <div class="box" id="kutuSonucBox">
+                <p>Kutu Miktar <span id="km" class="highlight"></span></p>
+                <p><b>Kutu Tutarı İskontosuz</b> <span id="ksk" class="highlight"></span></p>
+                <p><b>Kutu İskonto Tutarı</b> <span id="txtKutuIsk" class="label-text"></span> <span id="kit" class="highlight"></span></p>
+                <p style="color:#3498db;"><b>Kutu Satış Fiyatı</b> <span id="ksf" class="highlight" style="color:#3498db;"></span></p>
+            </div>
+        </div>
+        
+        <div class="creator">Created by Fatih Mersin</div>
+    </div>
+
+    <div id="karGeriTab" class="tab-content">
+        <div class="input-group">
+            <label>Fiyat (Mevcut Satış Fiyatı)</label>
+            <div class="field-container">
+                <input id="karGeriFiyat" type="text" inputmode="decimal">
+                <div class="clear-btn-ort" ontouchstart="temizleKarGeri(event,'karGeriFiyat')" onclick="temizleKarGeri(event,'karGeriFiyat')">×</div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Geri gelmek istediğiniz içindeki oran (%)</label>
+            <div class="field-container">
+                <input id="karGeriOran" type="text" inputmode="decimal" class="yellow-bg" value="7">
+                <div class="clear-btn-ort" ontouchstart="temizleKarGeri(event,'karGeriOran')" onclick="temizleKarGeri(event,'karGeriOran')">×</div>
+            </div>
+        </div>
+
+        <div class="button-row">
+            <button id="hesaplaBtnKarGeri" class="main-btn" onclick="hesaplaKarGeri()">Hesapla</button>
+            <button id="btnResetKarGeri" class="reset-btn" onclick="sifirlaKarGeri(event)">↺</button>
+        </div>
+
+        <div class="result" id="sonucKarGeri">
+            <p>Girilen Fiyat <span id="girilenFiyatKarGeri" class="highlight"></span></p>
+            <p>Geri Gelinen Oran <span id="secilenOranKarGeri" class="highlight"></span></p>
+            <div class="box">
+                <p>Düşülen Kâr Tutarı <span id="dusulenKarTutari" class="highlight"></span></p>
+                <p style="font-size:15px; font-weight:700; color:#27ae60;"><b>KÂR GERİ GERİLEN FİYAT</b> <span id="anaFiyatKarGeri" class="highlight" style="color:#27ae60;"></span></p>
+            </div>
+        </div>
+
+        <div class="creator">Created by Fatih Mersin</div>
+    </div>
+
+    <div id="indirimTab" class="tab-content">
+        <div class="input-group">
+            <label>Tek Ürün Fiyatı</label>
+            <div class="field-container">
+                <input id="fiyat" type="text" inputmode="decimal">
+                <div class="clear-btn-ort" ontouchstart="temizleIndirim(event,'fiyat')" onclick="temizleIndirim(event,'fiyat')">×</div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Adet</label>
+            <div class="field-container">
+                <input id="adet" type="text" inputmode="decimal">
+                <div class="clear-btn-ort" ontouchstart="temizleIndirim(event,'adet')" onclick="temizleIndirim(event,'adet')">×</div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>İskonto</label>
+            <div class="stepper-container">
+                <div class="step-btn" onclick="degistirIndirim(-1)">-</div>
+                <select id="indirim" class="yellow-bg">
+                    <option value="5">%5</option>
+                    <option value="10">%10</option>
+                    <option value="15">%15</option>
+                </select>
+                <div class="step-btn" onclick="degistirIndirim(1)">+</div>
+            </div>
+        </div>
+
+        <div class="button-row">
+            <button id="hesaplaBtnIndirim" class="main-btn" onclick="hesaplaIndirim()">Hesapla</button>
+            <button id="btnResetIndirim" class="reset-btn" onclick="sifirlaIndirim(event)">↺</button>
+        </div>
+
+        <div class="result border-style" id="sonucIndirim">
+            <p>Toplam <span id="toplam" class="highlight"></span></p>
+            <p><b>İndirimli Toplam</b> <span id="indirimli" class="highlight"></span></p>
+            <p>Oran <span id="oran" class="highlight"></span></p>
+            <p><b>İndirimli Tek Fiyat</b> <span id="birim" class="highlight"></span></p>
+        </div>
+
+        <div class="creator">Created by Fatih Mersin</div>
+    </div>
+
+    <div id="kdvTab" class="tab-content">
+        <div class="input-group">
+            <label>KDV Dahil Fiyat</label>
+            <div class="field-container">
+                <input id="kdvDahil" type="text" inputmode="decimal">
+                <div class="clear-btn-ort" ontouchstart="temizleKdv(event,'kdvDahil')" onclick="temizleKdv(event,'kdvDahil')">×</div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>KDV %</label>
+            <div class="stepper-container">
+                <div class="step-btn" onclick="degistirKdvSecim(-1)">-</div>
+                <select id="kdvSecim" class="green-bg">
+                    <option value="1">%1</option>
+                    <option value="10">%10</option>
+                    <option value="20">%20</option>
+                </select>
+                <div class="step-btn" onclick="degistirKdvSecim(1)">+</div>
+            </div>
+        </div>
+
+        <div class="button-row">
+            <button id="hesaplaBtnKdv" class="main-btn" onclick="hesaplaKdv()">Hesapla</button>
+            <button id="btnResetKdv" class="reset-btn" onclick="sifirlaKdv(event)">↺</button>
+        </div>
+
+        <div class="result border-style" id="sonucKdv">
+            <p>
+                <b>KDV Tutarı (<span id="oranKdv"></span>)</b>
+                <span id="kdvTutar" class="highlight-bold"></span>
+            </p>
+            <p>
+                <b>KDV Hariç Tutar</b>
+                <span id="haric" class="highlight-bold"></span>
+            </p>
+        </div>
+
+        <div class="creator">Created by Fatih Mersin</div>
+    </div>
+
+    <div id="indirimOranTab" class="tab-content">
+        <div class="input-group">
+            <label>Ürünün Önceki Fiyatı</label>
+            <div class="field-container">
+                <input id="eskiFiyat" type="text" inputmode="decimal">
+                <div class="clear-btn-ort" ontouchstart="temizleIndirimOran(event,'eskiFiyat')" onclick="temizleIndirimOran(event,'eskiFiyat')">×</div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Ürünün Yeni Fiyatı</label>
+            <div class="field-container">
+                <input id="yeniFiyat" type="text" inputmode="decimal" class="yellow-bg">
+                <div class="clear-btn-ort" ontouchstart="temizleIndirimOran(event,'yeniFiyat')" onclick="temizleIndirimOran(event,'yeniFiyat')">×</div>
+            </div>
+        </div>
+
+        <div class="button-row">
+            <button id="hesaplaBtnIndirimOran" class="main-btn" onclick="hesaplaIndirimOran()">Hesapla</button>
+            <button id="btnResetIndirimOran" class="reset-btn" onclick="sifirlaIndirimOran(event)">↺</button>
+        </div>
+
+        <div class="result" id="sonucIndirimOran">
+            <p>Önceki Fiyat <span id="resEski" class="highlight"></span></p> <p>Yeni Fiyat <span id="resYeni" class="highlight"></span></p>
+            <div class="box">
+                <p>İndirim Tutarı <span id="resTutar" class="highlight"></span></p>
+                <p style="font-size:15px; font-weight:700; color:#27ae60;"><b>İndirim Oranı</b> <span id="resIndirimYuzde" class="highlight" style="color:#27ae60;"></span></p>
+            </div>
+        </div>
+
+        <div class="creator">Created by Fatih Mersin</div>
+    </div>
+
+    <div id="karsilastirmaTab" class="tab-content">
+        <div class="input-group">
+            <label>Kutu Ürün Fiyatı</label>
+            <div class="field-container">
+                <input id="kutuFiyat" type="text" inputmode="decimal">
+                <div class="clear-btn-ort" ontouchstart="temizleKarsilastirma(event,'kutuFiyat')" onclick="temizleKarsilastirma(event,'kutuFiyat')">×</div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Kutu İçindeki Adet</label>
+            <div class="field-container">
+                <input id="adetKarsilastirma" type="text" inputmode="decimal">
+                <div class="clear-btn-ort" ontouchstart="temizleKarsilastirma(event,'adetKarsilastirma')" onclick="temizleKarsilastirma(event,'adetKarsilastirma')">×</div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Tekli Ürün Satış Fiyatı</label>
+            <div class="field-container">
+                <input id="tekliFiyat" type="text" inputmode="decimal">
+                <div class="clear-btn-ort" ontouchstart="temizleKarsilastirma(event,'tekliFiyat')" onclick="temizleKarsilastirma(event,'tekliFiyat')">×</div>
+            </div>
+        </div>
+
+        <div class="button-row">
+            <button id="hesaplaBtnKarsilastirma" class="main-btn" onclick="hesaplaKarsilastirma()">Hesapla</button>
+            <button id="btnResetKarsilastirma" class="reset-btn" onclick="sifirlaKarsilastirma(event)">↺</button>
+        </div>
+
+        <div class="result" id="sonucKarsilastirma">
+            <p>Kutu 1 Adet Fiyat <span id="resAdetFiyat" class="highlight"></span></p>
+            <p>Tekli Fiyat <span id="resTekli" class="highlight"></span></p>
+            <div class="box">
+                <p><b>Kutu Avantajı</b> <span id="resKarsilastirmaIndirim" class="highlight"></span></p>
+            </div>
+        </div>
+
+        <div class="creator">Created by Fatih Mersin</div>
+    </div>
+
+    <div id="kgLtTab" class="tab-content">
+        <div class="input-group">
+            <label>Fiyat</label>
+            <div class="field-container">
+                <input id="fiyatKg" type="text" inputmode="decimal">
+                <div class="clear-btn-ort" ontouchstart="temizleKg(event,'fiyatKg')" onclick="temizleKg(event,'fiyatKg')">×</div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Gramaj</label>
+            <div class="field-container">
+                <input id="gramajKg" type="text" inputmode="decimal">
+                <div class="clear-btn-ort" ontouchstart="temizleKg(event,'gramajKg')" onclick="temizleKg(event,'gramajKg')">×</div>
+            </div>
+        </div>
+
+        <div class="button-row">
+            <button id="hesaplaBtnKg" class="main-btn" onclick="hesaplaKg()">Hesapla</button>
+            <button id="btnResetKg" class="reset-btn" onclick="sifirlaKg(event)">↺</button>
+        </div>
+
+        <div class="result" id="sonucKg">
+            <p>Fiyat <span id="resFiyatKg" class="highlight"></span></p>
+            <p>Gramaj <span id="resGramajKg" class="highlight"></span></p>
+            <div class="box">
+                <p style="font-size:15px; font-weight:700; color:#27ae60;"><b>KG / LT Fiyatı</b> <span id="resKgFiyat" class="highlight" style="color:#27ae60;"></span></p>
+            </div>
+        </div>
+
+        <div class="creator">Created by Fatih Mersin</div>
+    </div>
+
+    <div id="sayiToplaTab" class="tab-content">
+        <div id="kutularTopla"></div>
+        <button class="add-box-btn" onclick="kutuEkleTopla()">+ Kutu Ekle</button>
+
+        <div class="button-row">
+            <button id="hesaplaBtnTopla" class="main-btn" onclick="hesaplaTopla()">Hesapla</button>
+            <button id="btnResetTopla" class="reset-btn" onclick="sifirlaTopla(event)">↺</button>
+        </div>
+
+        <div class="result result-dinamik" id="sonucAlaniTopla">
+            <p>Toplam Sonuç <span class="highlight total" id="toplaSonuc"></span></p>
+        </div>
+
+        <div class="creator">Created by Fatih Mersin</div>
+    </div>
+
+    <div id="sayiCikarTab" class="tab-content">
+        <div id="kutularCikar"></div>
+        <button class="add-box-btn" onclick="kutuEkleCikar()">+ Kutu Ekle</button>
+
+        <div class="button-row">
+            <button id="hesaplaBtnCikar" class="main-btn" onclick="hesaplaCikar()">Hesapla</button>
+            <button id="btnResetCikar" class="reset-btn" onclick="sifirlaCikar(event)">↺</button>
+        </div>
+
+        <div class="result result-dinamik" id="sonucAlaniCikar">
+            <p>Kalan Sonuç <span class="highlight total-cikar" id="cikarSonuc"></span></p>
+        </div>
+
+        <div class="creator">Created by Fatih Mersin</div>
+    </div>
+
+    <div id="hizliFaturaTab" class="tab-content">
+        <div class="fatura-header-labels">
+            <span>Adet</span>
+            <span>B. Fiyat</span>
+            <span>Tutar</span>
+        </div>
+        
+        <div id="faturaSatirlarKonteyner"></div>
+        
+        <button class="add-box-btn" onclick="satirEkleFatura()">+ Satır Ekle</button>
+
+        <div class="button-row">
+            <button id="hesaplaBtnFatura" class="main-btn" onclick="hesaplaFatura()">Genel Toplam</button>
+            <button id="btnResetFatura" class="reset-btn" onclick="sifirlaFatura(event)">↺</button>
+        </div>
+
+        <div class="result result-dinamik" id="sonucAlaniFatura" style="display: block;">
+            <p>Genel Toplam <span class="highlight total" id="faturaGenelToplam"></span></p>
+        </div>
+
+        <div class="creator">Created by Fatih Mersin</div>
+    </div>
+
+    <div id="ilaveTab" class="tab-content">
+        <div class="input-group">
+            <label>Tutar (Ana Para)</label>
+            <div class="field-container">
+                <input id="ilaveTutar" type="text" inputmode="decimal">
+                <div class="clear-btn-ort" ontouchstart="temizleIlave(event,'ilaveTutar')" onclick="temizleIlave(event,'ilaveTutar')">×</div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Yüzde Oranı (%)</label>
+            <div class="field-container">
+                <input id="ilaveYuzdeDegeri" type="text" inputmode="decimal" class="yellow-bg" value="25">
+                <div class="clear-btn-ort" ontouchstart="temizleIlave(event,'ilaveYuzdeDegeri')" onclick="temizleIlave(event,'ilaveYuzdeDegeri')">×</div>
+            </div>
+        </div>
+
+        <div class="button-row">
+            <button id="hesaplaBtnIlave" class="main-btn" onclick="hesaplaIlave()">Hesapla</button>
+            <button id="btnResetIlave" class="reset-btn" onclick="sifirlaIlave(event)">↺</button>
+        </div>
+
+        <div class="result" id="sonucIlave">
+            <p>Girilen Tutar <span id="girilenTutarIlave" class="highlight"></span></p>
+            <p>Yüzde Oranı <span id="secilenYuzdeIlave" class="highlight"></span></p>
+            <div class="box">
+                <p>Hesaplanan İlave Tutar (<span id="boxYuzdeOranIlave"></span>) <span id="ilaveUzerineEklenenTutar" class="highlight"></span></p>
+                <p style="font-size:15px; font-weight:700; color:#27ae60;"><b>% İLAVE EKLENMİŞ SONUÇ</b> <span id="toplamSonucIlave" class="highlight" style="color:#27ae60;"></span></p>
+            </div>
+        </div>
+
+        <div class="creator">Created by Fatih Mersin</div>
+    </div>
+
+</div>
+
+<script>
+const alanlarSatis = document.querySelectorAll("#satisTab input");
+const alanlarKarGeri = document.querySelectorAll("#karGeriTab input");
+const alanlarIndirim = document.querySelectorAll("#indirimTab input");
+const alanlarKdv = document.querySelectorAll("#kdvTab input");
+const alanlarIndirimOran = document.querySelectorAll("#indirimOranTab input");
+const alanlarKarsilastirma = document.querySelectorAll("#karsilastirmaTab input");
+const alanlarKg = document.querySelectorAll("#kgLtTab input");
+const alanlarIlave = document.querySelectorAll("#ilaveTab input");
+
+/* ANA SEKMELER ARASI GEÇİŞ FONKSİYONU */
+function switchMainTab(groupClass) {
+    document.querySelectorAll('#mainTabHeader .tab-btn').forEach(btn => btn.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    document.querySelectorAll('.sub-tab-btn').forEach(btn => {
+        btn.classList.remove('visible');
+        btn.classList.remove('active');
+    });
+    const subButtons = document.querySelectorAll(`.sub-tab-btn.${groupClass}`);
+    subButtons.forEach((btn, idx) => {
+        btn.classList.add('visible');
+        if(idx === 0) {
+            btn.classList.add('active');
+            btn.click();
+        }
+    });
+}
+
+/* ALT SEKME DEĞİŞTİRME FONKSİYONU */
+function switchTab(tabId, focusId) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.sub-tab-btn.visible').forEach(btn => btn.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+    setTimeout(() => {
+        if(!focusId) return;
+        const targetInput = document.getElementById(focusId);
+        if(targetInput) {
+            targetInput.focus();
+            if(targetInput.tagName === "INPUT") targetInput.select();
+        }
+    }, 50);
+}
+
+// Global sayıcılar ve Zamanlayıcı Referansları
+let toplaKutuSayac = 0;
+let cikarKutuSayac = 0;
+let faturaSatirSayac = 0;
+let resetTimeouts = {}; 
+
+window.addEventListener("DOMContentLoaded", () => {
+    const ilkAlan = document.getElementById("brut");
+    if(ilkAlan) {
+        ilkAlan.focus();
+    }
+    sifirlaTopla();
+    sifirlaCikar();
+    sifirlaFatura();
+
+    /* MOUSE TEKERLEĞİ İLE YATAY KAYDIRMA DESTEĞİ */
+    const mainTabHeader = document.getElementById("mainTabHeader");
+    if(mainTabHeader) {
+        mainTabHeader.addEventListener("wheel", (e) => {
+            e.preventDefault();
+            mainTabHeader.scrollLeft += e.deltaY;
+        });
+    }
+
+    const subTabHeader = document.getElementById("subTabHeader");
+    if(subTabHeader) {
+        subTabHeader.addEventListener("wheel", (e) => {
+            e.preventDefault();
+            subTabHeader.scrollLeft += e.deltaY;
+        });
+    }
+
+    /* Girdi yapıldığında sonuç panelini doğrudan gizleyen dinleyicileri bağla */
+    const sekmeler = [
+        { id: "satisTab", sonuc: "sonucSatis" },
+        { id: "karGeriTab", sonuc: "sonucKarGeri" },
+        { id: "indirimTab", sonuc: "sonucIndirim" },
+        { id: "kdvTab", sonuc: "sonucKdv" },
+        { id: "indirimOranTab", sonuc: "sonucIndirimOran" },
+        { id: "karsilastirmaTab", sonuc: "sonucKarsilastirma" },
+        { id: "kgLtTab", sonuc: "sonucKg" },
+        { id: "ilaveTab", sonuc: "sonucIlave" }
+    ];
+
+    sekmeler.forEach(sekme => {
+        const tabEl = document.getElementById(sekme.id);
+        if(!tabEl) return;
+        
+        tabEl.querySelectorAll("input").forEach(inputAlan => {
+            inputAlan.addEventListener("input", () => {
+                const sonucAlan = document.getElementById(sekme.sonuc);
+                if(sonucAlan) sonucAlan.style.display = "none";
+            });
+        });
+
+        tabEl.querySelectorAll("select").forEach(selectAlan => {
+            selectAlan.addEventListener("change", () => {
+                const sonucAlan = document.getElementById(sekme.sonuc);
+                if(sonucAlan) sonucAlan.style.display = "none";
+            });
+        });
+    });
+});
+
+function formatParaGenel(sayi) {
+    return sayi.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function parseInputFloat(val) {
+    let v = val.trim();
+    if(!v) return 0;
+    return parseFloat(v.replace(/\./g,"").replace(/,/g,".")) || 0;
+}
+
+// Sadece hesapla butonunun anlık parlamasını sağlayan fonksiyon
+function aktifEtHesaplamaEfekti(btnId) {
+    let btn = document.getElementById(btnId);
+    if(btn) {
+        btn.classList.add("clicked-blue");
+        setTimeout(() => { btn.classList.remove("clicked-blue"); }, 200);
+    }
+}
+
+// Ortak temizleme işleminde sonuç gizleme fonksiyonu
+function alanTemizleVeSondur(inputId, sonucId) {
+    document.getElementById(inputId).value = "";
+    const sonucAlan = document.getElementById(sonucId);
+    if(sonucAlan && sonucId !== 'sonucAlaniFatura') {
+        sonucAlan.style.display = "none";
+    }
+    document.getElementById(inputId).focus();
+}
+
+// Ortak 5 saniyelik kırmızı reset efekti yönetim fonksiyonu
+function tetikleResetEfekti(btnId) {
+    const resetBtn = document.getElementById(btnId);
+    if(!resetBtn) return;
+    
+    resetBtn.classList.add("active-reset");
+
+    if (resetTimeouts[btnId]) {
+        clearTimeout(resetTimeouts[btnId]);
+    }
+
+    resetTimeouts[btnId] = setTimeout(() => {
+        resetBtn.classList.remove("active-reset");
+    }, 5000);
+}
+
+/* ==========================================================================
+   MODÜL: HIZLI FATURA HESABI (ÜÇLÜ YAN YANA YAPI)
+   ========================================================================== */
+function satirEkleFatura() {
+    faturaSatirSayac++;
+    let konteyner = document.getElementById("faturaSatirlarKonteyner");
+    let yeniSatir = document.createElement("div");
+    yeniSatir.className = "fatura-row";
+    yeniSatir.id = `faturaRow_${faturaSatirSayac}`;
+    yeniSatir.innerHTML = `
+        <div class="fatura-input-box">
+            <input type="text" id="faturaAdet_${faturaSatirSayac}" inputmode="decimal" placeholder="" oninput="faturaSatirHesapla(${faturaSatirSayac})">
+        </div>
+        <div class="fatura-input-box">
+            <input type="text" id="faturaFiyat_${faturaSatirSayac}" inputmode="decimal" placeholder="" oninput="faturaSatirHesapla(${faturaSatirSayac})">
+        </div>
+        <div class="fatura-input-box">
+            <input type="text" id="faturaTutar_${faturaSatirSayac}" class="fatura-tutar-disabled" readonly tabindex="-1" value="">
+        </div>
+        <button class="fatura-del-btn" onclick="satirSilFatura(${faturaSatirSayac})">×</button>
+    `;
+    konteyner.appendChild(yeniSatir);
+}
+
+function faturaSatirHesapla(id) {
+    let adetVal = parseInputFloat(document.getElementById(`faturaAdet_${id}`).value);
+    let fiyatVal = parseInputFloat(document.getElementById(`faturaFiyat_${id}`).value);
+    let satirToplami = adetVal * fiyatVal;
+    document.getElementById(`faturaTutar_${id}`).value = satirToplami === 0 ? "" : formatParaGenel(satirToplami);
+}
+
+function satirSilFatura(id) {
+    let el = document.getElementById(`faturaRow_${id}`);
+    if(el) el.remove();
+    hesaplaFatura(); 
+}
+
+function hesaplaFatura() {
+    let rows = document.querySelectorAll("#faturaSatirlarKonteyner .fatura-row");
+    let genelToplam = 0;
+    rows.forEach(row => {
+        let id = row.id.split("_")[1];
+        let adetVal = parseInputFloat(document.getElementById(`faturaAdet_${id}`).value);
+        let fiyatVal = parseInputFloat(document.getElementById(`faturaFiyat_${id}`).value);
+        genelToplam += (adetVal * fiyatVal);
+    });
+    document.getElementById("faturaGenelToplam").innerText = genelToplam === 0 ? "" : formatParaGenel(genelToplam);
+    aktifEtHesaplamaEfekti("hesaplaBtnFatura");
+}
+
+function sifirlaFatura(e) {
+    if(e) e.preventDefault();
+    document.getElementById("faturaSatirlarKonteyner").innerHTML = "";
+    faturaSatirSayac = 0;
+    satirEkleFatura();
+    satirEkleFatura();
+    document.getElementById("faturaGenelToplam").innerText = "";
+    if(e) tetikleResetEfekti("btnResetFatura");
+
+    // Reset tetiklendiğinde doğrudan ilk satırın adet kutusuna odaklan
+    setTimeout(() => {
+        let ilkKutu = document.getElementById("faturaAdet_1");
+        if(ilkKutu) ilkKutu.focus();
+    }, 30);
+}
+
+/* ==========================================================================
+   MODÜL: SATIŞ FİYATI HESAPLA
+   ========================================================================== */
+function degistirSatis(id, yon) {
+    document.getElementById("sonucSatis").style.display = "none";
+    let selectEl = document.getElementById(id);
+    let index = selectEl.selectedIndex + yon;
+    if(index >= 0 && index < selectEl.options.length) {
+        selectEl.selectedIndex = index;
+    }
+}
+
+function temizleSatis(event, id) {
+    if(event) event.preventDefault();
+    alanTemizleVeSondur(id, "sonucSatis");
+}
+
+function hesaplaSatis() {
+    let brutVal = parseInputFloat(document.getElementById("brut").value);
+    let miktarVal = parseInputFloat(document.getElementById("miktar").value);
+    let miktar2Val = parseInputFloat(document.getElementById("miktar2").value);
+    
+    let isk1 = parseInputFloat(document.getElementById("isk1").value);
+    let isk2 = parseInputFloat(document.getElementById("isk2").value);
+    let isk3 = parseInputFloat(document.getElementById("isk3").value);
+    let isk4 = parseInputFloat(document.getElementById("isk4").value);
+    
+    let karOran = parseInputFloat(document.getElementById("kar").value);
+    let kdvOran = parseInputFloat(document.getElementById("kdv").value);
+    
+    let kutuMiktarVal = parseInputFloat(document.getElementById("kutuMiktar").value);
+    let kutuIskontoOran = parseInputFloat(document.getElementById("kutuIskonto").value);
+
+    let carpan1 = (miktarVal > 0) ? miktarVal : 1;
+    let carpan2 = (miktar2Val > 0) ? miktar2Val : 1;
+    let toplamMiktarCarpan = carpan1 * carpan2;
+
+    let hamBirimFiyat = brutVal;
+
+    let netBirimFiyat = hamBirimFiyat;
+    if(isk1 > 0) netBirimFiyat = netBirimFiyat * (1 - (isk1 / 100));
+    if(isk2 > 0) netBirimFiyat = netBirimFiyat * (1 - (isk2 / 100));
+    if(isk3 > 0) netBirimFiyat = netBirimFiyat * (1 - (isk3 / 100));
+    if(isk4 > 0) netBirimFiyat = netBirimFiyat * (1 - (isk4 / 100));
+
+    netBirimFiyat = netBirimFiyat / toplamMiktarCarpan;
+
+    let karliFiyat = netBirimFiyat * (1 + (karOran / 100));
+    let satisFiyatKdvDahil = karliFiyat * (1 + (kdvOran / 100));
+    let alisFiyatKdvDahil = netBirimFiyat * (1 + (kdvOran / 100));
+
+    document.getElementById("ham").innerText = formatParaGenel(hamBirimFiyat) + " ₺";
+    
+    let iskText = "";
+    if(isk1>0) iskText += `%${isk1}`;
+    if(isk2>0) iskText += `+${isk2}`;
+    if(isk3>0) iskText += `+${isk3}`;
+    if(isk4>0) iskText += `+${isk4}`;
+    if(toplamMiktarCarpan > 1) iskText += ` / ${toplamMiktarCarpan} Adet`;
+    document.getElementById("txtIsk").innerText = iskText ? `(${iskText})` : "";
+    document.getElementById("net").innerText = formatParaGenel(netBirimFiyat) + " ₺";
+    
+    document.getElementById("txtKar").innerText = `(%${karOran})`;
+    document.getElementById("karli").innerText = formatParaGenel(karliFiyat) + " ₺";
+    
+    document.getElementById("txtSatisKdv").innerText = `(%${kdvOran})`;
+    document.getElementById("satis").innerText = formatParaGenel(satisFiyatKdvDahil) + " ₺";
+    
+    document.getElementById("txtAlisKdv").innerText = `(%${kdvOran})`;
+    document.getElementById("alisKdvDahil").innerText = formatParaGenel(alisFiyatKdvDahil) + " ₺";
+
+    if (kutuMiktarVal > 0) {
+        document.getElementById("kutuSonucBox").style.display = "block";
+        let kutuTutariIskontosuz = satisFiyatKdvDahil * kutuMiktarVal;
+        let kutuIskontoTutari = kutuTutariIskontosuz * (kutuIskontoOran / 100);
+        let kutuSatisFiyatNihai = kutuTutariIskontosuz - kutuIskontoTutari;
+
+        document.getElementById("km").innerText = formatParaGenel(kutuMiktarVal) + " Adet";
+        document.getElementById("ksk").innerText = formatParaGenel(kutuTutariIskontosuz) + " ₺";
+        document.getElementById("txtKutuIsk").innerText = `(%${kutuIskontoOran})`;
+        document.getElementById("kit").innerText = formatParaGenel(kutuIskontoTutari) + " ₺";
+        document.getElementById("ksf").innerText = formatParaGenel(kutuSatisFiyatNihai) + " ₺";
+    } else {
+        document.getElementById("kutuSonucBox").style.display = "none";
+    }
+
+    document.getElementById("sonucSatis").style.display = "block";
+    aktifEtHesaplamaEfekti("hesaplaBtnSatis");
+}
+
+function sifirlaSatis(e) {
+    if(e) e.preventDefault();
+    document.getElementById("brut").value = "";
+    document.getElementById("miktar").value = "";
+    document.getElementById("miktar2").value = "";
+    document.getElementById("isk1").value = "";
+    document.getElementById("isk2").value = "";
+    document.getElementById("isk3").value = "";
+    document.getElementById("isk4").value = "";
+    document.getElementById("kutuMiktar").value = "";
+    
+    document.getElementById("kar").selectedIndex = 4; 
+    document.getElementById("kdv").selectedIndex = 0; 
+    document.getElementById("kutuIskonto").selectedIndex = 0; 
+    
+    document.getElementById("sonucSatis").style.display = "none";
+    tetikleResetEfekti("btnResetSatis");
+    document.getElementById("brut").focus();
+}
+
+/* ==========================================================================
+   MODÜL: % GERİ GELME HESAPLAMASI
+   ========================================================================= */
+function temizleKarGeri(event, id) {
+    if(event) event.preventDefault();
+    alanTemizleVeSondur(id, "sonucKarGeri");
+}
+
+function hesaplaKarGeri() {
+    let fiyatVal = parseInputFloat(document.getElementById("karGeriFiyat").value);
+    let oranVal = parseInputFloat(document.getElementById("karGeriOran").value);
+    
+    let dusulenKar = fiyatVal * (oranVal / 100);
+    let anaFiyat = fiyatVal - dusulenKar;
+    
+    document.getElementById("girilenFiyatKarGeri").innerText = formatParaGenel(fiyatVal) + " ₺";
+    document.getElementById("secilenOranKarGeri").innerText = "%" + formatParaGenel(oranVal);
+    document.getElementById("dusulenKarTutari").innerText = formatParaGenel(dusulenKar) + " ₺";
+    document.getElementById("anaFiyatKarGeri").innerText = formatParaGenel(anaFiyat) + " ₺";
+    
+    document.getElementById("sonucKarGeri").style.display = "block";
+    aktifEtHesaplamaEfekti("hesaplaBtnKarGeri");
+}
+
+function sifirlaKarGeri(e) {
+    if(e) e.preventDefault();
+    document.getElementById("karGeriFiyat").value = "";
+    document.getElementById("karGeriOran").value = "7";
+    document.getElementById("sonucKarGeri").style.display = "none";
+    tetikleResetEfekti("btnResetKarGeri");
+    document.getElementById("karGeriFiyat").focus();
+}
+
+/* ==========================================================================
+   MODÜL: KUTU İSKONTOSU UYGULA
+   ========================================================================= */
+function degistirIndirim(yon) {
+    let selectEl = document.getElementById("indirim");
+    let index = selectEl.selectedIndex + yon;
+    if(index >= 0 && index < selectEl.options.length) {
+        selectEl.selectedIndex = index;
+    }
+}
+
+function temizleIndirim(event, id) {
+    if(event) event.preventDefault();
+    alanTemizleVeSondur(id, "sonucIndirim");
+}
+
+function hesaplaIndirim() {
+    let fiyatVal = parseInputFloat(document.getElementById("fiyat").value);
+    let adetVal = parseInputFloat(document.getElementById("adet").value);
+    let indirimOran = parseInputFloat(document.getElementById("indirim").value);
+    
+    let toplam = fiyatVal * adetVal;
+    let indirimliToplam = toplam * (1 - (indirimOran / 100));
+    let indirimliTekFiyat = indirimliToplam / adetVal;
+    
+    document.getElementById("toplam").innerText = formatParaGenel(toplam) + " ₺";
+    document.getElementById("indirimli").innerText = formatParaGenel(indirimliToplam) + " ₺";
+    document.getElementById("oran").innerText = "%" + indirimOran;
+    document.getElementById("birim").innerText = formatParaGenel(indirimliTekFiyat) + " ₺";
+    
+    document.getElementById("sonucIndirim").style.display = "block";
+    aktifEtHesaplamaEfekti("hesaplaBtnIndirim");
+}
+
+function sifirlaIndirim(e) {
+    if(e) e.preventDefault();
+    document.getElementById("fiyat").value = "";
+    document.getElementById("adet").value = "";
+    document.getElementById("indirim").selectedIndex = 0;
+    document.getElementById("sonucIndirim").style.display = "none";
+    tetikleResetEfekti("btnResetIndirim");
+    document.getElementById("fiyat").focus();
+}
+
+/* ==========================================================================
+   MODÜL: KDV HARİÇ HESAPLA
+   ========================================================================= */
+function degistirKdvSecim(yon) {
+    let selectEl = document.getElementById("kdvSecim");
+    let index = selectEl.selectedIndex + yon;
+    if(index >= 0 && index < selectEl.options.length) {
+        selectEl.selectedIndex = index;
+    }
+}
+
+function temizleKdv(event, id) {
+    if(event) event.preventDefault();
+    alanTemizleVeSondur(id, "sonucKdv");
+}
+
+function hesaplaKdv() {
+    let kdvDahilVal = parseInputFloat(document.getElementById("kdvDahil").value);
+    let seciliKdv = parseInputFloat(document.getElementById("kdvSecim").value);
+    
+    let kdvHaricTutar = kdvDahilVal / (1 + (seciliKdv / 100));
+    let kdvTutari = kdvDahilVal - kdvHaricTutar;
+    
+    document.getElementById("oranKdv").innerText = "%" + seciliKdv;
+    
+    document.getElementById("kdvTutar").innerText = kdvTutari.toLocaleString('tr-TR', { minimumFractionDigits: 4, maximumFractionDigits: 4 }) + " ₺";
+    document.getElementById("haric").innerText = kdvHaricTutar.toLocaleString('tr-TR', { minimumFractionDigits: 4, maximumFractionDigits: 4 }) + " ₺";
+    
+    document.getElementById("sonucKdv").style.display = "block";
+    aktifEtHesaplamaEfekti("hesaplaBtnKdv");
+}
+
+function sifirlaKdv(e) {
+    if(e) e.preventDefault();
+    document.getElementById("kdvDahil").value = "";
+    document.getElementById("kdvSecim").selectedIndex = 0;
+    document.getElementById("sonucKdv").style.display = "none";
+    tetikleResetEfekti("btnResetKdv");
+    document.getElementById("kdvDahil").focus();
+}
+
+/* ==========================================================================
+   MODÜL: İNDİRİM ORANI NEDİR
+   ========================================================================= */
+function temizleIndirimOran(event, id) {
+    if(event) event.preventDefault();
+    alanTemizleVeSondur(id, "sonucIndirimOran");
+}
+
+function hesaplaIndirimOran() {
+    let eskiVal = parseInputFloat(document.getElementById("eskiFiyat").value);
+    let yeniVal = parseInputFloat(document.getElementById("yeniFiyat").value);
+    
+    let indirimTutari = eskiVal - yeniVal;
+    let indirimYuzdesi = eskiVal === 0 ? 0 : (indirimTutari / eskiVal) * 100;
+    
+    document.getElementById("resEski").innerText = formatParaGenel(eskiVal) + " ₺";
+    document.getElementById("resYeni").innerText = formatParaGenel(yeniVal) + " ₺";
+    document.getElementById("resTutar").innerText = formatParaGenel(indirimTutari) + " ₺";
+    document.getElementById("resIndirimYuzde").innerText = "%" + formatParaGenel(indirimYuzdesi);
+    
+    document.getElementById("sonucIndirimOran").style.display = "block";
+    aktifEtHesaplamaEfekti("hesaplaBtnIndirimOran");
+}
+
+function sifirlaIndirimOran(e) {
+    if(e) e.preventDefault();
+    document.getElementById("eskiFiyat").value = "";
+    document.getElementById("yeniFiyat").value = "";
+    document.getElementById("sonucIndirimOran").style.display = "none";
+    tetikleResetEfekti("btnResetIndirimOran");
+    document.getElementById("eskiFiyat").focus();
+}
+
+/* ==========================================================================
+   MODÜL: KUTU AVANTAJI NEDİR
+   ========================================================================= */
+function temizleKarsilastirma(event, id) {
+    if(event) event.preventDefault();
+    alanTemizleVeSondur(id, "sonucKarsilastirma");
+}
+
+function hesaplaKarsilastirma() {
+    let kutuFiyatVal = parseInputFloat(document.getElementById("kutuFiyat").value);
+    let adetKarsilastirmaVal = parseInputFloat(document.getElementById("adetKarsilastirma").value);
+    let tekliFiyatVal = parseInputFloat(document.getElementById("tekliFiyat").value);
+    
+    let kutuBirimFiyatı = adetKarsilastirmaVal === 0 ? 0 : kutuFiyatVal / adetKarsilastirmaVal;
+    let farkYuzde = 0;
+    if(tekliFiyatVal > 0) {
+        farkYuzde = ((tekliFiyatVal - kutuBirimFiyatı) / tekliFiyatVal) * 100;
+    }
+    
+    document.getElementById("resAdetFiyat").innerText = formatParaGenel(kutuBirimFiyatı) + " ₺";
+    document.getElementById("resTekli").innerText = formatParaGenel(tekliFiyatVal) + " ₺";
+    document.getElementById("resKarsilastirmaIndirim").innerText = "Kutu Alımında %" + formatParaGenel(farkYuzde) + " Daha Avantajlı";
+    
+    document.getElementById("sonucKarsilastirma").style.display = "block";
+    aktifEtHesaplamaEfekti("hesaplaBtnKarsilastirma");
+}
+
+function sifirlaKarsilastirma(e) {
+    if(e) e.preventDefault();
+    document.getElementById("kutuFiyat").value = "";
+    document.getElementById("adetKarsilastirma").value = "";
+    document.getElementById("tekliFiyat").value = "";
+    document.getElementById("sonucKarsilastirma").style.display = "none";
+    tetikleResetEfekti("btnResetKarsilastirma");
+    document.getElementById("kutuFiyat").focus();
+}
+
+/* ==========================================================================
+   MODÜL: KG / LT FİYATI NEDİR
+   ========================================================================= */
+function temizleKg(event, id) {
+    if(event) event.preventDefault();
+    alanTemizleVeSondur(id, "sonucKg");
+}
+
+function hesaplaKg() {
+    let fiyatVal = parseInputFloat(document.getElementById("fiyatKg").value);
+    let gramajVal = parseInputFloat(document.getElementById("gramajKg").value);
+    
+    let birKgFiyati = gramajVal === 0 ? 0 : (fiyatVal / gramajVal) * 1000;
+    
+    document.getElementById("resFiyatKg").innerText = formatParaGenel(fiyatVal) + " ₺";
+    document.getElementById("resGramajKg").innerText = formatParaGenel(gramajVal) + " Gr/Ml";
+    document.getElementById("resKgFiyat").innerText = formatParaGenel(birKgFiyati) + " ₺";
+    
+    document.getElementById("sonucKg").style.display = "block";
+    aktifEtHesaplamaEfekti("hesaplaBtnKg");
+}
+
+function sifirlaKg(e) {
+    if(e) e.preventDefault();
+    document.getElementById("fiyatKg").value = "";
+    document.getElementById("gramajKg").value = "";
+    document.getElementById("sonucKg").style.display = "none";
+    tetikleResetEfekti("btnResetKg");
+    document.getElementById("fiyatKg").focus();
+}
+
+/* ==========================================================================
+   MODÜL: DİNAMİK TOPLAMA SİSTEMİ
+   ========================================================================= */
+function kutuEkleTopla() {
+    toplaKutuSayac++;
+    let konteyner = document.getElementById("kutularTopla");
+    let yeniKutu = document.createElement("div");
+    yeniKutu.className = "input-group input-group-dinamik";
+    yeniKutu.id = `toplaKutuGroup_${toplaKutuSayac}`;
+    yeniKutu.innerHTML = `
+        <label>${toplaKutuSayac}. Sayı</label>
+        <div class="field-container">
+            <input type="text" id="toplaSayi_${toplaKutuSayac}" inputmode="decimal" placeholder="" oninput="hesaplaToplaYalin()">
+            <button class="delete-btn-ort" onclick="kutuSilTopla(${toplaKutuSayac})">🗑</button>
+        </div>
+    `;
+    konteyner.appendChild(yeniKutu);
+}
+
+function kutuSilTopla(id) {
+    let el = document.getElementById(`toplaKutuGroup_${id}`);
+    if(el) el.remove();
+    hesaplaToplaYalin();
+}
+
+function hesaplaToplaYalin() {
+    let inputs = document.querySelectorAll("#kutularTopla input");
+    let toplam = 0;
+    inputs.forEach(inp => {
+        toplam += parseInputFloat(inp.value);
+    });
+    document.getElementById("toplaSonuc").innerText = toplam === 0 ? "" : formatParaGenel(toplam);
+}
+
+function hesaplaTopla() {
+    hesaplaToplaYalin();
+    aktifEtHesaplamaEfekti("hesaplaBtnTopla");
+}
+
+function sifirlaTopla(e) {
+    if(e) e.preventDefault();
+    document.getElementById("kutularTopla").innerHTML = "";
+    toplaKutuSayac = 0;
+    kutuEkleTopla();
+    kutuEkleTopla();
+    document.getElementById("toplaSonuc").innerText = "";
+    if(e) tetikleResetEfekti("btnResetTopla");
+
+    // Reset tetiklendiğinde doğrudan ilk kutuya odaklan
+    setTimeout(() => {
+        let ilkKutu = document.getElementById("toplaSayi_1");
+        if(ilkKutu) ilkKutu.focus();
+    }, 30);
+}
+
+/* ==========================================================================
+   MODÜL: DİNAMİK ÇIKARMA SİSTEMİ
+   ========================================================================= */
+function kutuEkleCikar() {
+    cikarKutuSayac++;
+    let konteyner = document.getElementById("kutularCikar");
+    let yeniKutu = document.createElement("div");
+    yeniKutu.className = "input-group input-group-dinamik";
+    yeniKutu.id = `cikarKutuGroup_${cikarKutuSayac}`;
+    yeniKutu.innerHTML = `
+        <label>${cikarKutuSayac == 1 ? 'Ana Sayı (Başlangıç)' : (cikarKutuSayac - 1) + '. Çıkarılan Sayı'}</label>
+        <div class="field-container">
+            <input type="text" id="cikarSayi_${cikarKutuSayac}" inputmode="decimal" placeholder="" oninput="hesaplaCikarYalin()">
+            ${cikarKutuSayac > 1 ? `<button class="delete-btn-ort" onclick="kutuSilCikar(${cikarKutuSayac})">🗑</button>` : `<div style="width:40px;"></div>`}
+        </div>
+    `;
+    konteyner.appendChild(yeniKutu);
+}
+
+function kutuSilCikar(id) {
+    let el = document.getElementById(`cikarKutuGroup_${id}`);
+    if(el) el.remove();
+    hesaplaCikarYalin();
+}
+
+function hesaplaCikarYalin() {
+    let inputs = document.querySelectorAll("#kutularCikar input");
+    let kalan = 0;
+    inputs.forEach((inp, idx) => {
+        let val = parseInputFloat(inp.value);
+        if(idx === 0) {
+            kalan = val;
+        } else {
+            kalan -= val;
+        }
+    });
+    document.getElementById("cikarSonuc").innerText = kalan === 0 ? "" : formatParaGenel(kalan);
+}
+
+function hesaplaCikar() {
+    hesaplaCikarYalin();
+    aktifEtHesaplamaEfekti("hesaplaBtnCikar");
+}
+
+function sifirlaCikar(e) {
+    if(e) e.preventDefault();
+    document.getElementById("kutularCikar").innerHTML = "";
+    cikarKutuSayac = 0;
+    kutuEkleCikar();
+    kutuEkleCikar();
+    document.getElementById("cikarSonuc").innerText = "";
+    if(e) tetikleResetEfekti("btnResetCikar");
+
+    // Reset tetiklendiğinde doğrudan ilk kutuya odaklan
+    setTimeout(() => {
+        let ilkKutu = document.getElementById("cikarSayi_1");
+        if(ilkKutu) ilkKutu.focus();
+    }, 30);
+}
+
+/* ==========================================================================
+   MODÜL: % EKLE
+   ========================================================================= */
+function temizleIlave(event, id) {
+    if(event) event.preventDefault();
+    alanTemizleVeSondur(id, "sonucIlave");
+}
+
+function hesaplaIlave() {
+    let tutarVal = parseInputFloat(document.getElementById("ilaveTutar").value);
+    let yuzdeVal = parseInputFloat(document.getElementById("ilaveYuzdeDegeri").value);
+    
+    let eklenenTutar = tutarVal * (yuzdeVal / 100);
+    let toplamSonuc = tutarVal + eklenenTutar;
+    
+    document.getElementById("girilenTutarIlave").innerText = formatParaGenel(tutarVal) + " ₺";
+    document.getElementById("secilenYuzdeIlave").innerText = "%" + formatParaGenel(yuzdeVal);
+    document.getElementById("boxYuzdeOranIlave").innerText = "%" + formatParaGenel(yuzdeVal);
+    document.getElementById("ilaveUzerineEklenenTutar").innerText = formatParaGenel(eklenenTutar) + " ₺";
+    document.getElementById("toplamSonucIlave").innerText = formatParaGenel(toplamSonuc) + " ₺";
+    
+    document.getElementById("sonucIlave").style.display = "block";
+    aktifEtHesaplamaEfekti("hesaplaBtnIlave");
+}
+
+function sifirlaIlave(e) {
+    if(e) e.preventDefault();
+    document.getElementById("ilaveTutar").value = "";
+    document.getElementById("ilaveYuzdeDegeri").value = "25";
+    document.getElementById("sonucIlave").style.display = "none";
+    tetikleResetEfekti("btnResetIlave");
+    document.getElementById("ilaveTutar").focus();
+}
+</script>
+
+</body>
+</html>
