@@ -1094,7 +1094,7 @@ function setupOdakTakibi() {
    ENTER, SHIFT+ESC VE ESC TUŞU KLAVYE TAKİP SİSTEMİ
    ========================================================================== */
 document.addEventListener("keydown", function(e) {
-    // 🟢 1. SHIFT + ESC YAPINCA AKTİF RESET BUTONUNA BAS
+    // 1. SHIFT + ESC YAPINCA AKTİF RESET BUTONUNA BAS
     if (e.shiftKey && (e.key === "Escape" || e.keyCode === 27)) {
         e.preventDefault();
         let activeTab = document.querySelector(".tab-content.active");
@@ -1107,7 +1107,7 @@ document.addEventListener("keydown", function(e) {
         return;
     }
 
-    // 🟢 2. SADECE ESC TUŞU: KUTULAR VE HESAPLA BUTONU ARASINDA GERİ GELME SİSTEMİ
+    // 2. SADECE ESC TUŞU: KUTULAR VE HESAPLA BUTONU ARASINDA GERİ GELME SİSTEMİ
     if (!e.shiftKey && (e.key === "Escape" || e.keyCode === 27)) {
         e.preventDefault();
         let activeElement = document.activeElement;
@@ -1168,7 +1168,7 @@ document.addEventListener("keydown", function(e) {
                 if (currentIndex === fields.length - 1) {
                     let calcBtn = activeTab.querySelector(".main-btn");
                     if (calcBtn) {
-                        calcBtn.focus(); // Hesapla butonuna odaklanmasını sağlar
+                        calcBtn.focus();
                         calcBtn.click();
                     }
                 } else {
@@ -1744,7 +1744,9 @@ function hesaplaFatura() {
     document.getElementById("faturaKdvToplam").innerText = formatParaGenel(totalKdv) + " ₺";
     document.getElementById("faturaGenelToplam").innerText = formatParaGenel(gToplam) + " ₺";
     document.getElementById("sonucAlaniFatura").style.display = "block";
-    aktifEfHesaplamaEfekti("hesaplaBtnFatura");
+    
+    // 🟢 Hatanın düzeltildiği yer: fonksiyon adı doğru şekilde tetikleniyor
+    aktifEtHesaplamaEfekti("hesaplaBtnFatura");
 }
 
 function sifirlaFatura(e) {
