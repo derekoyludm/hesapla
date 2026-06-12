@@ -720,9 +720,9 @@ select.custom-select {
 
         <div class="result" id="sonucSatis">
             <p>Birim Fiyat <span id="ham" class="highlight"></span></p>
-            <p>Birim Fiyat İskontolu <span id="txtIsk" class="label-text"></span> <span id="net" class="highlight"></span></p>
-            <p>Satış Fiyatı Kârlı <span id="txtKar" class="label-text"></span> <span id="karli" class="highlight"></span></p>
-            <p style="color:#c0392b;">Satış Fiyatı KDV DAHİL <span id="txtSatisKdv" class="label-text" style="color:#c0392b;"></span> <span id="satis" class="highlight" style="color:#c0392b;"></span></p>
+            <p><strong>Birim Fiyat İskontolu</strong> <span id="txtIsk" class="label-text"></span> <span id="net" class="highlight"></span></p>
+            <p><strong>Satış Fiyatı Kârlı</strong> <span id="txtKar" class="label-text"></span> <span id="karli" class="highlight"></span></p>
+            <p style="color:#c0392b;"><strong>Satış Fiyatı KDV DAHİL</strong> <span id="txtSatisKdv" class="label-text" style="color:#c0392b;"></span> <span id="satis" class="highlight" style="color:#c0392b;"></span></p>
             <p>Alış Fiyatı KDV DAHİL <span id="txtAlisKdv" class="label-text"></span> <span id="alisKdvDahil" class="highlight"></span></p>
 
             <div class="box" id="kutuSonucBox">
@@ -1051,9 +1051,7 @@ select.custom-select {
    ========================================================================== */
 function parseInputFloat(val) {
     if(!val) return 0;
-    // 1. Tüm boşlukları sil
-    // 2. Tüm noktaları sil (Binlik ayırıcıları temizler)
-    // 3. Virgülü noktaya çevir (JavaScript hesaplaması için ondalık formata getirir)
+    // Tümüyle güncellenmiş (hem boşluk hem nokta silen, virgülü noktaya çeviren) çeviri mekanizması
     let clean = val.toString().replace(/\s/g, "").replace(/\./g, "").replace(",", ".");
     let f = parseFloat(clean);
     return isNaN(f) ? 0 : f;
@@ -1170,11 +1168,6 @@ function setupOdakTakibi() {
             } else {
                 el.classList.add("is-focused");
             }
-            
-            // Girdi alanına tıklandığında içindeki sayıyı otomatik seç
-            if (el.tagName === "INPUT") {
-                el.select();
-            }
         });
         
         el.addEventListener("blur", function() {
@@ -1287,13 +1280,6 @@ document.addEventListener("keydown", function(e) {
                 }
             }
         }
-    }
-});
-
-// Menü dışındaki bir alana (boşluğa) tıklandığında açık menüleri kapat
-document.addEventListener("click", function(event) {
-    if (!event.target.closest(".tab-header")) {
-        document.querySelectorAll(".dropdown-menu").forEach(m => m.classList.remove("open"));
     }
 });
 
@@ -1762,7 +1748,7 @@ function sifirlaKarsilastirma(e) {
 }
 
 /* ==========================================================================
-   MODÜL 8: KG - LT FİYATI NEDİR
+   MODÜL 8: KG - LT FİYATI NEDİR (100 Eşik Değeriyle Güncellendi)
    ========================================================================== */
 function temizleKg(e, id) {
     if(e) e.preventDefault();
@@ -1774,22 +1760,24 @@ function hesaplaKg() {
     let gramaj = parseInputFloat(document.getElementById("gramajKg").value);
     
     let kgFiyat = 0;
+    let birimMetni = "";
+    
     if(gramaj > 0) {
-        if (gramaj < 1) {
+        // EŞİK DEĞER MANTIĞI:
+        // Girilen rakam 100'den küçükse (Örn: 1.25, 5, 0.500) bunu KG/LT kabul et
+        if (gramaj < 100) {
             kgFiyat = fiyat / gramaj;
-        } else {
+            birimMetni = gramaj.toString().replace('.', ',') + " kg / lt";
+        } 
+        // 100 ve üzeriyse (Örn: 250, 1250) bunu GR/ML kabul et ve 1000'e çarp
+        else {
             kgFiyat = (fiyat / gramaj) * 1000;
+            birimMetni = formatParaGenel(gramaj) + " gr / ml";
         }
     }
     
     document.getElementById("resFiyatKg").innerText = formatParaGenel(fiyat) + " ₺";
-    
-    if (gramaj < 1) {
-        document.getElementById("resGramajKg").innerText = gramaj.toFixed(3).replace(".", ",") + " kg / lt";
-    } else {
-        document.getElementById("resGramajKg").innerText = formatParaGenel(gramaj) + " gr / ml";
-    }
-    
+    document.getElementById("resGramajKg").innerText = birimMetni;
     document.getElementById("resKgFiyat").innerText = formatParaGenel(kgFiyat) + " ₺";
     
     document.getElementById("sonucKg").style.display = "block";
