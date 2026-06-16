@@ -1221,6 +1221,10 @@ function aktifSekmeSonucunuKapat() {
 
 function setupOdakTakibi() {
     document.querySelectorAll("input, select").forEach(el => {
+        // Dinamik satır eklendikçe aynı kutulara tekrar tekrar event eklenmesini önler
+        if (el.dataset.odakAyarlandi) return;
+        el.dataset.odakAyarlandi = "true";
+
         el.addEventListener("focus", function() {
             let activeTab = document.querySelector(".tab-content.active");
             tumOdakHalkalariniTemizle(activeTab);
@@ -1230,6 +1234,13 @@ function setupOdakTakibi() {
                 stepper.classList.add("is-focused");
             } else {
                 el.classList.add("is-focused");
+            }
+
+            // 🟢 Fare ile veya dokunarak odaklanıldığında içindeki metni seç
+            if (el.tagName === "INPUT") {
+                setTimeout(() => {
+                    el.select();
+                }, 50); // Tarayıcının kendi imleç yerleştirmesini ezmek için 50ms gecikme
             }
         });
         
