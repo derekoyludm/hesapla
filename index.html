@@ -67,7 +67,7 @@ body{
 
 /* Aktif olan ana menu grubunun stili */
 #mainTabHeader .tab-btn.active {
-    background: #2c3e50; 
+    background: #000000; 
     color: #fff;
 }
 
@@ -141,7 +141,7 @@ body{
 
 /* Secili olan alt modulun stili */
 .dropdown-item.active {
-    background: #3498db;
+    background: #000000;
     color: #fff;
     font-weight: 600;
 }
@@ -236,11 +236,13 @@ select.custom-select {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+    text-align: center;
     text-align-last: center; 
-    padding-right: 24px; 
+    padding-right: 18px; 
+    padding-left: 18px;  
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 4 5'><path fill='%236b7a90' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
     background-repeat: no-repeat;
-    background-position: right 12px center;
+    background-position: right 6px center;
     background-size: 8px;
 }
 
@@ -252,6 +254,7 @@ select.custom-select {
     -moz-appearance: none;
     appearance: none;
     padding: 0;
+    text-align: center;
     text-align-last: center;
     font-size: 16px;
     cursor: pointer;
@@ -528,21 +531,52 @@ select.custom-select {
     margin-bottom: 2px;
 }
 .fatura-header-labels span {
-    flex: 1;
     font-size: 11px;
     font-weight: 600;
     color: #6b7a90;
     text-align: center;
 }
 .fatura-input-box {
-    flex: 1;
     min-width: 0; 
 }
+/* Genişlik Dağılımları */
+.fatura-col-narrow { flex: 1; }
+.fatura-col-wide { flex: 2; }
+.fatura-col-kdv { flex: 1.5; } /* KDV alanına artırma eksiltme için özel genişlik eklendi */
+.fatura-step-btn { width: 26px; font-size: 18px; padding: 0; } /* KDV Butonları sığsın diye daraltıldı */
+
 .fatura-tutar-disabled {
     background: #f8f9fa !important;
     color: #2c3e50;
     font-weight: 600;
     border-color: #dcdfe3 !important;
+}
+
+/* KDV Özet Alanı Stilleri */
+.kdv-ozet-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #3d4f66;
+    margin-bottom: 4px;
+    font-weight: normal;
+}
+.kdv-ozet-header {
+    font-weight: 600;
+    color: #2c3e50;
+    border-bottom: 1px solid #e4e9ed;
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+}
+.kdv-ozet-row span {
+    flex: 1;
+    text-align: center;
+}
+.kdv-ozet-row span:first-child {
+    text-align: left;
+}
+.kdv-ozet-row span:last-child {
+    text-align: right;
 }
 
 /* 🟢 Dinamik Toplama / Çıkarma Sayfası Düzen Stilleri */
@@ -997,10 +1031,11 @@ select.custom-select {
 
     <div id="hizliFaturaTab" class="tab-content">
         <div class="fatura-header-labels">
-            <span>Adet</span>
-            <span>Fiyat</span>
-            <span>KDV %</span>
-            <span>Tutar</span>
+            <span class="fatura-col-narrow">Adet</span>
+            <span class="fatura-col-wide">Fiyat</span>
+            <span class="fatura-col-narrow">İsk %</span>
+            <span class="fatura-col-kdv">KDV %</span>
+            <span class="fatura-col-wide">Tutar</span>
         </div>
         
         <div id="faturaSatirlarKonteyner"></div>
@@ -1013,7 +1048,11 @@ select.custom-select {
         </div>
 
         <div class="result result-dinamik" id="sonucAlaniFatura">
-            <p>Toplam Matrah <span class="highlight" id="faturaMatrah">0,00 ₺</span></p>
+            <div id="faturaKdvOzetAlani" style="margin-bottom: 12px; border-bottom: 1.5px dashed #c9d2dc; padding-bottom: 12px; display: none;"></div>
+            
+            <p><span id="lblToplamMatrah">Toplam Brüt Matrah</span> <span class="highlight" id="faturaMatrah">0,00 ₺</span></p>
+            <p id="pIskontoToplam" style="color:#e74c3c;">Toplam İskonto <span id="faturaIskontoOranText" style="font-size:13px; font-weight:normal; margin-left:4px; color:#e74c3c;"></span> <span class="highlight" id="faturaIskontoToplam" style="color:#e74c3c;">0,00 ₺</span></p>
+            <p id="pIndirimliMatrah">İndirimli Alt Toplam <span class="highlight" id="faturaIndirimliMatrah">0,00 ₺</span></p>
             <p>Toplam KDV <span class="highlight" id="faturaKdvToplam">0,00 ₺</span></p>
             <div class="box" style="background:#eaf7ef; border-left-color:#2ecc71; padding:12px 15px;">
                 <p style="font-size:16px; margin:0; color:#2ecc71;">GENEL TOPLAM <span class="highlight" id="faturaGenelToplam" style="color:#2ecc71; font-size:20px;">0,00 ₺</span></p>
@@ -1053,18 +1092,14 @@ select.custom-select {
 function parseInputFloat(val) {
     if(!val) return 0;
     
-    // Önce boşlukları temizle
     let str = val.toString().replace(/\s/g, "");
     
-    // Eğer hem nokta hem virgül varsa (Örn: 1.250,50)
     if (str.includes('.') && str.includes(',')) {
         str = str.replace(/\./g, "").replace(",", ".");
     } 
-    // Sadece virgül varsa (Örn: 15,5)
     else if (str.includes(',')) {
         str = str.replace(",", ".");
     }
-    // Sadece nokta varsa (Örn: 1.5) string olduğu gibi kalır parseFloat doğru anlar.
     
     let f = parseFloat(str);
     return isNaN(f) ? 0 : f;
@@ -1077,7 +1112,6 @@ function formatParaGenel(num) {
     return parts.join(",");
 }
 
-/* 🟢 YENİ EKLENEN: Fiyat inputlarını dinamik olarak otomatik formatlama fonksiyonu */
 function formatInputEl(id) {
     let el = document.getElementById(id);
     if(el && el.value !== "") {
@@ -1124,9 +1158,6 @@ function handleInputEvent(e) {
     dynamicInputFormatSade(e.target);
 }
 
-/**
- * 🟢 RESET BUTONU AKTİF OLDUĞUNDA 5 SANİYE YANIK KALSIN
- */
 let resetTimeoutlar = {}; 
 
 function tetikleResetEfekti(btnId) {
@@ -1415,7 +1446,7 @@ function degistirSatis(id, yon) {
 }
 
 function hesaplaSatis() {
-    formatInputEl("brut"); // Fiyatı formatla
+    formatInputEl("brut");
     
     let brut = parseInputFloat(document.getElementById("brut").value);
     let miktar = parseInputFloat(document.getElementById("miktar").value);
@@ -1438,7 +1469,6 @@ function hesaplaSatis() {
     netBirim = netBirim * (1 - isk3/100);
     netBirim = netBirim * (1 - isk4/100);
     
-    // YENİ BÖLME MANTIĞI: Fiyatı çarpmak yerine içindeki adede bölüyoruz.
     let bolenMiktar = 1;
     if(miktar > 0 && miktar2 > 0) {
         bolenMiktar = miktar * miktar2;
@@ -1527,7 +1557,7 @@ function degistirIndirim(yon) {
 }
 
 function hesaplaIndirim() {
-    formatInputEl("fiyat"); // Fiyatı formatla
+    formatInputEl("fiyat");
     
     let fiyat = parseInputFloat(document.getElementById("fiyat").value);
     let adet = parseInputFloat(document.getElementById("adet").value);
@@ -1572,7 +1602,7 @@ function temizleGeriGelme(e, id) {
 }
 
 function hesaplaGeriGelme() {
-    formatInputEl("geriFiyat"); // Fiyatı formatla
+    formatInputEl("geriFiyat");
     
     let fiyat = parseInputFloat(document.getElementById("geriFiyat").value);
     let oran = parseInputFloat(document.getElementById("geriOran").value);
@@ -1612,7 +1642,7 @@ function temizleIlave(e, id) {
 }
 
 function hesaplaIlave() {
-    formatInputEl("ilaveTutar"); // Fiyatı formatla
+    formatInputEl("ilaveTutar");
     
     let tutar = parseInputFloat(document.getElementById("ilaveTutar").value);
     let yuzde = parseInputFloat(document.getElementById("ilaveYuzdeDegeri").value);
@@ -1662,7 +1692,7 @@ function degistirKdvSecim(yon) {
 }
 
 function hesaplaKdv() {
-    formatInputEl("kdvDahil"); // Fiyatı formatla
+    formatInputEl("kdvDahil");
     
     let fiyat = parseInputFloat(document.getElementById("kdvDahil").value);
     let kdv = parseFloat(document.getElementById("kdvSecim").value);
@@ -1701,8 +1731,8 @@ function temizleIndirimOran(e, id) {
 }
 
 function hesaplaIndirimOran() {
-    formatInputEl("eskiFiyat"); // Fiyatı formatla
-    formatInputEl("yeniFiyat"); // Fiyatı formatla
+    formatInputEl("eskiFiyat");
+    formatInputEl("yeniFiyat");
     
     let eski = parseInputFloat(document.getElementById("eskiFiyat").value);
     let yeni = parseInputFloat(document.getElementById("yeniFiyat").value);
@@ -1742,8 +1772,8 @@ function temizleKarsilastirma(e, id) {
 }
 
 function hesaplaKarsilastirma() {
-    formatInputEl("kutuFiyat"); // Fiyatı formatla
-    formatInputEl("tekliFiyat"); // Fiyatı formatla
+    formatInputEl("kutuFiyat");
+    formatInputEl("tekliFiyat");
     
     let kutuFiyat = parseInputFloat(document.getElementById("kutuFiyat").value);
     let adet = parseInputFloat(document.getElementById("adetKarsilastirma").value);
@@ -1798,13 +1828,12 @@ function temizleKg(e, id) {
 function hesaplaKg() {
     let gramajRaw = document.getElementById("gramajKg").value;
 
-    // Gramaj değerinde (.) kullanılmışsa hata uyarısı gösterip işlemi keselim.
     if(gramajRaw.includes('.')) {
         alert("Lütfen gramaj girişinde ondalık kısım için nokta (.) yerine virgül (,) kullanınız. (Örn: 0,001)");
         return;
     }
 
-    formatInputEl("fiyatKg"); // Fiyatı formatla
+    formatInputEl("fiyatKg");
     
     let fiyat = parseInputFloat(document.getElementById("fiyatKg").value);
     let gramaj = parseInputFloat(gramajRaw);
@@ -1813,7 +1842,6 @@ function hesaplaKg() {
     let birimMetni = "";
     
     if(gramaj > 0) {
-        // Doğrudan kg/lt olarak işleniyor (Eşik değeri kaldırıldı)
         kgFiyat = fiyat / gramaj;
         let gramajFormatli = gramaj.toString().replace('.', ',');
         birimMetni = gramajFormatli + " kg / lt";
@@ -1854,18 +1882,24 @@ function satirEkleFatura() {
     row.className = "fatura-row";
     row.id = "faturaSatir_" + faturaSatirSayac;
     
+    // KDV için stepper-container entegre edildi. Ok silindi, metin ortalandı.
     row.innerHTML = `
-        <div class="fatura-input-box"><input id="faturaAdet_${faturaSatirSayac}" type="text" inputmode="decimal" oninput="faturaSatirTutarHesapla(${faturaSatirSayac})"></div>
-        <div class="fatura-input-box"><input id="faturaFiyat_${faturaSatirSayac}" type="text" inputmode="decimal" oninput="faturaSatirTutarHesapla(${faturaSatirSayac})"></div>
-        <div class="fatura-input-box">
-            <select id="faturaKdv_${faturaSatirSayac}" class="custom-select green-bg" onchange="faturaSatirTutarHesapla(${faturaSatirSayac})">
-                <option value="20" selected>20</option>
-                <option value="10">10</option>
-                <option value="1">1</option>
-                <option value="0">0</option>
-            </select>
+        <div class="fatura-input-box fatura-col-narrow"><input id="faturaAdet_${faturaSatirSayac}" type="text" inputmode="decimal" oninput="faturaSatirTutarHesapla(${faturaSatirSayac})"></div>
+        <div class="fatura-input-box fatura-col-wide"><input id="faturaFiyat_${faturaSatirSayac}" type="text" inputmode="decimal" oninput="faturaSatirTutarHesapla(${faturaSatirSayac})"></div>
+        <div class="fatura-input-box fatura-col-narrow"><input id="faturaIsk_${faturaSatirSayac}" type="text" inputmode="decimal" oninput="faturaSatirTutarHesapla(${faturaSatirSayac})"></div>
+        <div class="fatura-input-box fatura-col-kdv">
+            <div class="stepper-container">
+                <div class="step-btn fatura-step-btn" onclick="degistirFaturaKdv(${faturaSatirSayac}, -1)">-</div>
+                <select id="faturaKdv_${faturaSatirSayac}" class="green-bg" onchange="faturaSatirTutarHesapla(${faturaSatirSayac})">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="10">10</option>
+                    <option value="20" selected>20</option>
+                </select>
+                <div class="step-btn fatura-step-btn" onclick="degistirFaturaKdv(${faturaSatirSayac}, 1)">+</div>
+            </div>
         </div>
-        <div class="fatura-input-box"><input id="faturaTutar_${faturaSatirSayac}" type="text" readonly class="fatura-tutar-disabled" value="0,00"></div>
+        <div class="fatura-input-box fatura-col-wide"><input id="faturaTutar_${faturaSatirSayac}" type="text" readonly class="fatura-tutar-disabled" value="0,00"></div>
     `;
     
     container.appendChild(row);
@@ -1875,9 +1909,21 @@ function satirEkleFatura() {
     document.getElementById("hesaplaBtnFatura").classList.remove('active-calc');
 }
 
+// Fatura KDV artı/eksi butonu için yeni fonksiyon
+function degistirFaturaKdv(idx, yon) {
+    let sel = document.getElementById("faturaKdv_" + idx);
+    let yeniIdx = sel.selectedIndex + yon;
+    if(yeniIdx >= 0 && yeniIdx < sel.options.length) {
+        sel.selectedIndex = yeniIdx;
+        faturaSatirTutarHesapla(idx);
+    }
+    aktifSekmeSonucunuKapat();
+}
+
 function faturaSatirTutarHesapla(idx) {
     let adet = parseInputFloat(document.getElementById("faturaAdet_" + idx).value);
     let fiyat = parseInputFloat(document.getElementById("faturaFiyat_" + idx).value);
+    
     let ttr = adet * fiyat;
     document.getElementById("faturaTutar_" + idx).value = formatParaGenel(ttr);
     
@@ -1890,27 +1936,89 @@ function hesaplaFatura() {
     let rows = container.querySelectorAll(".fatura-row");
     
     let totalMatrah = 0;
+    let totalIskonto = 0;
+    let totalIndirimliMatrah = 0;
     let totalKdv = 0;
+    let kdvGruplari = {}; 
     
     rows.forEach(row => {
         let idStr = row.id.split("_")[1];
         
-        formatInputEl("faturaFiyat_" + idStr); // Fiyat alanlarını formatla
+        formatInputEl("faturaFiyat_" + idStr); 
         
         let adet = parseInputFloat(document.getElementById("faturaAdet_" + idStr).value);
         let fiyat = parseInputFloat(document.getElementById("faturaFiyat_" + idStr).value);
-        let kdvYuzde = parseFloat(document.getElementById("faturaKdv_" + idStr).value);
+        let iskYuzde = parseInputFloat(document.getElementById("faturaIsk_" + idStr).value);
+        let kdvYuzdeStr = document.getElementById("faturaKdv_" + idStr).value;
+        let kdvYuzde = parseFloat(kdvYuzdeStr);
         
-        let matrah = adet * fiyat;
-        let kdvTutar = matrah * (kdvYuzde / 100);
+        let matrah = adet * fiyat; 
+        let iskTutar = matrah * (iskYuzde / 100);
+        let indirimliMatrah = matrah - iskTutar;
+        let kdvTutar = indirimliMatrah * (kdvYuzde / 100);
         
         totalMatrah += matrah;
+        totalIskonto += iskTutar;
+        totalIndirimliMatrah += indirimliMatrah;
         totalKdv += kdvTutar;
+
+        if (indirimliMatrah > 0 || kdvTutar > 0) {
+            if (!kdvGruplari[kdvYuzdeStr]) {
+                kdvGruplari[kdvYuzdeStr] = { matrah: 0, kdvTutar: 0 };
+            }
+            kdvGruplari[kdvYuzdeStr].matrah += indirimliMatrah;
+            kdvGruplari[kdvYuzdeStr].kdvTutar += kdvTutar;
+        }
     });
     
-    let gToplam = totalMatrah + totalKdv;
+    let gToplam = totalIndirimliMatrah + totalKdv;
     
+    let ortalamaIskontoYuzde = totalMatrah > 0 ? (totalIskonto / totalMatrah) * 100 : 0;
+    
+    let ozetHtml = `<div class="kdv-ozet-row kdv-ozet-header">
+        <span>KDV Oranı</span>
+        <span>İndirimli Matrah</span>
+        <span>KDV Tutarı</span>
+    </div>`;
+    let hasKdvData = false;
+
+    let siraliOranlar = Object.keys(kdvGruplari).sort((a, b) => b - a);
+
+    siraliOranlar.forEach(oran => {
+        hasKdvData = true;
+        ozetHtml += `<div class="kdv-ozet-row">
+            <span>%${oran}</span>
+            <span>${formatParaGenel(kdvGruplari[oran].matrah)} ₺</span>
+            <span>${formatParaGenel(kdvGruplari[oran].kdvTutar)} ₺</span>
+        </div>`;
+    });
+
+    let ozetAlani = document.getElementById("faturaKdvOzetAlani");
+    if (hasKdvData) {
+        ozetAlani.innerHTML = ozetHtml;
+        ozetAlani.style.display = "block";
+    } else {
+        ozetAlani.style.display = "none";
+    }
+
+    let pIskonto = document.getElementById("pIskontoToplam");
+    let pIndirimli = document.getElementById("pIndirimliMatrah");
+    
+    if(totalIskonto > 0) {
+        document.getElementById("lblToplamMatrah").innerText = "Toplam Brüt Matrah";
+        document.getElementById("faturaIskontoOranText").innerText = "(%" + formatParaGenel(ortalamaIskontoYuzde) + ")";
+        pIskonto.style.display = "block";
+        pIndirimli.style.display = "block";
+    } else {
+        document.getElementById("lblToplamMatrah").innerText = "Toplam Matrah";
+        document.getElementById("faturaIskontoOranText").innerText = "";
+        pIskonto.style.display = "none";
+        pIndirimli.style.display = "none";
+    }
+
     document.getElementById("faturaMatrah").innerText = formatParaGenel(totalMatrah) + " ₺";
+    document.getElementById("faturaIskontoToplam").innerText = formatParaGenel(totalIskonto) + " ₺";
+    document.getElementById("faturaIndirimliMatrah").innerText = formatParaGenel(totalIndirimliMatrah) + " ₺";
     document.getElementById("faturaKdvToplam").innerText = formatParaGenel(totalKdv) + " ₺";
     document.getElementById("faturaGenelToplam").innerText = formatParaGenel(gToplam) + " ₺";
     document.getElementById("sonucAlaniFatura").style.display = "block";
@@ -1923,6 +2031,7 @@ function sifirlaFatura(e) {
     document.getElementById("faturaSatirlarKonteyner").innerHTML = "";
     faturaSatirSayac = 0;
     document.getElementById("sonucAlaniFatura").style.display = "none";
+    document.getElementById("faturaKdvOzetAlani").style.display = "none";
     document.getElementById('hesaplaBtnFatura').classList.remove('active-calc');
     tetikleResetEfekti("btnResetFatura");
     
