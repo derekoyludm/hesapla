@@ -232,6 +232,7 @@ select:focus {
     outline: none !important;
 }
 
+/* Genel Select Sınıfı (Oklu) */
 select.custom-select {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -244,6 +245,17 @@ select.custom-select {
     background-repeat: no-repeat;
     background-position: right 6px center;
     background-size: 8px;
+}
+
+/* Hızlı Fatura Özel KDV Select Sınıfı (Oksuz ve Tam Ortalanmış) */
+select.fatura-kdv-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: none !important; /* Oku kaldırır */
+    padding: 0 !important; /* Boşlukları sıfırlar */
+    text-align: center;
+    text-align-last: center;
 }
 
 .stepper-container select {
@@ -542,8 +554,6 @@ select.custom-select {
 /* Genişlik Dağılımları */
 .fatura-col-narrow { flex: 1; }
 .fatura-col-wide { flex: 2; }
-.fatura-col-kdv { flex: 1.5; } /* KDV alanına artırma eksiltme için özel genişlik eklendi */
-.fatura-step-btn { width: 26px; font-size: 18px; padding: 0; } /* KDV Butonları sığsın diye daraltıldı */
 
 .fatura-tutar-disabled {
     background: #f8f9fa !important;
@@ -1034,7 +1044,7 @@ select.custom-select {
             <span class="fatura-col-narrow">Adet</span>
             <span class="fatura-col-wide">Fiyat</span>
             <span class="fatura-col-narrow">İsk %</span>
-            <span class="fatura-col-kdv">KDV %</span>
+            <span class="fatura-col-narrow">KDV %</span>
             <span class="fatura-col-wide">Tutar</span>
         </div>
         
@@ -1882,22 +1892,18 @@ function satirEkleFatura() {
     row.className = "fatura-row";
     row.id = "faturaSatir_" + faturaSatirSayac;
     
-    // KDV için stepper-container entegre edildi. Ok silindi, metin ortalandı.
+    // Sadece Fatura Sayfası KDV Sütunu - Butonsuz, Oksuz ve Tam Ortalanmış
     row.innerHTML = `
         <div class="fatura-input-box fatura-col-narrow"><input id="faturaAdet_${faturaSatirSayac}" type="text" inputmode="decimal" oninput="faturaSatirTutarHesapla(${faturaSatirSayac})"></div>
         <div class="fatura-input-box fatura-col-wide"><input id="faturaFiyat_${faturaSatirSayac}" type="text" inputmode="decimal" oninput="faturaSatirTutarHesapla(${faturaSatirSayac})"></div>
         <div class="fatura-input-box fatura-col-narrow"><input id="faturaIsk_${faturaSatirSayac}" type="text" inputmode="decimal" oninput="faturaSatirTutarHesapla(${faturaSatirSayac})"></div>
-        <div class="fatura-input-box fatura-col-kdv">
-            <div class="stepper-container">
-                <div class="step-btn fatura-step-btn" onclick="degistirFaturaKdv(${faturaSatirSayac}, -1)">-</div>
-                <select id="faturaKdv_${faturaSatirSayac}" class="green-bg" onchange="faturaSatirTutarHesapla(${faturaSatirSayac})">
-                    <option value="0">0</option>
-                    <option value="1">1</option>
-                    <option value="10">10</option>
-                    <option value="20" selected>20</option>
-                </select>
-                <div class="step-btn fatura-step-btn" onclick="degistirFaturaKdv(${faturaSatirSayac}, 1)">+</div>
-            </div>
+        <div class="fatura-input-box fatura-col-narrow">
+            <select id="faturaKdv_${faturaSatirSayac}" class="fatura-kdv-select green-bg" onchange="faturaSatirTutarHesapla(${faturaSatirSayac})">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="10">10</option>
+                <option value="20" selected>20</option>
+            </select>
         </div>
         <div class="fatura-input-box fatura-col-wide"><input id="faturaTutar_${faturaSatirSayac}" type="text" readonly class="fatura-tutar-disabled" value="0,00"></div>
     `;
@@ -1907,17 +1913,6 @@ function satirEkleFatura() {
     setupOdakTakibi();
     
     document.getElementById("hesaplaBtnFatura").classList.remove('active-calc');
-}
-
-// Fatura KDV artı/eksi butonu için yeni fonksiyon
-function degistirFaturaKdv(idx, yon) {
-    let sel = document.getElementById("faturaKdv_" + idx);
-    let yeniIdx = sel.selectedIndex + yon;
-    if(yeniIdx >= 0 && yeniIdx < sel.options.length) {
-        sel.selectedIndex = yeniIdx;
-        faturaSatirTutarHesapla(idx);
-    }
-    aktifSekmeSonucunuKapat();
 }
 
 function faturaSatirTutarHesapla(idx) {
