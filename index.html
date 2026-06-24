@@ -759,6 +759,37 @@ select.fatura-kdv-select {
             </div>
         </div>
 
+        <div class="row">
+            <div class="input-group">
+                <label>Topl. Miktar</label>
+                <div class="field-container">
+                    <input id="farkToplMiktar" type="text" inputmode="decimal">
+                    <div class="clear-btn-sag" ontouchstart="temizleSatis(event,'farkToplMiktar')" onclick="temizleSatis(event,'farkToplMiktar')">×</div>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Kâr %</label>
+                <div class="stepper-container">
+                    <div class="step-btn" onclick="degistirSatis('farkKar', -1)">-</div>
+                    <select id="farkKar" class="green-bg">
+                        <option value="0">0</option> <option value="5">5</option> <option value="10">10</option> <option value="15">15</option> <option value="20">20</option>
+                        <option value="25" selected>25</option> <option value="30">30</option> <option value="35">35</option> <option value="40">40</option>
+                        <option value="45">45</option> <option value="50">50</option> <option value="55">55</option> <option value="60">60</option>
+                        <option value="65">65</option> <option value="70">70</option> <option value="75">75</option> <option value="80">80</option>
+                        <option value="85">85</option> <option value="90">90</option> <option value="95">95</option> <option value="100">100</option>
+                    </select>
+                    <div class="step-btn" onclick="degistirSatis('farkKar', 1)">+</div>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Satış Fiyatı</label>
+                <div class="field-container">
+                    <input id="farkSatisFiyati" type="text" inputmode="decimal">
+                    <div class="clear-btn-sag" ontouchstart="temizleSatis(event,'farkSatisFiyati')" onclick="temizleSatis(event,'farkSatisFiyati')">×</div>
+                </div>
+            </div>
+        </div>
+
         <div class="button-row">
             <button id="hesaplaBtnSatis" class="main-btn" onclick="hesaplaSatis();">Hesapla</button>
             <button id="btnResetSatis" class="reset-btn" onclick="sifirlaSatis(event)">↺</button>
@@ -776,6 +807,13 @@ select.fatura-kdv-select {
                 <p>Kutu Tutarı İskontosuz <span id="ksk" class="highlight"></span></p>
                 <p>Kutu İskonto Tutarı <span id="txtKutuIsk" class="label-text"></span> <span id="kit" class="highlight"></span></p>
                 <p style="color:#3498db;">Kutu Satış Fiyatı <span id="ksf" class="highlight" style="color:#3498db;"></span></p>
+            </div>
+
+            <div class="box" id="fiyatFarkiBox" style="display:none;">
+                <p style="font-size:14px; font-weight:600; color:#2c3e50; border-bottom:1px solid #c9d2dc; padding-bottom:4px; margin-bottom:8px;">Fiyat Farkı</p>
+                <p>Geri Gelinen Matrah <span id="ffGeriGelinen" class="highlight"></span></p>
+                <p>Birim Fiyat Farkı <span id="ffBirimFark" class="highlight"></span></p>
+                <p style="color:#e74c3c;">Toplam Fark Tutarı <span id="ffToplamFark" class="highlight" style="color:#e74c3c;"></span></p>
             </div>
         </div>
         
@@ -1268,6 +1306,9 @@ function aktifSekmeSonucunuKapat() {
     if (activeTab.id === "satisTab") {
         let kutuBox = document.getElementById("kutuSonucBox");
         if (kutuBox) kutuBox.style.display = "none";
+        
+        let fiyatFarkiBox = document.getElementById("fiyatFarkiBox");
+        if (fiyatFarkiBox) fiyatFarkiBox.style.display = "none";
     }
 
     let calcBtn = activeTab.querySelector(".main-btn");
@@ -1278,7 +1319,6 @@ function aktifSekmeSonucunuKapat() {
 
 function setupOdakTakibi() {
     document.querySelectorAll("input, select").forEach(el => {
-        // Dinamik satır eklendikçe aynı kutulara tekrar tekrar event eklenmesini önler
         if (el.dataset.odakAyarlandi) return;
         el.dataset.odakAyarlandi = "true";
 
@@ -1293,11 +1333,10 @@ function setupOdakTakibi() {
                 el.classList.add("is-focused");
             }
 
-            // 🟢 Fare ile veya dokunarak odaklanıldığında içindeki metni seç
             if (el.tagName === "INPUT") {
                 setTimeout(() => {
                     el.select();
-                }, 50); // Tarayıcının kendi imleç yerleştirmesini ezmek için 50ms gecikme
+                }, 50); 
             }
         });
         
@@ -1512,6 +1551,9 @@ function temizleSatis(e, id) {
     if(id === "kutuMiktar") {
         document.getElementById("kutuSonucBox").style.display = "none";
     }
+    if(id === "farkToplMiktar" || id === "farkSatisFiyati") {
+        document.getElementById("fiyatFarkiBox").style.display = "none";
+    }
 }
 
 function degistirSatis(id, yon) {
@@ -1525,6 +1567,7 @@ function degistirSatis(id, yon) {
 
 function hesaplaSatis() {
     formatInputEl("brut");
+    formatInputEl("farkSatisFiyati");
     
     let brut = parseInputFloat(document.getElementById("brut").value);
     let miktar = parseInputFloat(document.getElementById("miktar").value);
@@ -1540,6 +1583,11 @@ function hesaplaSatis() {
     
     let kutuMiktar = parseInputFloat(document.getElementById("kutuMiktar").value);
     let kutuIskontoYuzde = parseFloat(document.getElementById("kutuIskonto").value);
+
+    // Yeni Eklenen Fiyat Farkı Girdileri
+    let farkToplMiktar = parseInputFloat(document.getElementById("farkToplMiktar").value);
+    let farkKarYuzde = parseFloat(document.getElementById("farkKar").value);
+    let farkSatisFiyati = parseInputFloat(document.getElementById("farkSatisFiyati").value);
     
     let netBirim = brut;
     netBirim = netBirim * (1 - isk1/100);
@@ -1595,6 +1643,29 @@ function hesaplaSatis() {
     } else {
         document.getElementById("kutuSonucBox").style.display = "none";
     }
+
+    // Yeni Eklenen Fiyat Farkı Hesaplaması
+    if(farkToplMiktar > 0 || farkSatisFiyati > 0) {
+        document.getElementById("fiyatFarkiBox").style.display = "block";
+        
+        let geriGelinenFiyat = 0;
+        if(farkSatisFiyati > 0) {
+            // Satış fiyatından Kâr % geri gelsin çıkan fiyat
+            geriGelinenFiyat = farkSatisFiyati / (1 + farkKarYuzde / 100);
+        }
+        
+        // Alış Fiyatı KDV DAHİL'den çıkarsın
+        let birimFark = alisFiyatiKdvli - geriGelinenFiyat;
+        
+        // Topl. Miktar ile çarpsın
+        let toplamFark = birimFark * farkToplMiktar;
+
+        document.getElementById("ffGeriGelinen").innerText = formatParaGenel(geriGelinenFiyat) + " ₺";
+        document.getElementById("ffBirimFark").innerText = formatParaGenel(birimFark) + " ₺";
+        document.getElementById("ffToplamFark").innerText = formatParaGenel(toplamFark) + " ₺";
+    } else {
+        document.getElementById("fiyatFarkiBox").style.display = "none";
+    }
     
     document.getElementById("sonucSatis").style.display = "block";
     aktifEtHesaplamaEfekti("hesaplaBtnSatis");
@@ -1606,8 +1677,10 @@ function sifirlaSatis(e) {
     document.getElementById("kar").value = "25";
     document.getElementById("kdv").value = "1";
     document.getElementById("kutuIskonto").value = "5";
+    document.getElementById("farkKar").value = "25";
     document.getElementById("sonucSatis").style.display = "none";
     document.getElementById("kutuSonucBox").style.display = "none";
+    document.getElementById("fiyatFarkiBox").style.display = "none";
     document.getElementById('hesaplaBtnSatis').classList.remove('active-calc');
     tetikleResetEfekti("btnResetSatis");
     
@@ -1641,9 +1714,7 @@ function hesaplaKarDegisim() {
     let eskiKar = parseFloat(document.getElementById("eskiKarYuzde").value);
     let yeniKar = parseFloat(document.getElementById("yeniKarYuzde").value);
     
-    // Satış fiyatının içindeki kârı bölerek çıkar (maliyeti bul)
     let maliyet = satis / (1 + (eskiKar / 100));
-    // Yeni istenilen kâr oranını maliyetin üstüne ekle (çarp)
     let yeniSatis = maliyet * (1 + (yeniKar / 100));
     
     document.getElementById("resKarDegisimMaliyet").innerText = formatParaGenel(maliyet) + " ₺";
@@ -2011,7 +2082,6 @@ function satirEkleFatura() {
     row.className = "fatura-row";
     row.id = "faturaSatir_" + faturaSatirSayac;
     
-    // Sadece Fatura Sayfası KDV Sütunu - Butonsuz, Oksuz ve Tam Ortalanmış
     row.innerHTML = `
         <div class="fatura-input-box fatura-col-narrow"><input id="faturaAdet_${faturaSatirSayac}" type="text" inputmode="decimal" oninput="faturaSatirTutarHesapla(${faturaSatirSayac})"></div>
         <div class="fatura-input-box fatura-col-wide"><input id="faturaFiyat_${faturaSatirSayac}" type="text" inputmode="decimal" oninput="faturaSatirTutarHesapla(${faturaSatirSayac})"></div>
