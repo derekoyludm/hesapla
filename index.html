@@ -757,6 +757,13 @@ select.fatura-kdv-select {
                     <div class="step-btn" onclick="degistirSatis('kutuIskonto', 1)">+</div>
                 </div>
             </div>
+            <div class="input-group">
+                <label>FF Satış Fiyatı</label>
+                <div class="field-container">
+                    <input id="farkSatisFiyati" type="text" inputmode="decimal" oninput="farkSatisGirildi()">
+                    <div class="clear-btn-sag" ontouchstart="temizleSatis(event,'farkSatisFiyati')" onclick="temizleSatis(event,'farkSatisFiyati')">×</div>
+                </div>
+            </div>
         </div>
 
         <div class="row">
@@ -782,10 +789,10 @@ select.fatura-kdv-select {
                 </div>
             </div>
             <div class="input-group">
-                <label>FF Satış Fiyatı</label>
+                <label>FF Alış Fiyatı</label>
                 <div class="field-container">
-                    <input id="farkSatisFiyati" type="text" inputmode="decimal">
-                    <div class="clear-btn-sag" ontouchstart="temizleSatis(event,'farkSatisFiyati')" onclick="temizleSatis(event,'farkSatisFiyati')">×</div>
+                    <input id="farkAlisFiyati" type="text" inputmode="decimal" oninput="farkAlisGirildi()">
+                    <div class="clear-btn-sag" ontouchstart="temizleSatis(event,'farkAlisFiyati')" onclick="temizleSatis(event,'farkAlisFiyati')">×</div>
                 </div>
             </div>
         </div>
@@ -811,10 +818,10 @@ select.fatura-kdv-select {
 
             <div class="box" id="fiyatFarkiBox" style="display:none;">
                 <p style="font-size:14px; font-weight:600; color:#2c3e50; border-bottom:1px solid #c9d2dc; padding-bottom:4px; margin-bottom:8px;">Fiyat Farkı</p>
-                <p>FF Satılmak İstenilen Fiyat (KDV DAHİL) <span id="ffSatilmakIstenen" class="highlight"></span></p>
-                <p>FF Alış Fiyatı (KDV DAHİL) <span id="ffGeriGelinen" class="highlight"></span></p>
-                <p>FF Fiyat Farkı <span id="ffBirimFark" class="highlight"></span></p>
-                <p style="color:#e74c3c;">FF Toplam Fark Tutarı <span id="ffToplamFark" class="highlight" style="color:#e74c3c;"></span></p>
+                <p>Satılmak İstenilen Fiyat (KDV DAHİL) <span id="ffSatilmakIstenen" class="highlight"></span></p>
+                <p>Alış Fiyatı (KDV DAHİL) <span id="ffGeriGelinen" class="highlight"></span></p>
+                <p>Fiyat Farkı <span id="ffBirimFark" class="highlight"></span></p>
+                <p style="color:#e74c3c;">Toplam Fark Tutarı <span id="ffToplamFark" class="highlight" style="color:#e74c3c;"></span></p>
             </div>
         </div>
         
@@ -1552,8 +1559,24 @@ function temizleSatis(e, id) {
     if(id === "kutuMiktar") {
         document.getElementById("kutuSonucBox").style.display = "none";
     }
-    if(id === "farkToplMiktar" || id === "farkSatisFiyati") {
+    if(id === "farkToplMiktar" || id === "farkSatisFiyati" || id === "farkAlisFiyati") {
         document.getElementById("fiyatFarkiBox").style.display = "none";
+    }
+}
+
+function farkAlisGirildi() {
+    let alisInput = document.getElementById("farkAlisFiyati");
+    let satisInput = document.getElementById("farkSatisFiyati");
+    if(alisInput.value.length > 0) {
+        satisInput.value = "";
+    }
+}
+
+function farkSatisGirildi() {
+    let satisInput = document.getElementById("farkSatisFiyati");
+    let alisInput = document.getElementById("farkAlisFiyati");
+    if(satisInput.value.length > 0) {
+        alisInput.value = "";
     }
 }
 
@@ -1569,6 +1592,7 @@ function degistirSatis(id, yon) {
 function hesaplaSatis() {
     formatInputEl("brut");
     formatInputEl("farkSatisFiyati");
+    formatInputEl("farkAlisFiyati");
     
     let brut = parseInputFloat(document.getElementById("brut").value);
     let miktar = parseInputFloat(document.getElementById("miktar").value);
@@ -1585,10 +1609,11 @@ function hesaplaSatis() {
     let kutuMiktar = parseInputFloat(document.getElementById("kutuMiktar").value);
     let kutuIskontoYuzde = parseFloat(document.getElementById("kutuIskonto").value);
 
-    // Yeni Eklenen Fiyat Farkı Girdileri
+    // Fiyat Farkı Girdileri
     let farkToplMiktar = parseInputFloat(document.getElementById("farkToplMiktar").value);
     let farkKarYuzde = parseFloat(document.getElementById("farkKar").value);
     let farkSatisFiyati = parseInputFloat(document.getElementById("farkSatisFiyati").value);
+    let farkAlisFiyati = parseInputFloat(document.getElementById("farkAlisFiyati").value);
     
     let netBirim = brut;
     netBirim = netBirim * (1 - isk1/100);
@@ -1645,14 +1670,22 @@ function hesaplaSatis() {
         document.getElementById("kutuSonucBox").style.display = "none";
     }
 
-    // Yeni Eklenen Fiyat Farkı Hesaplaması
-    if(farkToplMiktar > 0 || farkSatisFiyati > 0) {
+    // Fiyat Farkı Hesaplaması
+    if(farkToplMiktar > 0 || farkSatisFiyati > 0 || farkAlisFiyati > 0) {
         document.getElementById("fiyatFarkiBox").style.display = "block";
         
         let geriGelinenFiyat = 0;
+        let satilmakIstenen = 0;
+        
         if(farkSatisFiyati > 0) {
+            satilmakIstenen = farkSatisFiyati;
             // Satış fiyatından Kâr % geri gelsin çıkan fiyat
             geriGelinenFiyat = farkSatisFiyati / (1 + farkKarYuzde / 100);
+        } else if (farkAlisFiyati > 0) {
+            // Manuel girilen FF Alış Fiyatı (KDV Dahil) doğrudan baz alınır
+            geriGelinenFiyat = farkAlisFiyati;
+            // Gösterim amacıyla satılmak istenen fiyat, kâr eklenerek hesaplanır
+            satilmakIstenen = farkAlisFiyati * (1 + farkKarYuzde / 100);
         }
         
         // Alış Fiyatı KDV DAHİL'den çıkarsın
@@ -1661,7 +1694,7 @@ function hesaplaSatis() {
         // Topl. mikt. ile çarpsın
         let toplamFark = birimFark * farkToplMiktar;
 
-        document.getElementById("ffSatilmakIstenen").innerText = formatParaGenel(farkSatisFiyati) + " ₺";
+        document.getElementById("ffSatilmakIstenen").innerText = formatParaGenel(satilmakIstenen) + " ₺";
         document.getElementById("ffGeriGelinen").innerText = formatParaGenel(geriGelinenFiyat) + " ₺";
         document.getElementById("ffBirimFark").innerText = formatParaGenel(birimFark) + " ₺";
         document.getElementById("ffToplamFark").innerText = formatParaGenel(toplamFark) + " ₺";
