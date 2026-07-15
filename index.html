@@ -632,8 +632,7 @@ select.fatura-kdv-select {
             <button class="dropdown-item active" onclick="switchTab('satisTab', 'brut', this, 'Hesapla > Satış Fiyatı Hesapla')">Satış Fiyatı Hesapla</button>
             <button class="dropdown-item" onclick="switchTab('karDegisimTab', 'eskiSatisFiyati', this, 'Hesapla > Kâr Oranı Değiştir')">Kâr Oranı Değiştir</button>
             <button class="dropdown-item" onclick="switchTab('indirimTab', 'fiyat', this, 'Hesapla > Kutu İskontosu Uygula')">Kutu İskontosu Uygula</button>
-            <button class="dropdown-item" onclick="switchTab('geriGelmeTab', 'geriFiyat', this, 'Hesapla > % Geri Gelme')">% Geri Gelme</button>
-            <button class="dropdown-item" onclick="switchTab('ilaveTab', 'ilaveTutar', this, 'Hesapla > % Ekle')">% Ekle</button>
+            <button class="dropdown-item" onclick="switchTab('geriGelmeTab', 'geriFiyat', this, 'Hesapla > % Geri Gelme ve İlave Oran (+)')">% Geri Gelme ve İlave Oran (+)</button>
             <button class="dropdown-item" onclick="switchTab('kdvTab', 'kdvDahil', this, 'Hesapla > KDV Hariç Hesapla')">KDV Hariç Hesapla</button>
         </div>
 
@@ -999,40 +998,6 @@ select.fatura-kdv-select {
                 <div class="box" style="margin-top:10px;">
                     <p style="font-size:15px; color:#e74c3c;">Nihai Fiyat <span id="resNihaiFiyat" class="highlight" style="color:#e74c3c;"></span></p>
                 </div>
-            </div>
-        </div>
-
-        <div class="creator">Created by Fatih Mersin</div>
-    </div>
-
-    <div id="ilaveTab" class="tab-content">
-        <div class="input-group">
-            <label>Tutar</label>
-            <div class="field-container">
-                <input id="ilaveTutar" type="text" inputmode="decimal">
-                <div class="clear-btn-ort" ontouchstart="temizleIlave(event,'ilaveTutar')" onclick="temizleIlave(event,'ilaveTutar')">×</div>
-            </div>
-        </div>
-
-        <div class="input-group">
-            <label>Eklenecek Oran (%)</label>
-            <div class="field-container">
-                <input id="ilaveYuzdeDegeri" type="text" inputmode="decimal" class="green-bg" value="10">
-                <div class="clear-btn-ort" ontouchstart="temizleIlave(event,'ilaveYuzdeDegeri')" onclick="temizleIlave(event,'ilaveYuzdeDegeri')">×</div>
-            </div>
-        </div>
-
-        <div class="button-row">
-            <button id="hesaplaBtnIlave" class="main-btn" onclick="hesaplaIlave();">Hesapla</button>
-            <button id="btnResetIlave" class="reset-btn" onclick="sifirlaIlave(event)">↺</button>
-        </div>
-
-        <div class="result" id="sonucIlave">
-            <p>Girilen Tutar <span id="gridilenTutarIlave" class="highlight"></span></p>
-            <p>Seçilen Yüzde <span id="secilenYuzdeIlave" class="highlight"></span></p>
-            <div class="box">
-                <p>Üzerine Eklenen Tutar (%<span id="boxYuzdeOranIlave"></span>) <span id="ilaveUzerineEklenenTutar" class="highlight"></span></p>
-                <p style="font-size:15px; color:#27ae60;">TOPLAM SONUÇ <span id="toplamSonucIlave" class="highlight" style="color:#27ae60;"></span></p>
             </div>
         </div>
 
@@ -1869,7 +1834,7 @@ function sifirlaIndirim(e) {
 }
 
 /* ==========================================================================
-   MODÜL 3: % GERİ GELME
+   MODÜL 3: % GERİ GELME VE İLAVE ORAN (+)
    ========================================================================== */
 function temizleGeriGelme(e, id) {
     if(e) e.preventDefault();
@@ -1944,46 +1909,7 @@ function sifirlaGeriGelme(e) {
     document.getElementById("geriFiyat").classList.add('is-focused');
     document.getElementById("geriFiyat").focus();
 }
-/* ==========================================================================
-   MODÜL 4: % EKLE
-   ========================================================================== */
-function temizleIlave(e, id) {
-    if(e) e.preventDefault();
-    alanTemizleVeSondur(id, "sonucIlave", "hesaplaBtnIlave");
-}
 
-function hesaplaIlave() {
-    formatInputEl("ilaveTutar");
-    
-    let tutar = parseInputFloat(document.getElementById("ilaveTutar").value);
-    let yuzde = parseInputFloat(document.getElementById("ilaveYuzdeDegeri").value);
-    
-    let eklenen = tutar * (yuzde / 100);
-    let toplam = tutar + eklenen;
-    
-    document.getElementById("gridilenTutarIlave").innerText = formatParaGenel(tutar) + " ₺";
-    document.getElementById("secilenYuzdeIlave").innerText = "%" + yuzde;
-    document.getElementById("boxYuzdeOranIlave").innerText = yuzde;
-    document.getElementById("ilaveUzerineEklenenTutar").innerText = formatParaGenel(eklenen) + " ₺";
-    document.getElementById("toplamSonucIlave").innerText = formatParaGenel(toplam) + " ₺";
-    
-    document.getElementById("sonucIlave").style.display = "block";
-    aktifEtHesaplamaEfekti("hesaplaBtnIlave");
-}
-
-function sifirlaIlave(e) {
-    if(e) e.preventDefault();
-    document.getElementById("ilaveTutar").value = "";
-    document.getElementById("ilaveYuzdeDegeri").value = "10";
-    document.getElementById("sonucIlave").style.display = "none";
-    document.getElementById('hesaplaBtnIlave').classList.remove('active-calc');
-    tetikleResetEfekti("btnResetIlave");
-    
-    let activeTab = document.querySelector(".tab-content.active");
-    tumOdakHalkalariniTemizle(activeTab);
-    document.getElementById("ilaveTutar").classList.add('is-focused');
-    document.getElementById("ilaveTutar").focus();
-}
 
 /* ==========================================================================
    MODÜL 5: KDV HARİÇ HESAPLA
