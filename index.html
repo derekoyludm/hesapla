@@ -634,6 +634,7 @@ select.fatura-kdv-select {
             <button class="dropdown-item" onclick="switchTab('indirimTab', 'fiyat', this, 'Hesapla > Kutu İskontosu Uygula')">Kutu İskontosu Uygula</button>
             <button class="dropdown-item" onclick="switchTab('geriGelmeTab', 'geriFiyat', this, 'Hesapla > % Geri Gelme ve İlave Oran (+)')">% Geri Gelme ve İlave Oran (+)</button>
             <button class="dropdown-item" onclick="switchTab('kdvTab', 'kdvDahil', this, 'Hesapla > KDV Hariç Hesapla')">KDV Hariç Hesapla</button>
+			<button class="dropdown-item" onclick="switchTab('damgaTab', 'brutDamga', this, 'Hesapla > Damga Vergisi Nedir?')">Damga Vergisi Nedir?</button>
         </div>
 
         <div id="dropdown_nedirGroup" class="dropdown-menu">
@@ -1034,6 +1035,31 @@ select.fatura-kdv-select {
         <div class="result border-style" id="sonucKdv">
             <p>KDV Tutarı (<span id="oranKdv"></span>) <span id="kdvTutar" class="highlight-bold"></span></p>
             <p>KDV Hariç Tutar <span id="haric" class="highlight-bold"></span></p>
+        </div>
+
+        <div class="creator">Created by Fatih Mersin</div>
+    </div>
+	
+	<div id="damgaTab" class="tab-content">
+        <div class="input-group">
+            <label>Brüt Tutar</label>
+            <div class="field-container">
+                <input id="brutDamga" type="text" inputmode="decimal">
+                <div class="clear-btn-ort" ontouchstart="temizleDamga(event,'brutDamga')" onclick="temizleDamga(event,'brutDamga')">×</div>
+            </div>
+        </div>
+
+        <div class="button-row">
+            <button id="hesaplaBtnDamga" class="main-btn" onclick="hesaplaDamga();">Hesapla</button>
+            <button id="btnResetDamga" class="reset-btn" onclick="sifirlaDamga(event)">↺</button>
+        </div>
+
+        <div class="result" id="sonucDamga">
+            <p>Brüt Tutar <span id="resBrutDamga" class="highlight"></span></p>
+            <p>Damga Vergisi Kesintisi (%0,948) <span id="resKesintiDamga" class="highlight" style="color:#e74c3c;"></span></p>
+            <div class="box">
+                <p style="font-size:15px; color:#27ae60;">Ele Geçen Net Tutar <span id="resNetDamga" class="highlight" style="color:#27ae60;"></span></p>
+            </div>
         </div>
 
         <div class="creator">Created by Fatih Mersin</div>
@@ -2263,6 +2289,47 @@ function sifirlaFatura(e) {
     tumOdakHalkalariniTemizle(activeTab);
     document.getElementById("faturaAdet_1").classList.add('is-focused');
     document.getElementById("faturaAdet_1").focus();
+}
+
+
+/* ==========================================================================
+   MODÜL: DAMGA VERGİSİ NEDİR?
+   ========================================================================== */
+function temizleDamga(e, id) {
+    if(e) e.preventDefault();
+    alanTemizleVeSondur(id, "sonucDamga", "hesaplaBtnDamga");
+}
+
+function sifirlaDamga(e) {
+    if(e) e.preventDefault();
+    document.getElementById("brutDamga").value = "";
+    document.getElementById("sonucDamga").style.display = "none";
+    document.getElementById("hesaplaBtnDamga").classList.remove('active-calc');
+    tetikleResetEfekti("btnResetDamga");
+    
+    let fInp = document.getElementById("brutDamga");
+    let activeTab = document.getElementById("damgaTab");
+    tumOdakHalkalariniTemizle(activeTab);
+    fInp.classList.add('is-focused');
+    fInp.focus();
+}
+
+function hesaplaDamga() {
+    formatInputEl("brutDamga");
+    let brut = parseInputFloat(document.getElementById("brutDamga").value);
+    
+    if (brut === 0) return;
+    
+    // %0,948 (binde 9,48) kesinti hesaplaması
+    let kesinti = brut * 0.00948;
+    let netTutar = brut - kesinti;
+    
+    document.getElementById("resBrutDamga").innerText = formatParaGenel(brut) + " ₺";
+    document.getElementById("resKesintiDamga").innerText = formatParaGenel(kesinti) + " ₺";
+    document.getElementById("resNetDamga").innerText = formatParaGenel(netTutar) + " ₺";
+    
+    document.getElementById("sonucDamga").style.display = "block";
+    aktifEtHesaplamaEfekti("hesaplaBtnDamga");
 }
 
 /* ==========================================================================
