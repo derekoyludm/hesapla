@@ -634,7 +634,7 @@ select.fatura-kdv-select {
             <button class="dropdown-item" onclick="switchTab('indirimTab', 'fiyat', this, 'Hesapla > Kutu İskontosu Uygula')">Kutu İskontosu Uygula</button>
             <button class="dropdown-item" onclick="switchTab('geriGelmeTab', 'geriFiyat', this, 'Hesapla > % Geri Gelme ve İlave Oran (+)')">% Geri Gelme ve İlave Oran (+)</button>
             <button class="dropdown-item" onclick="switchTab('kdvTab', 'kdvDahil', this, 'Hesapla > KDV Hariç Hesapla')">KDV Hariç Hesapla</button>
-			<button class="dropdown-item" onclick="switchTab('damgaTab', 'brutDamga', this, 'Hesapla > Damga Vergisi Nedir?')">Damga Vergisi Nedir?</button>
+			<button class="dropdown-item" onclick="switchTab('damgaVergisiTab', 'hesabaGelenTutar', this, 'Hesapla > Damga Vergisi Nedir?')">Damga Vergisi Nedir?</button>
         </div>
 
         <div id="dropdown_nedirGroup" class="dropdown-menu">
@@ -1039,31 +1039,6 @@ select.fatura-kdv-select {
 
         <div class="creator">Created by Fatih Mersin</div>
     </div>
-	
-	<div id="damgaTab" class="tab-content">
-        <div class="input-group">
-            <label>Brüt Tutar</label>
-            <div class="field-container">
-                <input id="brutDamga" type="text" inputmode="decimal">
-                <div class="clear-btn-ort" ontouchstart="temizleDamga(event,'brutDamga')" onclick="temizleDamga(event,'brutDamga')">×</div>
-            </div>
-        </div>
-
-        <div class="button-row">
-            <button id="hesaplaBtnDamga" class="main-btn" onclick="hesaplaDamga();">Hesapla</button>
-            <button id="btnResetDamga" class="reset-btn" onclick="sifirlaDamga(event)">↺</button>
-        </div>
-
-        <div class="result" id="sonucDamga">
-            <p>Brüt Tutar <span id="resBrutDamga" class="highlight"></span></p>
-            <p>Damga Vergisi Kesintisi (%0,948) <span id="resKesintiDamga" class="highlight" style="color:#e74c3c;"></span></p>
-            <div class="box">
-                <p style="font-size:15px; color:#27ae60;">Ele Geçen Net Tutar <span id="resNetDamga" class="highlight" style="color:#27ae60;"></span></p>
-            </div>
-        </div>
-
-        <div class="creator">Created by Fatih Mersin</div>
-    </div>
 
     <div id="indirimOranTab" class="tab-content">
         <div class="input-group">
@@ -1221,6 +1196,38 @@ select.fatura-kdv-select {
         <div class="result result-dinamik" id="sonucAlaniIslem">
             <div class="box" style="background:#eaf7ef; border-left-color:#2ecc71; padding:12px 15px;">
                 <p style="font-size:16px; margin:0; color:#2ecc71;">NET SONUÇ <span class="highlight" id="islemNetSonuc" style="color:#2ecc71; font-size:20px;">0,00</span></p>
+            </div>
+        </div>
+
+        <div class="creator">Created by Fatih Mersin</div>
+    </div>
+	
+	<div id="damgaVergisiTab" class="tab-content">
+        <div class="input-group">
+            <label>Hesaba Gelen Tutar (Kesinti Sonrası)</label>
+            <div class="field-container">
+                <input id="hesabaGelenTutar" type="text" inputmode="decimal">
+                <div class="clear-btn-ort" ontouchstart="temizleDamgaVergisi(event,'hesabaGelenTutar')" onclick="temizleDamgaVergisi(event,'hesabaGelenTutar')">×</div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Damga Vergisi Kesintisi (%)</label>
+            <div class="field-container">
+                <input id="damgaOrani" type="text" inputmode="decimal" class="green-bg" value="0,948">
+                <div class="clear-btn-ort" ontouchstart="temizleDamgaVergisi(event,'damgaOrani')" onclick="temizleDamgaVergisi(event,'damgaOrani')">×</div>
+            </div>
+        </div>
+
+        <div class="button-row">
+            <button id="hesaplaBtnDamga" class="main-btn" onclick="hesaplaDamgaVergisi();">Hesapla</button>
+            <button id="btnResetDamga" class="reset-btn" onclick="sifirlaDamgaVergisi(event)">↺</button>
+        </div>
+
+        <div class="result" id="sonucDamgaVergisi">
+            <p>Damga Vergisi Kesilmemiş Tutar <span id="resBrutTutar" class="highlight"></span></p>
+            <div class="box">
+                <p style="font-size:15px; color:#e74c3c;">Damga Vergisi Tutarı <span id="resDamgaTutari" class="highlight" style="color:#e74c3c;"></span></p>
             </div>
         </div>
 
@@ -1938,6 +1945,53 @@ function sifirlaGeriGelme(e) {
 
 
 /* ==========================================================================
+   YENİ EKLENEN MODÜL: DAMGA VERGİSİ HESAPLA
+   ========================================================================== */
+function temizleDamgaVergisi(e, id) {
+    if(e) e.preventDefault();
+    alanTemizleVeSondur(id, "sonucDamgaVergisi", "hesaplaBtnDamga");
+}
+
+function hesaplaDamgaVergisi() {
+    formatInputEl("hesabaGelenTutar");
+    
+    let netTutar = parseInputFloat(document.getElementById("hesabaGelenTutar").value);
+    
+    // Oran virgüllü girilmiş olabileceği için mevcut parseInputFloat ile sayısal veriye çeviriyoruz
+    let oranStr = document.getElementById("damgaOrani").value;
+    let oran = parseInputFloat(oranStr);
+    
+    if (netTutar > 0 && oran >= 0) {
+        // Tutar = Kesinti Yapılmamış Tutar - (Kesinti Yapılmamış Tutar * Oran / 100)
+        // Matematiksel ters işlemi: Kesinti Yapılmamış Tutar = Tutar / (1 - Oran/100)
+        let kesilmemisTutar = netTutar / (1 - (oran / 100));
+        
+        // Damga Tutarı = Brüt Tutar - Net Tutar
+        let damgaTutari = kesilmemisTutar - netTutar;
+        
+        document.getElementById("resBrutTutar").innerText = formatParaGenel(kesilmemisTutar) + " ₺";
+        document.getElementById("resDamgaTutari").innerText = formatParaGenel(damgaTutari) + " ₺";
+        
+        document.getElementById("sonucDamgaVergisi").style.display = "block";
+        aktifEtHesaplamaEfekti("hesaplaBtnDamga");
+    }
+}
+
+function sifirlaDamgaVergisi(e) {
+    if(e) e.preventDefault();
+    document.getElementById("hesabaGelenTutar").value = "";
+    document.getElementById("damgaOrani").value = "0,948"; // Sabit oranı geri yükler
+    document.getElementById("sonucDamgaVergisi").style.display = "none";
+    document.getElementById("hesaplaBtnDamga").classList.remove('active-calc');
+    tetikleResetEfekti("btnResetDamga");
+    
+    let activeTab = document.querySelector(".tab-content.active");
+    tumOdakHalkalariniTemizle(activeTab);
+    document.getElementById("hesabaGelenTutar").classList.add('is-focused');
+    document.getElementById("hesabaGelenTutar").focus();
+}
+
+/* ==========================================================================
    MODÜL 5: KDV HARİÇ HESAPLA
    ========================================================================== */
 function temizleKdv(e, id) {
@@ -2289,47 +2343,6 @@ function sifirlaFatura(e) {
     tumOdakHalkalariniTemizle(activeTab);
     document.getElementById("faturaAdet_1").classList.add('is-focused');
     document.getElementById("faturaAdet_1").focus();
-}
-
-
-/* ==========================================================================
-   MODÜL: DAMGA VERGİSİ NEDİR?
-   ========================================================================== */
-function temizleDamga(e, id) {
-    if(e) e.preventDefault();
-    alanTemizleVeSondur(id, "sonucDamga", "hesaplaBtnDamga");
-}
-
-function sifirlaDamga(e) {
-    if(e) e.preventDefault();
-    document.getElementById("brutDamga").value = "";
-    document.getElementById("sonucDamga").style.display = "none";
-    document.getElementById("hesaplaBtnDamga").classList.remove('active-calc');
-    tetikleResetEfekti("btnResetDamga");
-    
-    let fInp = document.getElementById("brutDamga");
-    let activeTab = document.getElementById("damgaTab");
-    tumOdakHalkalariniTemizle(activeTab);
-    fInp.classList.add('is-focused');
-    fInp.focus();
-}
-
-function hesaplaDamga() {
-    formatInputEl("brutDamga");
-    let brut = parseInputFloat(document.getElementById("brutDamga").value);
-    
-    if (brut === 0) return;
-    
-    // %0,948 (binde 9,48) kesinti hesaplaması
-    let kesinti = brut * 0.00948;
-    let netTutar = brut - kesinti;
-    
-    document.getElementById("resBrutDamga").innerText = formatParaGenel(brut) + " ₺";
-    document.getElementById("resKesintiDamga").innerText = formatParaGenel(kesinti) + " ₺";
-    document.getElementById("resNetDamga").innerText = formatParaGenel(netTutar) + " ₺";
-    
-    document.getElementById("sonucDamga").style.display = "block";
-    aktifEtHesaplamaEfekti("hesaplaBtnDamga");
 }
 
 /* ==========================================================================
