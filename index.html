@@ -634,7 +634,9 @@ select.fatura-kdv-select {
             <button class="dropdown-item" onclick="switchTab('indirimTab', 'fiyat', this, 'Hesapla > Kutu İskontosu Uygula')">Kutu İskontosu Uygula</button>
             <button class="dropdown-item" onclick="switchTab('geriGelmeTab', 'geriFiyat', this, 'Hesapla > % Geri Gelme ve İlave Oran (+)')">% Geri Gelme ve İlave Oran (+)</button>
             <button class="dropdown-item" onclick="switchTab('kdvTab', 'kdvDahil', this, 'Hesapla > KDV Hariç Hesapla')">KDV Hariç Hesapla</button>
-			<button class="dropdown-item" onclick="switchTab('damgaVergisiTab', 'hesabaGelenTutar', this, 'Hesapla > Damga Vergisi Nedir?')">Damga Vergisi Nedir?</button>
+            <button class="dropdown-item" onclick="switchTab('damgaVergisiTab', 'hesabaGelenTutar', this, 'Hesapla > Damga Vergisi Nedir?')">Damga Vergisi Nedir?</button>
+            <button class="dropdown-item" onclick="switchTab('sarjKwTab', 'sarjTutar', this, 'Hesapla > E. Araç kWh Hesapla Tutara Göre')">E. Araç kWh Hesapla Tutara Göre</button>
+            <button class="dropdown-item" onclick="switchTab('evMaliyetTab', 'ev100KmKw', this, 'Hesapla > E. Araç Kaç TL Elektrik Harcar')">E. Araç Kaç TL Elektrik Harcar</button>
         </div>
 
         <div id="dropdown_nedirGroup" class="dropdown-menu">
@@ -1234,6 +1236,79 @@ select.fatura-kdv-select {
         <div class="creator">Created by Fatih Mersin</div>
     </div>
 
+    <div id="sarjKwTab" class="tab-content">
+        <div class="input-group">
+            <label>Alınacak Tutar (TL)</label>
+            <div class="field-container">
+                <input id="sarjTutar" type="text" inputmode="decimal">
+                <div class="clear-btn-ort" ontouchstart="temizleSarjKw(event,'sarjTutar')" onclick="temizleSarjKw(event,'sarjTutar')">×</div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>1 kWh Fiyatı (TL)</label>
+            <div class="field-container">
+                <input id="sarjKwFiyat" type="text" inputmode="decimal" class="green-bg">
+                <div class="clear-btn-ort" ontouchstart="temizleSarjKw(event,'sarjKwFiyat')" onclick="temizleSarjKw(event,'sarjKwFiyat')">×</div>
+            </div>
+        </div>
+
+        <div class="button-row">
+            <button id="hesaplaBtnSarj" class="main-btn" onclick="hesaplaSarjKw();">Hesapla</button>
+            <button id="btnResetSarj" class="reset-btn" onclick="sifirlaSarjKw(event)">↺</button>
+        </div>
+
+        <div class="result" id="sonucSarjKw">
+            <p>Ödenecek Tutar <span id="resSarjTutar" class="highlight"></span></p>
+            <p>Birim kWh Fiyatı <span id="resSarjBirim" class="highlight"></span></p>
+            <div class="box">
+                <p style="font-size:15px; color:#27ae60;">Alınacak Enerji <span id="resSarjSonucKw" class="highlight" style="color:#27ae60;"></span></p>
+            </div>
+        </div>
+
+        <div class="creator">Created by Fatih Mersin</div>
+    </div>
+
+    <div id="evMaliyetTab" class="tab-content">
+        <div class="input-group">
+            <label>100 km'de Harcanan Enerji (kWs)</label>
+            <div class="field-container">
+                <input id="ev100KmKw" type="text" inputmode="numeric" class="green-bg">
+                <div class="clear-btn-ort" ontouchstart="temizleEvMaliyet(event,'ev100KmKw')" onclick="temizleEvMaliyet(event,'ev100KmKw')">×</div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>1 kWh Ücreti (TL)</label>
+            <div class="field-container">
+                <input id="evKwFiyat" type="text" inputmode="decimal">
+                <div class="clear-btn-ort" ontouchstart="temizleEvMaliyet(event,'evKwFiyat')" onclick="temizleEvMaliyet(event,'evKwFiyat')">×</div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Gidilen Yol (km)</label>
+            <div class="field-container">
+                <input id="evKm" type="text" inputmode="numeric" class="green-bg">
+                <div class="clear-btn-ort" ontouchstart="temizleEvMaliyet(event,'evKm')" onclick="temizleEvMaliyet(event,'evKm')">×</div>
+            </div>
+        </div>
+
+        <div class="button-row">
+            <button id="hesaplaBtnEv" class="main-btn" onclick="hesaplaEvMaliyet();">Hesapla</button>
+            <button id="btnResetEv" class="reset-btn" onclick="sifirlaEvMaliyet(event)">↺</button>
+        </div>
+
+        <div class="result" id="sonucEvMaliyet">
+            <p>1 km'de Harcanan Tutar <span id="resEvBirimKm" class="highlight"></span></p>
+            <div class="box">
+                <p style="font-size:15px; color:#27ae60;">Yazılan Yol (<span id="resEvYolMetin">0</span> km) Toplam Maliyet <span id="resEvToplamTutar" class="highlight" style="color:#27ae60;"></span></p>
+            </div>
+        </div>
+
+        <div class="creator">Created by Fatih Mersin</div>
+    </div>
+
 </div>
 
 <script>
@@ -1263,6 +1338,11 @@ function formatParaGenel(num) {
     return parts.join(",");
 }
 
+function formatTamSayiGenel(num) {
+    if(num === 0) return "0";
+    return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
 function formatInputEl(id) {
     let el = document.getElementById(id);
     if(el && el.value !== "") {
@@ -1271,8 +1351,21 @@ function formatInputEl(id) {
     }
 }
 
+function formatTamSayiInputEl(id) {
+    let el = document.getElementById(id);
+    if(el && el.value !== "") {
+        let val = parseInputFloat(el.value);
+        el.value = formatTamSayiGenel(val);
+    }
+}
+
 function dynamicInputFormatSade(el) {
     let clean = el.value.replace(/[^0-9,.]/g, "");
+    el.value = clean;
+}
+
+function dynamicTamSayiFormatSade(el) {
+    let clean = el.value.replace(/[^0-9]/g, "");
     el.value = clean;
 }
 
@@ -1303,10 +1396,18 @@ function registerDynamicFormat() {
         inp.removeEventListener("input", handleInputEvent);
         inp.addEventListener("input", handleInputEvent);
     });
+    document.querySelectorAll("input[inputmode='numeric']").forEach(inp => {
+        inp.removeEventListener("input", handleNumericInputEvent);
+        inp.addEventListener("input", handleNumericInputEvent);
+    });
 }
 
 function handleInputEvent(e) {
     dynamicInputFormatSade(e.target);
+}
+
+function handleNumericInputEvent(e) {
+    dynamicTamSayiFormatSade(e.target);
 }
 
 let resetTimeoutlar = {}; 
@@ -1717,19 +1818,13 @@ function hesaplaSatis() {
         
         if(farkSatisFiyati > 0) {
             satilmakIstenen = farkSatisFiyati;
-            // Satış fiyatından Kâr % geri gelsin çıkan fiyat
             geriGelinenFiyat = farkSatisFiyati / (1 + farkKarYuzde / 100);
         } else if (farkAlisFiyati > 0) {
-            // Manuel girilen FF Alış Fiyatı (KDV Dahil) doğrudan baz alınır
             geriGelinenFiyat = farkAlisFiyati;
-            // Gösterim amacıyla satılmak istenen fiyat, kâr eklenerek hesaplanır
             satilmakIstenen = farkAlisFiyati * (1 + farkKarYuzde / 100);
         }
         
-        // Alış Fiyatı KDV DAHİL'den çıkarsın
         let birimFark = alisFiyatiKdvli - geriGelinenFiyat;
-        
-        // Topl. mikt. ile çarpsın
         let toplamFark = birimFark * farkToplMiktar;
 
         document.getElementById("ffSatilmakIstenen").innerText = formatParaGenel(satilmakIstenen) + " ₺";
@@ -1764,7 +1859,7 @@ function sifirlaSatis(e) {
 }
 
 /* ==========================================================================
-   🟢 YENİ EKLENEN MODÜL: KÂR ORANI DEĞİŞTİR (SATIŞ FİYATI GÜNCELLEME)
+   MODÜL: KÂR ORANI DEĞİŞTİR (SATIŞ FİYATI GÜNCELLEME)
    ========================================================================== */
 function temizleKarDegisim(e, id) {
     if(e) e.preventDefault();
@@ -1891,12 +1986,10 @@ function hesaplaGeriGelme() {
     let oran2 = parseFloat(document.getElementById("geriOran2").value);
     let eklemeOran = parseFloat(document.getElementById("eklemeOran").value);
     
-    // Kademeli geri gelme hesaplaması (Fiyat önce Oran 1'e, çıkan sonuç Oran 2'ye bölünür)
     let matrah1 = fiyat / (1 + oran1/100);
     let sonMatrah = matrah1 / (1 + oran2/100);
     let dusulen = fiyat - sonMatrah;
     
-    // İlave Ekleme hesaplaması (Geri gelinen fiyat üzerinden)
     let eklemeTutari = sonMatrah * (eklemeOran / 100);
     let nihaiFiyat = sonMatrah + eklemeTutari;
     
@@ -1911,7 +2004,6 @@ function hesaplaGeriGelme() {
     document.getElementById("resGeriDusulen").innerText = formatParaGenel(dusulen) + " ₺";
     document.getElementById("resGeriMatrah").innerText = formatParaGenel(sonMatrah) + " ₺";
     
-    // İlave Oran varsa Nihai Fiyat alanını göster
     let resEklemeAlan = document.getElementById("resEklemeAlan");
     if(eklemeOran > 0) {
         resEklemeAlan.style.display = "block";
@@ -1943,9 +2035,8 @@ function sifirlaGeriGelme(e) {
     document.getElementById("geriFiyat").focus();
 }
 
-
 /* ==========================================================================
-   YENİ EKLENEN MODÜL: DAMGA VERGİSİ HESAPLA
+   MODÜL: DAMGA VERGİSİ HESAPLA
    ========================================================================== */
 function temizleDamgaVergisi(e, id) {
     if(e) e.preventDefault();
@@ -1956,17 +2047,11 @@ function hesaplaDamgaVergisi() {
     formatInputEl("hesabaGelenTutar");
     
     let netTutar = parseInputFloat(document.getElementById("hesabaGelenTutar").value);
-    
-    // Oran virgüllü girilmiş olabileceği için mevcut parseInputFloat ile sayısal veriye çeviriyoruz
     let oranStr = document.getElementById("damgaOrani").value;
     let oran = parseInputFloat(oranStr);
     
     if (netTutar > 0 && oran >= 0) {
-        // Tutar = Kesinti Yapılmamış Tutar - (Kesinti Yapılmamış Tutar * Oran / 100)
-        // Matematiksel ters işlemi: Kesinti Yapılmamış Tutar = Tutar / (1 - Oran/100)
         let kesilmemisTutar = netTutar / (1 - (oran / 100));
-        
-        // Damga Tutarı = Brüt Tutar - Net Tutar
         let damgaTutari = kesilmemisTutar - netTutar;
         
         document.getElementById("resBrutTutar").innerText = formatParaGenel(kesilmemisTutar) + " ₺";
@@ -1980,7 +2065,7 @@ function hesaplaDamgaVergisi() {
 function sifirlaDamgaVergisi(e) {
     if(e) e.preventDefault();
     document.getElementById("hesabaGelenTutar").value = "";
-    document.getElementById("damgaOrani").value = "0,948"; // Sabit oranı geri yükler
+    document.getElementById("damgaOrani").value = "0,948";
     document.getElementById("sonucDamgaVergisi").style.display = "none";
     document.getElementById("hesaplaBtnDamga").classList.remove('active-calc');
     tetikleResetEfekti("btnResetDamga");
@@ -1989,6 +2074,93 @@ function sifirlaDamgaVergisi(e) {
     tumOdakHalkalariniTemizle(activeTab);
     document.getElementById("hesabaGelenTutar").classList.add('is-focused');
     document.getElementById("hesabaGelenTutar").focus();
+}
+
+/* ==========================================================================
+   E. ARAÇ kWh HESAPLA TUTARA GÖRE
+   ========================================================================== */
+function temizleSarjKw(e, id) {
+    if(e) e.preventDefault();
+    alanTemizleVeSondur(id, "sonucSarjKw", "hesaplaBtnSarj");
+}
+
+function hesaplaSarjKw() {
+    formatInputEl("sarjTutar");
+    formatInputEl("sarjKwFiyat");
+    
+    let tutar = parseInputFloat(document.getElementById("sarjTutar").value);
+    let birimFiyat = parseInputFloat(document.getElementById("sarjKwFiyat").value);
+    
+    if (tutar > 0 && birimFiyat > 0) {
+        let alinanKwh = tutar / birimFiyat;
+        let formattedKwh = formatTamSayiGenel(alinanKwh);
+        
+        document.getElementById("resSarjTutar").innerText = formatParaGenel(tutar) + " ₺";
+        document.getElementById("resSarjBirim").innerText = formatParaGenel(birimFiyat) + " ₺ / kWh";
+        document.getElementById("resSarjSonucKw").innerText = formattedKwh + " kWh";
+        
+        document.getElementById("sonucSarjKw").style.display = "block";
+        aktifEtHesaplamaEfekti("hesaplaBtnSarj");
+    }
+}
+
+function sifirlaSarjKw(e) {
+    if(e) e.preventDefault();
+    document.getElementById("sarjTutar").value = "";
+    document.getElementById("sarjKwFiyat").value = "";
+    document.getElementById("sonucSarjKw").style.display = "none";
+    document.getElementById("hesaplaBtnSarj").classList.remove('active-calc');
+    tetikleResetEfekti("btnResetSarj");
+    
+    let activeTab = document.querySelector(".tab-content.active");
+    tumOdakHalkalariniTemizle(activeTab);
+    document.getElementById("sarjTutar").classList.add('is-focused');
+    document.getElementById("sarjTutar").focus();
+}
+
+/* ==========================================================================
+   🟢 E. ARAÇ KAÇ TL ELEKTRİK HARCAR
+   ========================================================================== */
+function temizleEvMaliyet(e, id) {
+    if(e) e.preventDefault();
+    alanTemizleVeSondur(id, "sonucEvMaliyet", "hesaplaBtnEv");
+}
+
+function hesaplaEvMaliyet() {
+    formatTamSayiInputEl("ev100KmKw");
+    formatInputEl("evKwFiyat");
+    formatTamSayiInputEl("evKm");
+    
+    let kw100 = parseInputFloat(document.getElementById("ev100KmKw").value);
+    let kwFiyat = parseInputFloat(document.getElementById("evKwFiyat").value);
+    let km = parseInputFloat(document.getElementById("evKm").value);
+    
+    if (kw100 > 0 && kwFiyat > 0) {
+        let birimKmFiyat = (kw100 / 100) * kwFiyat;
+        let toplamTutar = birimKmFiyat * km;
+        
+        document.getElementById("resEvBirimKm").innerText = formatParaGenel(birimKmFiyat) + " ₺";
+        document.getElementById("resEvYolMetin").innerText = formatTamSayiGenel(km);
+        document.getElementById("resEvToplamTutar").innerText = formatParaGenel(toplamTutar) + " ₺";
+        
+        document.getElementById("sonucEvMaliyet").style.display = "block";
+        aktifEtHesaplamaEfekti("hesaplaBtnEv");
+    }
+}
+
+function sifirlaEvMaliyet(e) {
+    if(e) e.preventDefault();
+    document.getElementById("ev100KmKw").value = "";
+    document.getElementById("evKwFiyat").value = "";
+    document.getElementById("evKm").value = "";
+    document.getElementById("sonucEvMaliyet").style.display = "none";
+    document.getElementById("hesaplaBtnEv").classList.remove('active-calc');
+    tetikleResetEfekti("btnResetEv");
+    
+    let activeTab = document.querySelector(".tab-content.active");
+    tumOdakHalkalariniTemizle(activeTab);
+    document.getElementById("ev100KmKw").classList.add('is-focused');
+    document.getElementById("ev100KmKw").focus();
 }
 
 /* ==========================================================================
@@ -2346,7 +2518,7 @@ function sifirlaFatura(e) {
 }
 
 /* ==========================================================================
-   🟢 MODÜL 10: DİNAMİK TOPLAMA / ÇIKARMA SİSTEMİ
+   MODÜL 10: DİNAMİK TOPLAMA / ÇIKARMA SİSTEMİ
    ========================================================================== */
 let islemSatirSayac = 0;
 
