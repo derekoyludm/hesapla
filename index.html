@@ -1253,6 +1253,14 @@ select.fatura-kdv-select {
             </div>
         </div>
 
+        <div class="input-group">
+            <label>Uygulama İskontosu %</label>
+            <div class="field-container">
+                <input id="sarjUygulamaIsk" type="text" inputmode="decimal">
+                <div class="clear-btn-ort" ontouchstart="temizleSarjKw(event,'sarjUygulamaIsk')" onclick="temizleSarjKw(event,'sarjUygulamaIsk')">×</div>
+            </div>
+        </div>
+
         <div class="button-row">
             <button id="hesaplaBtnSarj" class="main-btn" onclick="hesaplaSarjKw();">Hesapla</button>
             <button id="btnResetSarj" class="reset-btn" onclick="sifirlaSarjKw(event)">↺</button>
@@ -1287,6 +1295,30 @@ select.fatura-kdv-select {
         </div>
 
         <div class="input-group">
+            <label>Uygulama İskontosu %</label>
+            <div class="field-container">
+                <input id="evUygulamaIsk" type="text" inputmode="decimal">
+                <div class="clear-btn-ort" ontouchstart="temizleEvMaliyet(event,'evUygulamaIsk')" onclick="temizleEvMaliyet(event,'evUygulamaIsk')">×</div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Banka Puan İskontosu %</label>
+            <div class="field-container">
+                <input id="evBankaPuanIsk" type="text" inputmode="decimal">
+                <div class="clear-btn-ort" ontouchstart="temizleEvMaliyet(event,'evBankaPuanIsk')" onclick="temizleEvMaliyet(event,'evBankaPuanIsk')">×</div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Puan Tutarı (TL)</label>
+            <div class="field-container">
+                <input id="evPuanTutari" type="text" inputmode="decimal">
+                <div class="clear-btn-ort" ontouchstart="temizleEvMaliyet(event,'evPuanTutari')" onclick="temizleEvMaliyet(event,'evPuanTutari')">×</div>
+            </div>
+        </div>
+
+        <div class="input-group">
             <label>Gidilen Yol (km)</label>
             <div class="field-container">
                 <input id="evKm" type="text" inputmode="numeric" class="green-bg">
@@ -1300,9 +1332,11 @@ select.fatura-kdv-select {
         </div>
 
         <div class="result" id="sonucEvMaliyet">
-            <p>1 km'de Harcanan Tutar <span id="resEvBirimKm" class="highlight"></span></p>
+            <p>İndirimsiz Toplam Tutar <span id="resEvIndirimsizTutar" class="highlight"></span></p>
+            <p style="color:#e74c3c;">Toplam İndirim <span id="resEvIskOranText" class="label-text" style="color:#e74c3c;"></span> <span id="resEvIndirimTutari" class="highlight" style="color:#e74c3c;"></span></p>
             <div class="box">
-                <p style="font-size:15px; color:#27ae60;">Yazılan Yol (<span id="resEvYolMetin">0</span> km) Toplam Maliyet <span id="resEvToplamTutar" class="highlight" style="color:#27ae60;"></span></p>
+                <p style="font-size:15px; color:#27ae60; margin-bottom:6px;">Yazılan Yol (<span id="resEvYolMetin">0</span> km) Toplam Tutar <span id="resEvToplamTutar" class="highlight" style="color:#27ae60;"></span></p>
+                <p style="font-size:14px; margin:0; color:#3d4f66;">1 km'de Harcanan Tutar <span id="resEvBirimKm" class="highlight"></span></p>
             </div>
         </div>
 
@@ -2087,16 +2121,19 @@ function temizleSarjKw(e, id) {
 function hesaplaSarjKw() {
     formatInputEl("sarjTutar");
     formatInputEl("sarjKwFiyat");
+    formatInputEl("sarjUygulamaIsk");
     
     let tutar = parseInputFloat(document.getElementById("sarjTutar").value);
     let birimFiyat = parseInputFloat(document.getElementById("sarjKwFiyat").value);
+    let uygulamaIsk = parseInputFloat(document.getElementById("sarjUygulamaIsk").value);
     
     if (tutar > 0 && birimFiyat > 0) {
-        let alinanKwh = tutar / birimFiyat;
+        let netBirimFiyat = birimFiyat * (1 - uygulamaIsk / 100);
+        let alinanKwh = netBirimFiyat > 0 ? tutar / netBirimFiyat : 0;
         let formattedKwh = formatTamSayiGenel(alinanKwh);
         
         document.getElementById("resSarjTutar").innerText = formatParaGenel(tutar) + " ₺";
-        document.getElementById("resSarjBirim").innerText = formatParaGenel(birimFiyat) + " ₺ / kWh";
+        document.getElementById("resSarjBirim").innerText = formatParaGenel(netBirimFiyat) + " ₺ / kWh";
         document.getElementById("resSarjSonucKw").innerText = formattedKwh + " kWh";
         
         document.getElementById("sonucSarjKw").style.display = "block";
@@ -2108,6 +2145,7 @@ function sifirlaSarjKw(e) {
     if(e) e.preventDefault();
     document.getElementById("sarjTutar").value = "";
     document.getElementById("sarjKwFiyat").value = "";
+    document.getElementById("sarjUygulamaIsk").value = "";
     document.getElementById("sonucSarjKw").style.display = "none";
     document.getElementById("hesaplaBtnSarj").classList.remove('active-calc');
     tetikleResetEfekti("btnResetSarj");
@@ -2129,17 +2167,35 @@ function temizleEvMaliyet(e, id) {
 function hesaplaEvMaliyet() {
     formatTamSayiInputEl("ev100KmKw");
     formatInputEl("evKwFiyat");
+    formatInputEl("evUygulamaIsk");
+    formatInputEl("evBankaPuanIsk");
+    formatInputEl("evPuanTutari");
     formatTamSayiInputEl("evKm");
     
     let kw100 = parseInputFloat(document.getElementById("ev100KmKw").value);
     let kwFiyat = parseInputFloat(document.getElementById("evKwFiyat").value);
+    let uygulamaIsk = parseInputFloat(document.getElementById("evUygulamaIsk").value);
+    let bankaPuanIsk = parseInputFloat(document.getElementById("evBankaPuanIsk").value);
+    let puanTutari = parseInputFloat(document.getElementById("evPuanTutari").value);
     let km = parseInputFloat(document.getElementById("evKm").value);
     
     if (kw100 > 0 && kwFiyat > 0) {
-        let birimKmFiyat = (kw100 / 100) * kwFiyat;
-        let toplamTutar = birimKmFiyat * km;
+        let toplamEnerjiKwh = (kw100 / 100) * km;
+        let indirimsizToplamTutar = toplamEnerjiKwh * kwFiyat;
+        
+        let netKwFiyat = kwFiyat * (1 - uygulamaIsk / 100) * (1 - bankaPuanIsk / 100);
+        let toplamBrutTutar = toplamEnerjiKwh * netKwFiyat;
+        let toplamTutar = Math.max(0, toplamBrutTutar - puanTutari);
+        
+        let toplamIndirimTutari = indirimsizToplamTutar - toplamTutar;
+        let toplamIndirimYuzde = indirimsizToplamTutar > 0 ? (toplamIndirimTutari / indirimsizToplamTutar) * 100 : 0;
+        
+        let birimKmFiyat = km > 0 ? toplamTutar / km : (kw100 / 100) * netKwFiyat;
         
         document.getElementById("resEvBirimKm").innerText = formatParaGenel(birimKmFiyat) + " ₺";
+        document.getElementById("resEvIndirimsizTutar").innerText = formatParaGenel(indirimsizToplamTutar) + " ₺";
+        document.getElementById("resEvIskOranText").innerText = "(%" + formatParaGenel(toplamIndirimYuzde) + ")";
+        document.getElementById("resEvIndirimTutari").innerText = formatParaGenel(toplamIndirimTutari) + " ₺";
         document.getElementById("resEvYolMetin").innerText = formatTamSayiGenel(km);
         document.getElementById("resEvToplamTutar").innerText = formatParaGenel(toplamTutar) + " ₺";
         
@@ -2152,6 +2208,9 @@ function sifirlaEvMaliyet(e) {
     if(e) e.preventDefault();
     document.getElementById("ev100KmKw").value = "";
     document.getElementById("evKwFiyat").value = "";
+    document.getElementById("evUygulamaIsk").value = "";
+    document.getElementById("evBankaPuanIsk").value = "";
+    document.getElementById("evPuanTutari").value = "";
     document.getElementById("evKm").value = "";
     document.getElementById("sonucEvMaliyet").style.display = "none";
     document.getElementById("hesaplaBtnEv").classList.remove('active-calc');
@@ -2626,7 +2685,7 @@ function sifirlaIslem(e) {
 }
 
 /* ==========================================================================
-   SAYFA İLK YÜKLENİŞ BAŞLANGIÇ AYARLARI (INITIALIZATION)
+   SAYFA İLK YÜKLENİŞ BAŞLANGIÇ AYARlARI (INITIALIZATION)
    ========================================================================== */
 window.addEventListener("DOMContentLoaded", function() {
     registerDynamicFormat();
