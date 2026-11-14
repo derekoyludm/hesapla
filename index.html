@@ -252,8 +252,8 @@ select.fatura-kdv-select {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    background-image: none !important; /* Oku kaldırır */
-    padding: 0 !important; /* Boşlukları sıfırlar */
+    background-image: none !important;
+    padding: 0 !important;
     text-align: center;
     text-align-last: center;
 }
@@ -1281,7 +1281,7 @@ select.fatura-kdv-select {
         <div class="input-group">
             <label>100 km'de Harcanan Enerji (kWs)</label>
             <div class="field-container">
-                <input id="ev100KmKw" type="text" inputmode="numeric" class="green-bg">
+                <input id="ev100KmKw" type="text" inputmode="decimal" class="green-bg">
                 <div class="clear-btn-ort" ontouchstart="temizleEvMaliyet(event,'ev100KmKw')" onclick="temizleEvMaliyet(event,'ev100KmKw')">×</div>
             </div>
         </div>
@@ -1811,12 +1811,13 @@ function hesaplaSatis() {
     
     document.getElementById("ham").innerText = formatParaGenel(brut) + " ₺";
     
-    let iskEtiketi = "";
-    if(isk1>0) iskEtiketi += "%" + isk1;
-    if(isk2>0) iskEtiketi += "+" + isk2;
-    if(isk3>0) iskEtiketi += "+" + isk3;
-    if(isk4>0) iskEtiketi += "+" + isk4;
-    document.getElementById("txtIsk").innerText = iskEtiketi ? "("+iskEtiketi+")" : "";
+    let iskList = [];
+    if(isk1 > 0) iskList.push("%" + isk1);
+    if(isk2 > 0) iskList.push("%" + isk2);
+    if(isk3 > 0) iskList.push("%" + isk3);
+    if(isk4 > 0) iskList.push("%" + isk4);
+    let iskEtiketi = iskList.join("+");
+    document.getElementById("txtIsk").innerText = iskEtiketi ? "(" + iskEtiketi + ")" : "";
     document.getElementById("net").innerText = formatParaGenel(netBirimMiktarli) + " ₺";
     
     document.getElementById("txtKar").innerText = "(%" + karYuzde + ")";
@@ -2111,7 +2112,7 @@ function sifirlaDamgaVergisi(e) {
 }
 
 /* ==========================================================================
-   E. ARAÇ kWh HESAPLA TUTARA GÖRE
+   🟢 E. ARAÇ kWh HESAPLA TUTARA GÖRE
    ========================================================================== */
 function temizleSarjKw(e, id) {
     if(e) e.preventDefault();
@@ -2130,7 +2131,7 @@ function hesaplaSarjKw() {
     if (tutar > 0 && birimFiyat > 0) {
         let netBirimFiyat = birimFiyat * (1 - uygulamaIsk / 100);
         let alinanKwh = netBirimFiyat > 0 ? tutar / netBirimFiyat : 0;
-        let formattedKwh = formatTamSayiGenel(alinanKwh);
+        let formattedKwh = formatParaGenel(alinanKwh);
         
         document.getElementById("resSarjTutar").innerText = formatParaGenel(tutar) + " ₺";
         document.getElementById("resSarjBirim").innerText = formatParaGenel(netBirimFiyat) + " ₺ / kWh";
@@ -2157,7 +2158,7 @@ function sifirlaSarjKw(e) {
 }
 
 /* ==========================================================================
-   🟢 E. ARAÇ KAÇ TL HARCADI
+   E. ARAÇ KAÇ TL HARCADI
    ========================================================================== */
 function temizleEvMaliyet(e, id) {
     if(e) e.preventDefault();
@@ -2165,7 +2166,7 @@ function temizleEvMaliyet(e, id) {
 }
 
 function hesaplaEvMaliyet() {
-    formatTamSayiInputEl("ev100KmKw");
+    formatInputEl("ev100KmKw");
     formatInputEl("evKwFiyat");
     formatInputEl("evUygulamaIsk");
     formatInputEl("evBankaPuanIsk");
@@ -2685,7 +2686,7 @@ function sifirlaIslem(e) {
 }
 
 /* ==========================================================================
-   SAYFA İLK YÜKLENİŞ BAŞLANGIÇ AYARlARI (INITIALIZATION)
+   SAYFA İLK YÜKLENİŞ BAŞLANGIÇ AYARLARI (INITIALIZATION)
    ========================================================================== */
 window.addEventListener("DOMContentLoaded", function() {
     registerDynamicFormat();
